@@ -4,6 +4,11 @@
   "compileOnSave": false,
   "compilerOptions": {
     "strict": true,
+    "paths": {
+      "gpa-ui-core": [
+        "./projects/gpa-ui-core/src/public-api.ts"
+      ]
+    },
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
@@ -22,5 +27,13 @@
     "typeCheckHostBindings": true,
     "strictTemplates": true
   },
-  "files": []
+  "files": [],
+  "references": [
+    {
+      "path": "./projects/gpa-ui-core/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/gpa-ui-core/tsconfig.spec.json"
+    }
+  ]
 }

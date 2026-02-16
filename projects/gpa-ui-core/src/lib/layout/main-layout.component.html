@@ -1,0 +1,85 @@
+﻿@if (whoami()) {
+  <div class="layout-grid" [class.expanded]="isExpanded()">
+
+  <aside class="sidenav" [class.collapsed]="!isExpanded()" role="navigation" aria-label="Primary">
+    <mat-nav-list>
+
+      @for (link  of sortedMenuRoots()  ; track link) {
+          <a mat-list-item [routerLink]="[endpointFor(link)]" [activated]="isActive(link)"  class="nav-item" [attr.aria-label]="link.description || link.id">
+            <mat-icon>{{ link.icon || 'chevron_right' }}</mat-icon>
+            <span class="label" [class.hidden]="!isExpanded()">{{ link.description || link.id }}</span>
+          </a>
+      }
+    </mat-nav-list>
+  </aside>
+
+  <main class="main-content">
+
+    <mat-toolbar color="primary" class="toolbar">
+
+      <button mat-icon-button (click)="toggleSidenav()" aria-label="Apri/Chiudi menu" [attr.aria-pressed]="isExpanded()">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <span class="title">{{ currentPageTitle() }}</span>
+
+      <span class="spacer"></span>
+
+      <button mat-icon-button [matMenuTriggerFor]="userMenu">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item>
+          <mat-icon>person</mat-icon>
+          <span>Profilo</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+
+      <button mat-icon-button (click)="openExtraSidenav()" aria-label="Apri menu laterale destro">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <!-- Sidenav destra -->
+      <div class="extra-sidenav" [class.open]="extraSidenavOpen()" tabindex="-1" role="complementary" aria-label="Menu laterale destro">
+        <button mat-icon-button class="close-btn" (click)="closeExtraSidenav()" aria-label="Chiudi menu laterale destro">
+          <mat-icon>close</mat-icon>
+        </button>
+        <div class="extra-content">
+          <h3>Applicazioni</h3>
+          <mat-nav-list>
+            @for (app of apps(); track app.id) {
+              @if (app.id === currentAppId) {
+                <div mat-list-item class="extra-menu-item disabled-app" [attr.aria-label]="app.description || app.id">
+                  <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
+                  <span>{{ app.description || app.id }}</span>
+                </div>
+              } @else {
+                <a mat-list-item [href]="app.path || '#'" class="extra-menu-item" [attr.aria-label]="app.description || app.id">
+                  <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
+                  <span>{{ app.description || app.id }}</span>
+                </a>
+              }
+            }
+          </mat-nav-list>
+        </div>
+      </div>
+      <div class="extra-sidenav-backdrop" [class.open]="extraSidenavOpen()" (click)="closeExtraSidenav()" tabindex="-1" aria-label="Chiudi menu laterale destro"></div>
+
+    </mat-toolbar>
+
+    <div class="content">
+      <router-outlet />
+    </div>
+
+  </main>
+
+</div>
+}
+@else {
+<div class="content">
+<router-outlet />
+</div>}
