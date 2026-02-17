@@ -1,4 +1,3 @@
-export * from './lib/gpa-ui-core';
 export * from './lib/tokens';
 export * from './lib/system/system.models';
 export * from './lib/system/system.service';

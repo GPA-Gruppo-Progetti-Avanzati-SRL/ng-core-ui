@@ -1,10 +1,17 @@
-﻿import { Component, signal, computed, ChangeDetectionStrategy , inject ,OnInit } from '@angular/core';
+﻿import {
+  Component,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+  inject,
+  OnInit
+} from '@angular/core';
 import { RouterOutlet, RouterLink,Router,NavigationEnd } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { SystemService } from '../system/system.service';
-import { MenuNode } from '../system/system.models';
-import { LIB_APP_ID } from '../tokens';
+import { PathNode } from '../system/system.models';
+import {SystemService} from '../system/system.service';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -12,6 +19,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
+import {LIB_APP_ID} from '../tokens';
 
 @Component({
   selector: 'app-main-layout',
@@ -31,9 +39,15 @@ import { MatCardModule } from '@angular/material/card';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainLayoutComponent implements OnInit {
-  private system = inject(SystemService);
-  private router = inject(Router);
-  private appId = inject(LIB_APP_ID);
+
+  private router :Router = inject(Router);
+
+  private system :SystemService = inject(SystemService);
+
+  private appId :string =    inject(LIB_APP_ID);
+
+
+
   // false = collapsed (icons-only); true = expanded (icons + labels)
   whoami = this.system.whoamiSig;
   menuTree = this.system.menuTreeSig;
@@ -48,7 +62,7 @@ export class MainLayoutComponent implements OnInit {
     if (!url) return 'Enterprise App';
     const normalizedUrl = this.system.normalizePath(url);
     const nodes = this.menuTree();
-    const activeNode = nodes?.find(n => this.endpointFor(n) === normalizedUrl);
+    const activeNode = nodes?.find((n: PathNode) => this.endpointFor(n) === normalizedUrl);
     return activeNode?.description || activeNode?.id || 'Enterprise App';
   });
 
@@ -57,16 +71,16 @@ export class MainLayoutComponent implements OnInit {
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
       map((e) => e.urlAfterRedirects)
     ),
-    { initialValue: this.router.url }
+    { initialValue: this.router.url}
   );
 
   // MenuRoots già ordinati dal SystemService
   sortedMenuRoots = this.menuTree;
 
-  endpointFor(n: MenuNode): string | null {
+  endpointFor(n: PathNode): string | null {
     return n.path ? this.system.normalizePath(n.path) : null;
   }
-  isActive(n: MenuNode): boolean {
+  isActive(n: PathNode): boolean {
     return this.endpointFor(n) === this.currentUrl();
   }
 

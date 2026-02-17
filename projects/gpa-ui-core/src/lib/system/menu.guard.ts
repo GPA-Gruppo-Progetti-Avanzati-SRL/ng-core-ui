@@ -1,13 +1,20 @@
-import { Injectable, inject } from '@angular/core';
-import { CanActivateChild, ActivatedRouteSnapshot, RouterStateSnapshot, Router, UrlTree } from '@angular/router';
-import { SystemService } from './system.service';
+import {EnvironmentInjector, inject, Injectable, runInInjectionContext} from '@angular/core';
+import {ActivatedRouteSnapshot, CanActivateChild, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
+import {SystemService} from './system.service';
+
 
 @Injectable({ providedIn: 'root' })
 export class MenuGuard implements CanActivateChild {
-  private system = inject(SystemService);
-  private router = inject(Router);
+
+
+  private system: SystemService = inject(SystemService);
+  private router: Router = inject(Router);
+
+
 
   async canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean | UrlTree> {
+
+
     // Assicura che i dati base siano caricati almeno una volta
     if (!this.system.whoamiSig() || this.system.menuTreeSig() === null) {
       await this.system.bootstrap().catch(() => void 0);

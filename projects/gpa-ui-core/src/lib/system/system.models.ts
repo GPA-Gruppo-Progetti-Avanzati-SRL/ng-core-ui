@@ -1,9 +1,10 @@
-export interface MenuNode {
+export interface PathNode {
   id: string;
   description?: string;
   icon?: string;
   path?: string | null;
   order?: number;
+  ismenu?: boolean;
 }
 
 export interface App {
@@ -14,8 +15,10 @@ export interface App {
   order?: number;
 }
 
-export interface WhoamiBodyResponse {
+export interface TokenResponse {
   user: string;
   roles: string[] | null;
   capabilities: string[] | null;
+  paths: PathNode[] | null;
+  apps:  App[] | null;
 }

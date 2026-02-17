@@ -1,22 +1,28 @@
-import { Injectable, computed, inject, signal, InjectionToken } from '@angular/core';
+import {Injectable, computed, inject, signal} from '@angular/core';
 import { HttpClient , HttpHeaders} from '@angular/common/http';
-import { App, MenuNode, WhoamiBodyResponse } from './system.models';
+import { App, PathNode, TokenResponse } from './system.models';
 import { firstValueFrom } from 'rxjs';
 import { LIB_APP_ID } from '../tokens';
+import { decrypt } from '../utils';
+
 
 @Injectable({ providedIn: 'root' })
 export class SystemService {
-  private http = inject(HttpClient);
-  private appId = inject(LIB_APP_ID);
-
+  private readonly http: HttpClient = inject(HttpClient);
+  private  readonly appId: string = inject(LIB_APP_ID);
+  constructor() {
+    console.log("SS "+ LIB_APP_ID);
+    console.log("SystemService Initialized");
+  }
   // Signals per stato
-  readonly whoamiSig = signal<WhoamiBodyResponse | null>(null);
-  readonly menuTreeSig = signal<MenuNode[] | null>(null);
+  readonly whoamiSig = signal<{user: string, roles: string[] | null, capabilities: string[] | null} | null>(null);
+  readonly pathsSig = signal<PathNode[] | null>(null);
+  readonly menuTreeSig = signal<PathNode[] | null>(null);
   readonly appsSig = signal<App[] | null>(null);
 
-  // Endpoints consentiti (derivati dal menu)
+  // Endpoints consentiti (tutti i path ricevuti)
   readonly allowedEndpoints = computed(() => {
-    const list = this.menuTreeSig();
+    const list = this.pathsSig();
     if (!list) return new Set<string>();
     const acc = new Set<string>();
     for (const n of list) {
@@ -38,26 +44,28 @@ export class SystemService {
     }
   }
 
-  async loadWhoami(): Promise<WhoamiBodyResponse> {
+  async loadToken(): Promise<TokenResponse> {
     const headers = new HttpHeaders().set('AppId', this.appId);
-    const data = await firstValueFrom(this.http.get<WhoamiBodyResponse>('/api/whoami', { headers }));
-    this.whoamiSig.set(data);
+    const encryptedToken = await firstValueFrom(this.http.get('/api/token', { headers, responseType: 'text' }));
+    const decryptedJson = await decrypt(encryptedToken, this.appId);
+    const data: TokenResponse = JSON.parse(decryptedJson);
+    console.debug("token", data);
+
+    this.whoamiSig.set({
+      user: data.user,
+      roles: data.roles,
+      capabilities: data.capabilities
+    });
+    this.pathsSig.set(data.paths);
+
+    const menuNodes = (data.paths ?? []).filter(p => p.ismenu);
+    const sortedMenu = this.sortPathNodes(menuNodes);
+    this.menuTreeSig.set(sortedMenu);
+
+    const sortedApps = this.sortApps(data.apps ?? []);
+    this.appsSig.set(sortedApps);
+
     return data;
-  }
-
-  async loadMenu(): Promise<MenuNode[] | null> {
-    const headers = new HttpHeaders().set('AppId', this.appId);
-    const data = await firstValueFrom(this.http.get<MenuNode[] | null>('/api/menu', { headers }));
-    const sorted = this.sortMenuTree(data ?? []);
-    this.menuTreeSig.set(sorted);
-    return sorted;
-  }
-
-  async loadApps(): Promise<App[] | null> {
-    const data = await firstValueFrom(this.http.get<App[] | null>('/api/apps'));
-    const sorted = this.sortApps(data ?? []);
-    this.appsSig.set(sorted);
-    return sorted;
   }
 
   private bootstrapPromise: Promise<void> | null = null;
@@ -67,21 +75,19 @@ export class SystemService {
       return this.bootstrapPromise;
     }
 
-    // Se i dati sono già presenti, evitiamo il ricaricamento (opzionale, ma consigliato se bootstrap è idempotent)
-    if (this.whoamiSig() && this.menuTreeSig() && this.appsSig()) {
+
+    // Se i dati sono già presenti, evitiamo il ricaricamento
+    if (this.whoamiSig() && this.pathsSig() && this.appsSig()) {
       return Promise.resolve();
     }
 
     console.debug('Bootstrap starting...');
-    this.bootstrapPromise = Promise.allSettled([
-      this.loadWhoami(),
-      this.loadMenu(),
-      this.loadApps()
-    ]).then(() => {
+    this.bootstrapPromise = this.loadToken().then(() => {
       console.debug('Bootstrap finished');
-      // Non azzeriamo il promise se vogliamo che chiamate successive riutilizzino lo stesso risultato "già fatto"
-      // Se invece vogliamo permettere un re-bootstrap futuro, potremmo volerlo azzerare in certe condizioni.
-      // Per ora lo teniamo per evitare chiamate multiple durante l'init.
+    }).catch(err => {
+      console.error('Bootstrap failed', err);
+      this.bootstrapPromise = null; // Permetti riprovo se fallisce
+      throw err;
     });
 
     return this.bootstrapPromise;
@@ -89,10 +95,10 @@ export class SystemService {
 
   // Ordina per 'order' crescente; elementi senza 'order' in fondo;
   // a parità di 'order' ordina alfabeticamente per description/id
-  private sortMenuTree(nodes: MenuNode[] | null): MenuNode[] {
+  private sortPathNodes(nodes: PathNode[] | null): PathNode[] {
     if (!nodes || !nodes.length) return [];
-    const toKey = (n: MenuNode) => (n.description?.toLowerCase() || n.id.toLowerCase());
-    const getOrder = (n: MenuNode) => (n.order ?? Number.POSITIVE_INFINITY);
+    const toKey = (n: PathNode) => (n.description?.toLowerCase() || n.id.toLowerCase());
+    const getOrder = (n: PathNode) => (n.order ?? Number.POSITIVE_INFINITY);
 
     return [...nodes].sort((a, b) => {
       const ao = getOrder(a);
@@ -118,4 +124,6 @@ export class SystemService {
       return ak.localeCompare(bk);
     });
   }
+
+
 }
