@@ -1,5 +1,5 @@
 ﻿@if (whoami()) {
-  <div class="layout-grid" [class.expanded]="isExpanded()">
+  <div class="layout-grid" [class.expanded]="isExpanded()" [class]="environment()?.theme || ''">
 
   <aside class="sidenav" [class.collapsed]="!isExpanded()" role="navigation" aria-label="Primary">
     <mat-nav-list>
@@ -35,7 +35,7 @@
         </button>
         <button mat-menu-item>
           <mat-icon>logout</mat-icon>
-          <span>Logout</span>
+          <a [href]="environment()?.logoutPath || '#'"><span>Logout</span></a>
         </button>
       </mat-menu>
 
@@ -75,6 +75,9 @@
 
     <div class="content">
       <router-outlet />
+      <div class="app-info">
+        Version : {{ appVersion }} - Sha: {{ appSha }}
+      </div>
     </div>
 
   </main>

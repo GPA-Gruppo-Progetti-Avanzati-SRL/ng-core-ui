@@ -19,7 +19,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
-import {LIB_APP_ID} from '../tokens';
+import {LIB_APP_ID, LIB_APP_VERSION,LIB_APP_SHA} from '../main';
 
 @Component({
   selector: 'app-main-layout',
@@ -44,12 +44,15 @@ export class MainLayoutComponent implements OnInit {
 
   private system :SystemService = inject(SystemService);
 
-  private appId :string =    inject(LIB_APP_ID);
+  public appId :string =    inject(LIB_APP_ID);
+  public appSha:string =  inject(LIB_APP_SHA);
+  public appVersion:string =  inject(LIB_APP_VERSION);
 
 
 
   // false = collapsed (icons-only); true = expanded (icons + labels)
   whoami = this.system.whoamiSig;
+  environment = this.system.environmentSig;
   menuTree = this.system.menuTreeSig;
   apps = this.system.appsSig;
   currentAppId = this.appId;

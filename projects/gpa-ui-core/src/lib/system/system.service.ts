@@ -1,8 +1,9 @@
 import {Injectable, computed, inject, signal} from '@angular/core';
 import { HttpClient , HttpHeaders} from '@angular/common/http';
 import { App, PathNode, TokenResponse } from './system.models';
+import { Environment } from './environment';
 import { firstValueFrom } from 'rxjs';
-import { LIB_APP_ID } from '../tokens';
+import {LIB_APP_ID, LIB_APP_VERSION,LIB_APP_SHA} from '../main';
 import { decrypt } from '../utils';
 
 
@@ -10,8 +11,12 @@ import { decrypt } from '../utils';
 export class SystemService {
   private readonly http: HttpClient = inject(HttpClient);
   private  readonly appId: string = inject(LIB_APP_ID);
+  private  readonly appSha: string = inject(LIB_APP_SHA);
+  private readonly appVersion: string = inject(LIB_APP_VERSION);
   constructor() {
-    console.log("SS "+ LIB_APP_ID);
+    console.log("App "+ this.appId);
+    console.log("Sha "+ this.appSha);
+    console.log("Version "+ this.appVersion);
     console.log("SystemService Initialized");
   }
   // Signals per stato
@@ -19,6 +24,12 @@ export class SystemService {
   readonly pathsSig = signal<PathNode[] | null>(null);
   readonly menuTreeSig = signal<PathNode[] | null>(null);
   readonly appsSig = signal<App[] | null>(null);
+  readonly environmentSig = signal<Environment | null>(null);
+  readonly environmentProperties = computed(() => this.environmentSig()?.properties || {});
+
+  getEnvironmentProperty(key: string): any {
+    return this.environmentProperties()[key];
+  }
 
   // Endpoints consentiti (tutti i path ricevuti)
   readonly allowedEndpoints = computed(() => {
@@ -42,6 +53,13 @@ export class SystemService {
       const p = path.startsWith('/') ? path : `/${path}`;
       return p.endsWith('/') && p !== '/' ? p.slice(0, -1) : p;
     }
+  }
+
+  async loadEnvironment(): Promise<Environment> {
+    const data = await firstValueFrom(this.http.get<Environment>('/environment/environment.json'));
+    console.debug("environment", data);
+    this.environmentSig.set(data);
+    return data;
   }
 
   async loadToken(): Promise<TokenResponse> {
@@ -82,7 +100,10 @@ export class SystemService {
     }
 
     console.debug('Bootstrap starting...');
-    this.bootstrapPromise = this.loadToken().then(() => {
+    this.bootstrapPromise = Promise.all([
+      this.loadToken(),
+      this.loadEnvironment()
+    ]).then(() => {
       console.debug('Bootstrap finished');
     }).catch(err => {
       console.error('Bootstrap failed', err);
@@ -97,7 +118,7 @@ export class SystemService {
   // a parità di 'order' ordina alfabeticamente per description/id
   private sortPathNodes(nodes: PathNode[] | null): PathNode[] {
     if (!nodes || !nodes.length) return [];
-    const toKey = (n: PathNode) => (n.description?.toLowerCase() || n.id.toLowerCase());
+    const toKey = (n: PathNode) => (n.id.toLowerCase());
     const getOrder = (n: PathNode) => (n.order ?? 0);
 
     return [...nodes].sort((a, b) => {
