@@ -55,13 +55,15 @@
               @if (app.id === currentAppId) {
                 <div mat-list-item class="extra-menu-item disabled-app" [attr.aria-label]="app.description || app.id">
                   <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
-                  <span>{{ app.description || app.id }}</span>
+                  <span class="app-label">{{ app.description || app.id }}</span>
                 </div>
               } @else {
-                <a mat-list-item [href]="app.path || '#'" class="extra-menu-item" [attr.aria-label]="app.description || app.id">
+                <div mat-list-item class="extra-menu-item" [attr.aria-label]="app.description || app.id">
+                  <a [href]="app.path || '#'">
                   <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
-                  <span>{{ app.description || app.id }}</span>
-                </a>
+                  <span class="app-label">{{ app.description || app.id }}</span>
+                  </a>
+                </div>
               }
             }
           </mat-nav-list>

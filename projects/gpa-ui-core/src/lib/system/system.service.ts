@@ -98,7 +98,7 @@ export class SystemService {
   private sortPathNodes(nodes: PathNode[] | null): PathNode[] {
     if (!nodes || !nodes.length) return [];
     const toKey = (n: PathNode) => (n.description?.toLowerCase() || n.id.toLowerCase());
-    const getOrder = (n: PathNode) => (n.order ?? Number.POSITIVE_INFINITY);
+    const getOrder = (n: PathNode) => (n.order ?? 0);
 
     return [...nodes].sort((a, b) => {
       const ao = getOrder(a);
@@ -112,8 +112,8 @@ export class SystemService {
 
   private sortApps(apps: App[] | null): App[] {
     if (!apps || !apps.length) return [];
-    const toKey = (a: App) => (a.description?.toLowerCase() || a.id.toLowerCase());
-    const getOrder = (a: App) => (a.order ?? Number.POSITIVE_INFINITY);
+    const toKey = (a: App) => (a.id.toLowerCase());
+    const getOrder = (a: App) => (a.order ?? 0);
 
     return [...apps].sort((a, b) => {
       const ao = getOrder(a);

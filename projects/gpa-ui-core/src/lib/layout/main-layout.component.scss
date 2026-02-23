@@ -1,4 +1,4 @@
-﻿﻿.layout-container {
+﻿.layout-container {
   height: 100vh;
 }
 
@@ -94,19 +94,22 @@
   transition: opacity 0.15s ease;
   display: inline-flex;
   align-items: center;
+}
+
+.sidenav .label {
   margin-left: 12px;
 }
 
-.label.hidden {
+.sidenav .label.hidden {
   opacity: 0;
   width: 0;
   overflow: hidden;
   margin-left: 0;
 }
 
-/* Ensure labels are hidden when collapsed (icons-only) */
+/* Ensure labels are hidden when collapsed (icons-only) in the sidenav */
 .sidenav.collapsed .label,
-.label.hidden {
+.sidenav .label.hidden {
   display: inline-flex;
   width: 0;
   opacity: 0;
@@ -211,9 +214,28 @@
   pointer-events: none;
 }
 
-.extra-menu-item span {
+.extra-menu-item .label {
+  margin-left: 0;
   font-size: 13px;
   font-weight: 400;
   color: #444;
   text-align: center;
+  flex: none;
+  display: block;
+  opacity: 1 !important;
+  width: auto !important;
+}
+
+
+/* Explicit styles for right applications menu labels */
+.extra-menu-item .app-label {
+  margin-left: 0;
+  font-size: 13px;
+  font-weight: 400;
+  color: #444;
+  text-align: center;
+  flex: none;
+  display: block;
+  opacity: 1 !important;
+  width: auto !important;
 }
