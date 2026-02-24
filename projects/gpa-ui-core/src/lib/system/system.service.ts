@@ -1,10 +1,11 @@
-import {Injectable, computed, inject, signal} from '@angular/core';
+import {Injectable, computed, inject, signal, effect} from '@angular/core';
 import { HttpClient , HttpHeaders} from '@angular/common/http';
 import { App, PathNode, TokenResponse } from './system.models';
 import { Environment } from './environment';
 import { firstValueFrom } from 'rxjs';
 import {LIB_APP_ID, LIB_APP_VERSION,LIB_APP_SHA} from '../main';
 import { decrypt } from '../utils';
+import { StyleManagerService } from './style-manager.service';
 
 
 @Injectable({ providedIn: 'root' })
@@ -13,11 +14,20 @@ export class SystemService {
   private  readonly appId: string = inject(LIB_APP_ID);
   private  readonly appSha: string = inject(LIB_APP_SHA);
   private readonly appVersion: string = inject(LIB_APP_VERSION);
+  private readonly styleManager: StyleManagerService = inject(StyleManagerService);
+
   constructor() {
     console.log("App "+ this.appId);
     console.log("Sha "+ this.appSha);
     console.log("Version "+ this.appVersion);
     console.log("SystemService Initialized");
+
+    // Automatically apply theme class to body when environment changes
+    effect(() => {
+      const theme = this.environmentSig()?.theme;
+      console.log("Theme changed to: ", theme);
+      this.styleManager.setTheme(theme);
+    });
   }
   // Signals per stato
   readonly whoamiSig = signal<{user: string, roles: string[] | null, capabilities: string[] | null} | null>(null);

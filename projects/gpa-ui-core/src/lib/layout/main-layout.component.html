@@ -1,5 +1,5 @@
 ﻿@if (whoami()) {
-  <div class="layout-grid" [class.expanded]="isExpanded()" [class]="environment()?.theme || ''">
+  <div class="layout-grid" [class.expanded]="isExpanded()">
 
   <aside class="sidenav" [class.collapsed]="!isExpanded()" role="navigation" aria-label="Primary">
     <mat-nav-list>
