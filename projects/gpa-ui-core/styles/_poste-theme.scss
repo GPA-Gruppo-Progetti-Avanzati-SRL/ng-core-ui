@@ -19,11 +19,6 @@ $poste-theme: mat.define-theme((
   // Apply the material theme variables
   @include mat.all-component-themes($poste-theme);
 
-  // Brand-specific tokens that cannot be set via define-theme API
-  // Keep the sidenav (surface) yellow and text blue for Poste
-  --mat-sys-surface: #ffcc00;
-  --mat-sys-on-surface: #005495;
-
   // Custom tokens for layout fine-tuning
   --layout-sidenav-border: none;
   --layout-toolbar-border: none;
