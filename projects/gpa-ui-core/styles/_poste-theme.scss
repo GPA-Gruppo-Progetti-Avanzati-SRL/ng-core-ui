@@ -1,13 +1,13 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
-@use 'poste-colors' as colors;
+@use 'poste-colors' as pi-theme;
 
 // Define the Poste theme using the generated palettes
 $poste-theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary: colors.$primary-palette,
-    tertiary: colors.$tertiary-palette,
+    primary: pi-theme.$primary-palette,
+    tertiary: pi-theme.$tertiary-palette
   ),
   typography: (
     brand-family: 'Roboto, sans-serif',
