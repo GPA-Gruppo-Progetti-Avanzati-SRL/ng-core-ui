@@ -8,7 +8,6 @@ $gpa-theme: mat.define-theme((
     theme-type: light,
     primary: colors.$primary-palette,
     tertiary: colors.$tertiary-palette,
-
   ),
   typography: (
     brand-family: 'Roboto, sans-serif',
@@ -20,14 +19,7 @@ $gpa-theme: mat.define-theme((
   // Apply the material theme variables
   @include mat.all-component-themes($gpa-theme);
 
-  // We still need some brand-specific fine-tuning because M3 derivation
-  // might not match the specific brand guidelines for surfaces and toolbars.
-  --mat-sys-surface: #ffffff;
-  --mat-sys-on-surface: #333;
-  --mat-toolbar-container-background-color: #ffffff;
-  --mat-toolbar-container-text-color: #00bcd4;
-
   // Custom tokens for layout fine-tuning that are not part of standard Material roles
-  --layout-sidenav-border: 1px solid #e0e0e0;
-  --layout-toolbar-border: 1px solid #e0e0e0;
+  --layout-sidenav-border: 1px solid var(--mat-sys-outline-variant);
+  --layout-toolbar-border: 1px solid var(--mat-sys-outline-variant);
 }

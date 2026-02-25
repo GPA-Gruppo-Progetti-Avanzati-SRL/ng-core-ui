@@ -1,13 +1,13 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
-@use 'poste-colors' as colors;
+@use 'poste-colors' as pi-theme;
 
 // Define the Poste theme using the generated palettes
 $poste-theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary: colors.$primary-palette,
-    tertiary: colors.$tertiary-palette,
+    primary: pi-theme.$primary-palette,
+    tertiary: pi-theme.$tertiary-palette
   ),
   typography: (
     brand-family: 'Roboto, sans-serif',
@@ -18,11 +18,6 @@ $poste-theme: mat.define-theme((
 .poste {
   // Apply the material theme variables
   @include mat.all-component-themes($poste-theme);
-
-  // Brand-specific tokens that cannot be set via define-theme API
-  // Keep the sidenav (surface) yellow and text blue for Poste
-  --mat-sys-surface: #ffcc00;
-  --mat-sys-on-surface: #005495;
 
   // Custom tokens for layout fine-tuning
   --layout-sidenav-border: none;
