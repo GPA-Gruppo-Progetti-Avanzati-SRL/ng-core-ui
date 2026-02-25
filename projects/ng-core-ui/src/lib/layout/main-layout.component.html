@@ -3,9 +3,8 @@
 
   <aside class="sidenav" [class.collapsed]="!isExpanded()" role="navigation" aria-label="Primary">
     <mat-nav-list>
-
       @for (link  of sortedMenuRoots()  ; track link) {
-          <a mat-list-item [routerLink]="[endpointFor(link)]" [activated]="isActive(link)"  class="nav-item" [attr.aria-label]="link.description || link.id">
+          <a mat-list-item [routerLink]="[endpointFor(link)]" [activated]="isActive(link)"  [attr.aria-label]="link.description || link.id">
             <mat-icon>{{ link.icon || 'chevron_right' }}</mat-icon>
             <span class="label" [class.hidden]="!isExpanded()">{{ link.description || link.id }}</span>
           </a>
@@ -14,13 +13,10 @@
   </aside>
 
   <main class="main-content">
-
     <mat-toolbar color="primary" class="toolbar">
-
       <button mat-icon-button (click)="toggleSidenav()" aria-label="Apri/Chiudi menu" [attr.aria-pressed]="isExpanded()">
         <mat-icon>menu</mat-icon>
       </button>
-
       <span class="title">{{ currentPageTitle() }}</span>
 
       <span class="spacer"></span>
@@ -53,17 +49,15 @@
           <mat-nav-list>
             @for (app of apps(); track app.id) {
               @if (app.id === currentAppId) {
-                <div mat-list-item class="extra-menu-item disabled-app" [attr.aria-label]="app.description || app.id">
+                <a mat-list-item class="extra-menu-item disabled-app" [attr.aria-label]="app.description || app.id">
                   <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
                   <span class="app-label">{{ app.description || app.id }}</span>
-                </div>
+                </a>
               } @else {
-                <div mat-list-item class="extra-menu-item" [attr.aria-label]="app.description || app.id">
-                  <a [href]="app.path || '#'">
+                <a mat-list-item class="extra-menu-item" [attr.aria-label]="app.description || app.id" [href]="app.path || '#'" >
                   <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
                   <span class="app-label">{{ app.description || app.id }}</span>
-                  </a>
-                </div>
+                </a>
               }
             }
           </mat-nav-list>

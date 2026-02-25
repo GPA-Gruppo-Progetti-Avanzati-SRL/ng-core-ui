@@ -5,8 +5,8 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "gpa-ui-core": [
-        "./projects/gpa-ui-core/src/public-api.ts"
+      "ng-core-ui": [
+        "./projects/ng-core-ui/src/public-api.ts"
       ]
     },
     "noImplicitOverride": true,
@@ -30,10 +30,10 @@
   "files": [],
   "references": [
     {
-      "path": "./projects/gpa-ui-core/tsconfig.lib.json"
+      "path": "./projects/ng-core-ui/tsconfig.lib.json"
     },
     {
-      "path": "./projects/gpa-ui-core/tsconfig.spec.json"
+      "path": "./projects/ng-core-ui/tsconfig.spec.json"
     }
   ]
 }

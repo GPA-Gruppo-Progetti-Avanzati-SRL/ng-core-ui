@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'lib-gpa-ui-core',
+  selector: 'lib-ng-core-ui',
   imports: [],
   template: `
     <p>

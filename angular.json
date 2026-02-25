@@ -3,20 +3,20 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "gpa-ui-core": {
+    "ng-core-ui": {
       "projectType": "library",
-      "root": "projects/gpa-ui-core",
-      "sourceRoot": "projects/gpa-ui-core/src",
+      "root": "projects/ng-core-ui",
+      "sourceRoot": "projects/ng-core-ui/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
           "configurations": {
             "production": {
-              "tsConfig": "projects/gpa-ui-core/tsconfig.lib.prod.json"
+              "tsConfig": "projects/ng-core-ui/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/gpa-ui-core/tsconfig.lib.json"
+              "tsConfig": "projects/ng-core-ui/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -24,7 +24,7 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "tsConfig": "projects/gpa-ui-core/tsconfig.spec.json"
+            "tsConfig": "projects/ng-core-ui/tsconfig.spec.json"
           }
         }
       }

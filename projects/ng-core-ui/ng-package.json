@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../dist/gpa-ui-core",
+  "dest": "../../dist/ng-core-ui",
   "lib": {
     "entryFile": "src/public-api.ts"
   },

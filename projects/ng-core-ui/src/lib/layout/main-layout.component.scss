@@ -1,5 +1,5 @@
 ﻿@use '../../../styles/themes' as themes;
-
+@use '@angular/material' as mat;
 :host {
   display: block;
 }
@@ -37,62 +37,32 @@
   flex: 1 1 auto;
 }
 
-/* Ensure a dark fallback background so icons are visible */
-.sidenav {
-  /* remove fixed width here: grid controls the column size */
-  width: 100%;
-  transition: width 0.2s ease;
-  overflow: hidden;
-  background: var(--mat-sys-surface); /* Material Surface */
-  color: var(--mat-sys-on-surface);
-  padding-top: 8px;
-  box-sizing: border-box;
-  box-shadow: 2px 0 8px 0 rgba(0,0,0,0.08);
-  border-right: var(--layout-sidenav-border, none);
+
+mat-sidenav.sidenav-start {
+  @include mat.sidenav-overrides((
+    container-background-color: var(--mat-sys-tertiary),
+    container-width: auto,
+    container-shape: 0px,
+  ));
+
+  mat-icon {
+    @include mat.icon-overrides((
+      color: var(--mat-sys-on-tertiary),
+    ));
+  }
+
+  span {
+    color: var(--mat-sys-on-tertiary)
+  }
+
 }
 
-/* Ensure material icons inherit the color and are visible */
-.sidenav mat-icon,
-.sidenav .mat-icon {
-  color: var(--mat-sys-on-surface);
-  font-size: 24px;
-}
-
-/* nav item layout */
-.nav-item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-  padding: 10px 16px;
-  color: var(--mat-sys-on-surface);
-  border-radius: 4px;
-  transition: background 0.2s;
-  min-height: 56px;
-  position: relative;
-}
-
-.nav-item mat-icon,
-.nav-item .mat-icon {
-  min-width: 32px;
-  font-size: 24px;
-  margin: 0;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  vertical-align: middle;
-  flex-shrink: 0;
-}
-
-.sidenav.collapsed .nav-item {
-  justify-content: center;
-}
-
-/* When collapsed, ensure labels are not shown but keep icons centered */
-.sidenav.collapsed {
-  display: block;
+mat-sidenav.sidenav-end {
+  @include mat.sidenav-overrides((
+    container-background-color: var(--mat-sys-secondary),
+    container-width: auto,
+    container-shape: 0px,
+  ));
 }
 
 .label {
