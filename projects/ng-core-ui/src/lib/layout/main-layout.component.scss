@@ -1,138 +1,234 @@
-﻿@use '../../../styles/themes' as themes;
+@use '../../../styles/themes' as themes;
 @use '@angular/material' as mat;
+@use '../../../styles/poste-colors' as pi;
+
 :host {
   display: block;
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: pi.$primary-palette,
+      tertiary: pi.$tertiary-palette,
+    ),
+  ));
 }
 
 .layout-container {
   height: 100vh;
 }
 
-/* layout-grid: aside + main */
 .layout-grid {
   display: grid;
-  grid-template-columns: 72px 1fr; /* default: collapsed width + content */
+  grid-template-columns: 72px 1fr;
   height: 100vh;
-  box-sizing: border-box;
   margin: 0;
+
+  &.expanded {
+    grid-template-columns: 240px 1fr;
+  }
 }
 
-.layout-grid.expanded {
-  grid-template-columns: 240px 1fr; /* expanded width + content */
-}
+/* ───────────────── Toolbar ───────────────── */
+mat-toolbar.toolbar {
+  @include mat.toolbar-overrides((
+    container-background-color: var(--mat-sys-primary),
+    container-text-color: var(--mat-sys-on-primary),
+  ));
 
-.toolbar {
-  display: flex;
-  align-items: center;
   border-bottom: var(--layout-toolbar-border, none);
+
+  mat-icon,
+  .mat-icon {
+    color: var(--mat-sys-on-primary) !important;
+  }
 }
 
 .title {
   margin-left: 12px;
   font-weight: 600;
   font-size: 18px;
+  color: var(--mat-sys-on-primary);
 }
 
 .spacer {
   flex: 1 1 auto;
 }
 
+/* ───────────────── Left sidenav ───────────────── */
+aside.sidenav {
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--mat-sys-tertiary);
+  color: var(--mat-sys-on-tertiary);
+  padding-top: 8px;
+  box-sizing: border-box;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+  border-right: var(--layout-sidenav-border, none);
+  transition: width 0.2s ease;
 
-mat-sidenav.sidenav-start {
-  @include mat.sidenav-overrides((
-    container-background-color: var(--mat-sys-tertiary),
-    container-width: auto,
-    container-shape: 0px,
-  ));
-
-  mat-icon {
-    @include mat.icon-overrides((
-      color: var(--mat-sys-on-tertiary),
-    ));
+  mat-icon,
+  .mat-icon {
+    color: var(--mat-sys-on-tertiary);
+    font-size: 24px;
   }
-
-  span {
-    color: var(--mat-sys-on-tertiary)
-  }
-
 }
 
-mat-sidenav.sidenav-end {
-  @include mat.sidenav-overrides((
-    container-background-color: var(--mat-sys-secondary),
-    container-width: auto,
-    container-shape: 0px,
-  ));
+/* ───────────────── Nav items ───────────────── */
+/* Center icon vertically/horizontally when collapsed.
+   Center icon+label together when expanded. */
+.nav-item {
+  display: flex;
+  align-items: center;     /* vertical center */
+  justify-content: center; /* center group horizontally */
+  width: 100%;
+  padding: 10px 16px;
+  min-height: 56px;
+  border-radius: 4px;
+  position: relative;
+
+  color: var(--mat-sys-on-tertiary);
+  background: transparent;
+
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  /* Kill MDC state layers (grey overlay + sticky states) */
+  &::before,
+  &::after {
+    display: none !important;
+  }
+
+  mat-icon,
+  .mat-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+
+    font-size: 24px;
+    margin: 0;
+    padding: 0;
+    flex-shrink: 0;
+
+    color: var(--mat-sys-on-tertiary);
+    transition: color 0.2s ease;
+  }
 }
 
+/* FIX: Material internal wrapper alignment (your request) */
+.nav-item .mat-mdc-list-item-unscoped-content.mdc-list-item__primary-text {
+  display: flex;
+  align-items: flex-end;   /* as requested */
+  justify-content: center; /* center icon+text as a group */
+  width: 100%;
+}
+
+/* ───────────────── Label ───────────────── */
 .label {
   font-size: 16px;
   font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
-  flex: 1;
-  transition: opacity 0.15s ease;
+
   display: inline-flex;
   align-items: center;
-}
-
-.sidenav .label {
   margin-left: 12px;
+
+  color: var(--mat-sys-on-tertiary);
+  transition: opacity 0.15s ease, color 0.2s ease;
 }
 
-.sidenav .label.hidden {
-  opacity: 0;
+/* Collapsed: hide label + remove spacing so icon stays perfectly centered */
+.label.hidden,
+.sidenav.collapsed .label {
   width: 0;
-  overflow: hidden;
+  opacity: 0;
   margin-left: 0;
+  overflow: hidden;
 }
 
-/* Ensure labels are hidden when collapsed (icons-only) in the sidenav */
-.sidenav.collapsed .label,
-.sidenav .label.hidden {
-  display: inline-flex;
-  width: 0;
-  opacity: 0;
-}
-
-/* nav item: colore testo e icone, hover/active */
+/* ───────────────── Hover (subtle transparent grey) ───────────────── */
+/* Apply hover background to BOTH the item and the internal wrapper,
+   and force it to work even when item is active/selected. */
 .nav-item:hover,
-.nav-item:focus {
-  background: var(--mat-sys-surface-variant);
-  color: var(--mat-sys-on-surface-variant);
+.nav-item:hover .mat-mdc-list-item-unscoped-content.mdc-list-item__primary-text {
+  background-color: rgba(0, 0, 0, 0.06) !important;
 }
 
-.nav-item[aria-current="page"],
-.nav-item.active {
-  background: var(--mat-sys-primary-container) !important;
-  color: var(--mat-sys-on-primary-container) !important;
-  font-weight: 600;
+/* Extra specificity for active/current page hover */
+.nav-item.active:hover,
+.nav-item[aria-current='page']:hover,
+.nav-item[aria-selected='true']:hover,
+.nav-item.mdc-list-item--activated:hover,
+.nav-item.mdc-list-item--selected:hover,
+.nav-item.active:hover .mat-mdc-list-item-unscoped-content.mdc-list-item__primary-text,
+.nav-item[aria-current='page']:hover .mat-mdc-list-item-unscoped-content.mdc-list-item__primary-text,
+.nav-item[aria-selected='true']:hover .mat-mdc-list-item-unscoped-content.mdc-list-item__primary-text,
+.nav-item.mdc-list-item--activated:hover .mat-mdc-list-item-unscoped-content.mdc-list-item__primary-text,
+.nav-item.mdc-list-item--selected:hover .mat-mdc-list-item-unscoped-content.mdc-list-item__primary-text {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Keep icon/text color stable on hover */
+.nav-item:hover mat-icon,
+.nav-item:hover .label {
+  color: var(--mat-sys-on-tertiary);
+}
+
+/* ───────────────── Remove sticky hover after click (focus) ───────────────── */
+.nav-item:focus,
+.nav-item:focus-visible {
+  background: transparent;
+  outline: none;
+}
+
+/* Optional keyboard focus indicator */
+.nav-item:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: -2px;
+}
+
+/* ───────────────── Remove permanent active/current styling ───────────────── */
+/* IMPORTANT: no !important on colors so hover can still work */
+.nav-item.active,
+.nav-item[aria-current='page'],
+.nav-item[aria-selected='true'],
+.nav-item.mdc-list-item--activated,
+.nav-item.mdc-list-item--selected {
+  background: transparent !important;
+  font-weight: inherit !important;
 }
 
 .nav-item.active mat-icon,
-.nav-item.active .mat-icon {
-  color: var(--mat-sys-on-primary-container) !important;
+.nav-item[aria-current='page'] mat-icon,
+.nav-item[aria-selected='true'] mat-icon,
+.nav-item.mdc-list-item--activated mat-icon,
+.nav-item.mdc-list-item--selected mat-icon,
+.nav-item.active .label,
+.nav-item[aria-current='page'] .label,
+.nav-item[aria-selected='true'] .label,
+.nav-item.mdc-list-item--activated .label,
+.nav-item.mdc-list-item--selected .label {
+  color: var(--mat-sys-on-tertiary);
 }
 
-
-/* Backdrop: sempre sopra tutto, blocca interazioni */
+/* ───────────────── Right overlay sidenav ───────────────── */
 .extra-sidenav-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
   background: transparent;
   z-index: 9999;
   pointer-events: none;
   transition: background 0.3s;
-}
-.extra-sidenav-backdrop.open {
-  background: rgba(0,0,0,0.5);
-  pointer-events: auto;
+
+  &.open {
+    background: rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+  }
 }
 
-/* Sidenav destra: sopra il backdrop */
 .extra-sidenav {
   position: fixed;
   top: 0;
@@ -142,28 +238,28 @@ mat-sidenav.sidenav-end {
   height: 100vh;
   background: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
-  box-shadow: -2px 0 8px 0 rgba(0,0,0,0.12);
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.12);
   z-index: 10000;
   transform: translateX(100%);
-  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+  transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
   display: flex;
   flex-direction: column;
   padding: 24px 8px 16px 8px;
   pointer-events: none;
   opacity: 0;
-}
-.extra-sidenav.open {
-  transform: translateX(0);
-  pointer-events: auto;
-  opacity: 1;
+
+  &.open {
+    transform: translateX(0);
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  .close-btn {
+    align-self: flex-end;
+    margin-bottom: 8px;
+  }
 }
 
-.extra-sidenav .close-btn {
-  align-self: flex-end;
-  margin-bottom: 8px;
-}
-
-/* Layout verticale menu */
 .extra-content {
   flex: 1;
   display: flex;
@@ -180,48 +276,36 @@ mat-sidenav.sidenav-end {
   justify-content: center;
   gap: 8px;
   width: 100%;
+
+  mat-icon {
+    font-size: 48px !important;
+    color: var(--mat-sys-primary);
+    width: 48px;
+    height: 48px;
+    display: block;
+  }
+
+  &.disabled-app {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .label,
+  .app-label {
+    margin-left: 0;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--mat-sys-on-surface);
+    text-align: center;
+    flex: none;
+    display: block;
+    opacity: 1 !important;
+    width: auto !important;
+  }
 }
 
-.extra-menu-item mat-icon {
-  font-size: 48px !important;
-  color: var(--mat-sys-primary);
-  width: 48px;
-  height: 48px;
-  display: block;
-}
-
-.extra-menu-item.disabled-app {
-  opacity: 0.5;
-  cursor: default;
-  pointer-events: none;
-}
-
-.extra-menu-item .label {
-  margin-left: 0;
-  font-size: 13px;
-  font-weight: 400;
-  color: var(--mat-sys-on-surface);
-  text-align: center;
-  flex: none;
-  display: block;
-  opacity: 1 !important;
-  width: auto !important;
-}
-
-
-/* Explicit styles for right applications menu labels */
-.extra-menu-item .app-label {
-  margin-left: 0;
-  font-size: 13px;
-  font-weight: 400;
-  color: var(--mat-sys-on-surface);
-  text-align: center;
-  flex: none;
-  display: block;
-  opacity: 1 !important;
-  width: auto !important;
-}
-
+/* ───────────────── Main content ───────────────── */
 .main-content {
   display: flex;
   flex-direction: column;
@@ -240,7 +324,7 @@ mat-sidenav.sidenav-end {
   bottom: 8px;
   right: 16px;
   font-size: 10px;
-  color: #d32f2f; /* Minimal Red */
+  color: #d32f2f;
   opacity: 0.8;
   pointer-events: none;
   z-index: 1000;
