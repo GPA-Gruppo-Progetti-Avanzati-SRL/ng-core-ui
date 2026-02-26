@@ -4,7 +4,8 @@
   computed,
   ChangeDetectionStrategy,
   inject,
-  OnInit
+  OnInit,
+  ViewEncapsulation
 } from '@angular/core';
 import { RouterOutlet, RouterLink,Router,NavigationEnd } from '@angular/router';
 import { filter, map } from 'rxjs';
@@ -36,6 +37,7 @@ import {LIB_APP_ID, LIB_APP_VERSION,LIB_APP_SHA} from '../main';
   ],
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss'],
+  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainLayoutComponent implements OnInit {

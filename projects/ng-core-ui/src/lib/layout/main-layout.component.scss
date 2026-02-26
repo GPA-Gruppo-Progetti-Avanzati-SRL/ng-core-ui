@@ -1,20 +1,11 @@
 @use '../../../styles/themes' as themes;
 @use '@angular/material' as mat;
-@use '../../../styles/poste-colors' as pi;
 
 :host {
   display: block;
-  @include mat.theme((
-    color: (
-      theme-type: light,
-      primary: pi.$primary-palette,
-      tertiary: pi.$tertiary-palette,
-    ),
-  ));
-}
-
-.layout-container {
   height: 100vh;
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
 }
 
 .layout-grid {
