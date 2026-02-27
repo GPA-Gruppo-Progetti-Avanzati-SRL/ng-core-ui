@@ -1,126 +1,137 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-// GPA Cyan: #00bcd4 (Primary)
-// GPA White: #ffffff (Secondary/Neutral)
+// ─── Generated from: primary: #274c77, secondary: #6096ba, tertiary: #cae9ff ───
 
 $_palettes: (
+
+  // ── Primary · source #274c77 ────────────────────────────────────────────────
   primary: (
-    0: #000000,
-    10: #001f24,
-    20: #00363d,
-    25: #00424b,
-    30: #004f58,
-    35: #005b67,
-    40: #006975,
-    50: #008493,
-    60: #00a0b1,
-    70: #00bdcf,
-    80: #00daef, // Close to #00bcd4
-    90: #97f0ff,
-    95: #d1f8ff,
-    98: #edfcff,
-    99: #f6feff,
+    0:   #000000,
+    10:  #001c38,   // --mat-sys-on-primary-container / on-primary-fixed
+    20:  #0a2f52,
+    25:  #123c61,
+    30:  #234873,   // --mat-sys-on-primary-fixed-variant
+    35:  #2e5380,
+    40:  #3d608c,   // --mat-sys-primary (generated tone 40)
+    50:  #567aa7,
+    60:  #7095c3,
+    70:  #8bb1df,
+    80:  #a6c9fb,   // --mat-sys-primary-fixed-dim / inverse-primary
+    90:  #d3e4ff,   // --mat-sys-primary-container / primary-fixed
+    95:  #e9f1ff,
+    98:  #f4f8ff,
+    99:  #f9fbff,
     100: #ffffff,
   ),
+
+  // ── Secondary · source #6096ba ───────────────────────────────────────────────
   secondary: (
-    0: #000000,
-    10: #191c1d,
-    20: #2d3132,
-    25: #383c3d,
-    30: #444748,
-    35: #4f5354,
-    40: #5b5f60,
-    50: #747878,
-    60: #8d9192,
-    70: #a8acad,
-    80: #c4c7c8,
-    90: #e0e3e4,
-    95: #eef1f2,
-    98: #f7fafa,
-    99: #fafdfd,
+    0:   #000000,
+    10:  #001e2e,   // --mat-sys-on-secondary-container / on-secondary-fixed
+    20:  #003249,
+    25:  #003c57,
+    30:  #034c6c,   // --mat-sys-on-secondary-fixed-variant
+    35:  #0d587a,
+    40:  #2a6485,   // --mat-sys-secondary
+    50:  #447ea0,
+    60:  #5e99bc,
+    70:  #79b4d8,
+    80:  #97cdf3,   // --mat-sys-secondary-fixed-dim
+    90:  #c7e7ff,   // --mat-sys-secondary-container / secondary-fixed
+    95:  #e2f3ff,
+    98:  #eef8ff,
+    99:  #f6fbff,
     100: #ffffff,
   ),
+
+  // ── Tertiary · source #cae9ff ────────────────────────────────────────────────
   tertiary: (
-    0: #000000,
-    10: #1b1b22,
-    20: #303038,
-    25: #3b3b43,
-    30: #47474f,
-    35: #52525b,
-    40: #5e5e67,
-    50: #777680,
-    60: #91909a,
-    70: #acaab5,
-    80: #c8c6d0,
-    90: #e4e1ed,
-    95: #f2f0fb,
-    98: #fbf8ff,
-    99: #fefbff,
+    0:   #000000,
+    10:  #001e2d,   // --mat-sys-on-tertiary-container / on-tertiary-fixed
+    20:  #00344a,
+    25:  #003d58,
+    30:  #2d4a5c,   // --mat-sys-on-tertiary-fixed-variant
+    35:  #39566a,
+    40:  #456274,   // --mat-sys-tertiary (generated tone 40)
+    50:  #5e7d91,
+    60:  #7898ad,
+    70:  #93b4c9,
+    80:  #accbe0,   // --mat-sys-tertiary-fixed-dim
+    90:  #c8e7fd,   // --mat-sys-tertiary-container / tertiary-fixed
+    95:  #e3f3ff,
+    98:  #edf7ff,
+    99:  #f6fbff,
     100: #ffffff,
   ),
+
+  // ── Neutral · source #faf9fd ─────────────────────────────────────────────────
   neutral: (
-    0: #000000,
-    10: #1a1c1d,
-    20: #2f3132,
-    25: #3a3c3d,
-    30: #454748,
-    35: #515354,
-    40: #5d5f60,
-    50: #767779,
-    60: #909192,
-    70: #abaaac,
-    80: #c6c7c8,
-    90: #e2e2e4,
-    95: #f0f1f2,
-    98: #f9f9fa,
-    99: #fcfcfd,
+    0:   #000000,
+    10:  #1a1c1f,   // --mat-sys-on-surface / neutral10
+    20:  #2f3034,   // --mat-sys-inverse-surface
+    25:  #3a3b3f,
+    30:  #46474a,
+    35:  #515256,
+    40:  #5d5e62,
+    50:  #76777b,
+    60:  #909195,
+    70:  #abacb0,
+    80:  #c7c7cb,
+    90:  #e2e2e6,   // --mat-sys-surface-container-highest
+    95:  #f1f0f4,   // --mat-sys-inverse-on-surface
+    98:  #faf9fd,   // --mat-sys-surface / background
+    99:  #fdfcff,
     100: #ffffff,
   ),
+
+  // ── Neutral-variant ──────────────────────────────────────────────────────────
   neutral-variant: (
-    0: #000000,
-    10: #171c1e,
-    20: #2c3133,
-    25: #373c3e,
-    30: #42474a,
-    35: #4e5356,
-    40: #5a5f62,
-    50: #72787a,
-    60: #8c9294,
-    70: #a7acae,
-    80: #c2c7ca,
-    90: #dee3e6,
-    95: #ecf1f4,
-    98: #f7f9fc,
-    99: #fafcff,
+    0:   #000000,
+    10:  #181c23,
+    20:  #2c3138,   // --mat-sys-neutral-variant20
+    25:  #373c44,
+    30:  #43474f,   // --mat-sys-on-surface-variant
+    35:  #4e535b,
+    40:  #5a5f67,
+    50:  #73777f,   // --mat-sys-outline
+    60:  #8d9199,
+    70:  #a8acb4,
+    80:  #c3c6d0,   // --mat-sys-outline-variant
+    90:  #dfe2ec,   // --mat-sys-surface-variant
+    95:  #eef1f9,
+    98:  #f5f7ff,
+    99:  #fafbff,
     100: #ffffff,
   ),
+
+  // ── Error ────────────────────────────────────────────────────────────────────
   error: (
-    0: #000000,
-    10: #410002,
-    20: #690005,
-    25: #7e0007,
-    30: #93000a,
-    35: #a80710,
-    40: #ba1a1a,
-    50: #de3730,
-    60: #ff5449,
-    70: #ff897d,
-    80: #ffb4ab,
-    90: #ffdad6,
-    95: #ffedea,
-    98: #fff8f7,
-    99: #fffbff,
+    0:   #000000,
+    10:  #410002,
+    20:  #690005,
+    25:  #7e0007,
+    30:  #93000a,
+    35:  #a80710,
+    40:  #ba1a1a,
+    50:  #de3730,
+    60:  #ff5449,
+    70:  #ff897d,
+    80:  #ffb4ab,
+    90:  #ffdad6,
+    95:  #ffedea,
+    98:  #fff8f7,
+    99:  #fffbff,
     100: #ffffff,
   ),
 );
 
 $_rest: (
-  secondary: map.get($_palettes, secondary),
-  neutral: map.get($_palettes, neutral),
+  secondary:       map.get($_palettes, secondary),
+  neutral:         map.get($_palettes, neutral),
   neutral-variant: map.get($_palettes, neutral-variant),
-  error: map.get($_palettes, error),
+  error:           map.get($_palettes, error),
 );
 
-$primary-palette: map.merge(map.get($_palettes, primary), $_rest);
+$primary-palette:  map.merge(map.get($_palettes, primary),  $_rest);
 $tertiary-palette: map.merge(map.get($_palettes, tertiary), $_rest);
