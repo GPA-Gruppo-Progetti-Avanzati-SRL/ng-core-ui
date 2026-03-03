@@ -1,0 +1,16 @@
+:host {
+  display: block !important;
+  width: 260px !important;
+  min-width: 260px !important;
+  max-width: 260px !important;
+  height: 404px !important;
+  min-height: 404px !important;
+  max-height: 404px !important;
+  overflow: hidden !important;
+}
+
+.card-inner {
+  width: 100% !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+}
