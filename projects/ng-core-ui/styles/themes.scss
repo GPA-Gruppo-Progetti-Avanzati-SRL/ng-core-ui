@@ -1,6 +1,6 @@
 @forward 'poste-theme';
 @forward 'gpa-theme';
-
+@use "tailwindcss";
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;
