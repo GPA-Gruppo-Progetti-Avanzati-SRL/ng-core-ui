@@ -14,3 +14,22 @@
   height: 100% !important;
   box-sizing: border-box !important;
 }
+
+:host ::ng-deep mat-icon {
+  width: 112px !important;
+  height: 112px !important;
+  font-size: 112px !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+:host ::ng-deep {
+  .mat-mdc-unelevated-button .mdc-button__ripple {
+    border-radius: 8px !important;
+  }
+
+  .mat-mdc-unelevated-button {
+    --mat-sys-button-unelevated-ripple-shape: 8px;
+    border-radius: 8px !important;
+  }
+}
