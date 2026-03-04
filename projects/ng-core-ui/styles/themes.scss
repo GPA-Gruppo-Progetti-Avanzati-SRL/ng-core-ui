@@ -1,5 +1,23 @@
 @forward 'poste-theme';
 @forward 'gpa-theme';
+@use "tailwindcss";
+@use '@angular/material' as mat;
+
+.error-snackbar {
+  @include mat.snack-bar-overrides((
+    container-color: var(--mat-sys-error),
+    button-color: var(--mat-sys-on-error),
+  ))
+}
+
+.mat-mdc-unelevated-button .mdc-button__ripple {
+  border-radius: 8px !important;
+}
+
+.mat-mdc-unelevated-button {
+  --mat-sys-button-unelevated-ripple-shape: 8px;
+  border-radius: 8px !important;
+}
 
 @font-face {
   font-family: 'Material Icons';

@@ -1,20 +1,14 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
-@use 'gpa-colors' as colors;
+@use 'gpa-colors' as gpa-theme;
 
 @include mat.core();
-
-// ─── GPA Theme ────────────────────────────────────────────────────────────────
-// Generated from: primary: #274c77, secondary: #6096ba, tertiary: #cae9ff
-// Toolbar:  #274c77 (--mat-sys-primary)
-// Sidenav:  #cae9ff (--mat-sys-tertiary) with #001e2d text/icons
-// ─────────────────────────────────────────────────────────────────────────────
 
 $gpa-theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary:   colors.$primary-palette,
-    tertiary:  colors.$tertiary-palette,
+    primary:  gpa-theme.$primary-palette,
+    tertiary: gpa-theme.$tertiary-palette,
   ),
   typography: (
     brand-family: 'Roboto, sans-serif',
@@ -27,86 +21,14 @@ $gpa-theme: mat.define-theme((
   @include mat.system-level-colors($gpa-theme);
   @include mat.system-level-typography($gpa-theme);
 
-  // ── Primary · source #274c77 ─────────────────────────────────────────────────
-  --mat-sys-primary:                    #274c77;   // ← exact toolbar color
-  --mat-sys-on-primary:                 #ffffff;
-  --mat-sys-primary-container:          #d3e4ff;
-  --mat-sys-on-primary-container:       #001c38;
-  --mat-sys-inverse-primary:            #a6c9fb;
-  --mat-sys-primary-fixed:              #d3e4ff;
-  --mat-sys-primary-fixed-dim:          #a6c9fb;
-  --mat-sys-on-primary-fixed:           #001c38;
-  --mat-sys-on-primary-fixed-variant:   #234873;
-
-  // ── Secondary · source #6096ba ───────────────────────────────────────────────
-  --mat-sys-secondary:                  #2a6485;
-  --mat-sys-on-secondary:               #ffffff;
-  --mat-sys-secondary-container:        #c7e7ff;
-  --mat-sys-on-secondary-container:     #001e2e;
-  --mat-sys-secondary-fixed:            #c7e7ff;
-  --mat-sys-secondary-fixed-dim:        #97cdf3;
-  --mat-sys-on-secondary-fixed:         #001e2e;
-  --mat-sys-on-secondary-fixed-variant: #034c6c;
-
-  // ── Tertiary · source #cae9ff ────────────────────────────────────────────────
-  --mat-sys-tertiary:                   #cae9ff;   // ← exact sidenav background color
-  --mat-sys-on-tertiary:                #001e2d;   // ← dark navy — readable on light blue
-  --mat-sys-tertiary-container:         #c8e7fd;
-  --mat-sys-on-tertiary-container:      #001e2d;
-  --mat-sys-tertiary-fixed:             #c8e7fd;
-  --mat-sys-tertiary-fixed-dim:         #accbe0;
-  --mat-sys-on-tertiary-fixed:          #001e2d;
-  --mat-sys-on-tertiary-fixed-variant:  #2d4a5c;
-
-  // ── Neutral / surface ────────────────────────────────────────────────────────
-  --mat-sys-background:                 #faf9fd;
-  --mat-sys-on-background:              #1a1c1f;
-  --mat-sys-surface:                    #faf9fd;
-  --mat-sys-surface-dim:                #dad9de;
-  --mat-sys-surface-bright:             #faf9fd;
-  --mat-sys-surface-container-lowest:   #ffffff;
-  --mat-sys-surface-container-low:      #f4f3f7;
-  --mat-sys-surface-container:          #eeedf1;
-  --mat-sys-surface-container-high:     #e8e8ec;
-  --mat-sys-surface-container-highest:  #e2e2e6;
-  --mat-sys-on-surface:                 #1a1c1f;
-  --mat-sys-surface-tint:               #3d608c;
-  --mat-sys-inverse-surface:            #2f3034;
-  --mat-sys-inverse-on-surface:         #f1f0f4;
-
-  // ── Neutral variant ──────────────────────────────────────────────────────────
-  --mat-sys-surface-variant:            #dfe2ec;
-  --mat-sys-on-surface-variant:         #43474f;
-  --mat-sys-outline:                    #73777f;
-  --mat-sys-outline-variant:            #c3c6d0;
-  --mat-sys-neutral10:                  #1a1c1f;
-  --mat-sys-neutral-variant20:          #2c3138;
-
-  // ── Utility ──────────────────────────────────────────────────────────────────
-  --mat-sys-shadow:                     #000000;
-  --mat-sys-scrim:                      #000000;
-
-  // ── Error ────────────────────────────────────────────────────────────────────
-  --mat-sys-error:                      #ba1a1a;
-  --mat-sys-on-error:                   #ffffff;
-  --mat-sys-error-container:            #ffdad6;
-  --mat-sys-on-error-container:         #410002;
-
-
-  // ── Layout custom tokens ─────────────────────────────────────────────────────
-  --layout-sidenav-border: 1px solid var(--mat-sys-outline-variant);
-  --layout-toolbar-border: 1px solid var(--mat-sys-outline-variant);
+  --layout-sidenav-border: none;
+  --layout-toolbar-border: none;
 }
 
-// ── Icon color fix: force dark icons on light #cae9ff tertiary surfaces ────────
-// When --mat-sys-tertiary is overridden to a very light color, Angular Material's
-// icon components may compute a near-white color from palette tones.
-// This rule scopes the fix to only the sidenav elements inside .gpa.
-.gpa {
-  aside.sidenav mat-icon,
-  aside.sidenav .mat-icon,
-  .extra-sidenav mat-icon,
-  .extra-sidenav .mat-icon {
-    color: var(--mat-sys-on-tertiary) !important;
-  }
+.error-snackbar {
+  @include mat.snack-bar-overrides((
+    container-color: var(--mat-sys-error),
+    button-color: var(--mat-sys-on-error),
+  ))
 }
+

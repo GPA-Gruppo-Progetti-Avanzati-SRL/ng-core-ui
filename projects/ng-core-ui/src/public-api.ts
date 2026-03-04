@@ -7,4 +7,7 @@ export * from './lib/system/menu.guard';
 export * from './lib/not-found/not-found.component';
 export * from './lib/forbidden/forbidden.component';
 export * from './lib/layout/main-layout.component';
-export * from './lib/main';
+export * from './lib/main'
+
+// COMPONENTI
+export * from './lib/components/card.component/card.component';

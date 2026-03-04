@@ -1,0 +1,35 @@
+:host {
+  display: block !important;
+  width: 260px !important;
+  min-width: 260px !important;
+  max-width: 260px !important;
+  height: 404px !important;
+  min-height: 404px !important;
+  max-height: 404px !important;
+  overflow: hidden !important;
+}
+
+.card-inner {
+  width: 100% !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+}
+
+:host ::ng-deep mat-icon {
+  width: 112px !important;
+  height: 112px !important;
+  font-size: 112px !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+:host ::ng-deep {
+  .mat-mdc-unelevated-button .mdc-button__ripple {
+    border-radius: 8px !important;
+  }
+
+  .mat-mdc-unelevated-button {
+    --mat-sys-button-unelevated-ripple-shape: 8px;
+    border-radius: 8px !important;
+  }
+}
