@@ -2,7 +2,7 @@
 
 *.txt
 *.ps1
-
+*.sh
 
 # Compiled output
 /dist
