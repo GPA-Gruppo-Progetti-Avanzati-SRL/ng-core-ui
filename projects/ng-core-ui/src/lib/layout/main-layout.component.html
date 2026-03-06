@@ -27,24 +27,16 @@
         <span class="title">{{ currentPageTitle() }}</span>
         <span class="spacer"></span>
 
-        <button mat-icon-button [matMenuTriggerFor]="userMenu">
-          <mat-icon>account_circle</mat-icon>
-        </button>
+        <span class="user-name">{{ whoami()?.user }}</span>
 
-        <mat-menu #userMenu="matMenu">
-          <button mat-menu-item>
-            <mat-icon>person</mat-icon>
-            <span>Profilo</span>
-          </button>
-          <button mat-menu-item>
-            <mat-icon>logout</mat-icon>
-            <a [href]="environment()?.logoutPath || '#'"><span>Logout</span></a>
-          </button>
-        </mat-menu>
-
+        <a mat-icon-button [href]="environment()?.logoutPath || '#'" aria-label="Logout">
+          <mat-icon>logout</mat-icon>
+        </a>
         <button mat-icon-button (click)="openExtraSidenav()" aria-label="Apri menu laterale destro">
           <mat-icon>more_vert</mat-icon>
         </button>
+
+
 
         <!-- Sidenav destra -->
         <div class="extra-sidenav" [class.open]="extraSidenavOpen()" tabindex="-1" role="complementary" aria-label="Menu laterale destro">

@@ -18,7 +18,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
 import {LIB_APP_ID, LIB_APP_VERSION,LIB_APP_SHA} from '../main';
 
@@ -30,7 +29,6 @@ import {LIB_APP_ID, LIB_APP_VERSION,LIB_APP_SHA} from '../main';
     MatSidenavModule,
     MatToolbarModule,
     MatListModule,
-    MatMenuModule,
     MatCardModule,
     RouterOutlet,
     RouterLink,
@@ -62,15 +60,6 @@ export class MainLayoutComponent implements OnInit {
   isExpanded = computed(() => this.sidenavExpanded());
   extraSidenavOpen = signal(false);
 
-  currentPageTitle = computed(() => {
-    const url = this.currentUrl();
-    if (!url) return 'Enterprise App';
-    const normalizedUrl = this.system.normalizePath(url);
-    const nodes = this.menuTree();
-    const activeNode = nodes?.find((n: PathNode) => this.endpointFor(n) === normalizedUrl);
-    return activeNode?.description || activeNode?.id || 'Enterprise App';
-  });
-
   private currentUrl = toSignal(
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -78,6 +67,20 @@ export class MainLayoutComponent implements OnInit {
     ),
     { initialValue: this.router.url}
   );
+
+  currentPageTitle = computed(() => {
+    const apps = this.apps();
+    const currentApp = apps?.find(app => app.id === this.currentAppId);
+    if (currentApp) {
+      return currentApp.description || currentApp.id;
+    }
+    const url = this.currentUrl();
+    if (!url) return 'Enterprise App';
+    const normalizedUrl = this.system.normalizePath(url);
+    const nodes = this.menuTree();
+    const activeNode = nodes?.find((n: PathNode) => this.endpointFor(n) === normalizedUrl);
+    return activeNode?.description || activeNode?.id || 'Enterprise App';
+  });
 
   // MenuRoots già ordinati dal SystemService
   sortedMenuRoots = this.menuTree;

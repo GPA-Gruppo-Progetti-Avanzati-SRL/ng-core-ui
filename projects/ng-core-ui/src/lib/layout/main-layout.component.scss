@@ -45,6 +45,13 @@ mat-toolbar.toolbar {
   flex: 1 1 auto;
 }
 
+.user-name {
+  margin-right: 8px;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--mat-sys-on-primary);
+}
+
 /* ───────────────── Left sidenav ───────────────── */
 aside.sidenav {
   width: 100%;
