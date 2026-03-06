@@ -42,6 +42,12 @@
   -webkit-font-smoothing: antialiased;
 }
 
+.mat-mdc-icon-button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 /* roboto-300 - latin */
 @font-face {
   font-display: swap;

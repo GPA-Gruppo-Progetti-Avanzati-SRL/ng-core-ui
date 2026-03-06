@@ -242,8 +242,8 @@ aside.sidenav {
   width: 180px;
   max-width: 90vw;
   height: 100vh;
-  background: #2e3f54;
-  color: #e8f1fb;
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.12);
   z-index: 10000;
   transform: translateX(100%);
@@ -266,12 +266,12 @@ aside.sidenav {
 
     mat-icon,
     .mat-icon {
-      color: #e8f1fb;
+      color: var(--mat-sys-inverse-on-surface);
     }
   }
 
   h3 {
-    color: #e8f1fb;
+    color: var(--mat-sys-inverse-on-surface);
     margin: 0 0 12px 0;
     font-size: 11px;
     font-weight: 600;
@@ -307,7 +307,7 @@ aside.sidenav {
   --mdc-list-list-item-container-shape: 4px;
   box-sizing: border-box;
 
-  color: #e8f1fb;
+  color: var(--mat-sys-inverse-on-surface);
   background: transparent;
   transition: background-color 0.15s ease;
 
@@ -317,14 +317,16 @@ aside.sidenav {
   }
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.08) !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
 
     mat-icon,
     .mat-icon,
     .app-label {
-      color: #e8f1fb;
+      color: var(--mat-sys-inverse-on-surface);
     }
   }
+
+
 
   &:focus,
   &:focus-visible {
