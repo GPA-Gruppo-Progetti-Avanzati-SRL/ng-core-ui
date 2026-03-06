@@ -23,9 +23,9 @@ $poste-theme: mat.define-theme((
   @include mat.system-level-colors($poste-theme);
   @include mat.system-level-typography($poste-theme);
 
-  // Custom tokens for layout fine-tuning
   --layout-sidenav-border: none;
   --layout-toolbar-border: none;
+  --mat-sys-surface-variant: var(--mat-sys-tertiary-container);
 }
 
 .error-snackbar {
