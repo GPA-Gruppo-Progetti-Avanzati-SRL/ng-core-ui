@@ -11,4 +11,5 @@ export * from './lib/main'
 
 // COMPONENTI
 export * from './lib/components/card.component/card.component';
-export * from './lib/components/topbar.component/topbar.component'
+export * from './lib/components/topbar.component/topbar.component';
+export * from './lib/components/tailwind.component/tailwind.component'
