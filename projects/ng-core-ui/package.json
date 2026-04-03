@@ -14,5 +14,6 @@
 
   },
   "sideEffects": false,
-  "schematics": "./schematics/collection.json"
+  "schematics": "./schematics/collection.json",
+  "repository": "https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui"
 }
