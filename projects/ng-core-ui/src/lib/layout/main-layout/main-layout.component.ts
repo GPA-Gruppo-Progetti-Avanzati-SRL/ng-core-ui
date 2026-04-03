@@ -10,8 +10,8 @@
 import { RouterOutlet, RouterLink,Router,NavigationEnd } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { PathNode } from '../system/system.models';
-import {SystemService} from '../system/system.service';
+import { PathNode } from '../../system/system.models';
+import {SystemService} from '../../system/system.service';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,7 +19,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
-import {LIB_APP_ID, LIB_APP_VERSION,LIB_APP_SHA} from '../main';
+import {LIB_APP_ID, LIB_APP_VERSION,LIB_APP_SHA} from '../../main';
 
 @Component({
   selector: 'app-main-layout',
@@ -107,7 +107,7 @@ export class MainLayoutComponent implements OnInit {
     // Il bootstrap viene già gestito dal MenuGuard se la rotta è protetta.
     // Chiamarlo qui assicura che venga eseguito anche se la guardia non dovesse scattare,
     // ma SystemService.bootstrap ora previene esecuzioni multiple.
-    this.system.bootstrap();
+    this.system.bootstrap().catch(err => console.error('Bootstrap error in MainLayout', err));
   }
 
 

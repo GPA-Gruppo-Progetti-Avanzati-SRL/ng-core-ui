@@ -1,1 +1,27 @@
-<p>topbar.component works!</p>
+<div
+  class="flex items-center justify-between px-6 py-3 min-h-[64px]"
+  style="background-color: var(--mat-sys-surface-variant)"
+>
+  <!-- Left: Title + Description -->
+  <div class="flex flex-col justify-center">
+    <span
+      class="text-[16px] font-semibold leading-tight"
+      style="color: var(--mat-sys-on-surface-variant)"
+    >
+      {{ title }}
+    </span>
+    @if (description) {
+      <span
+        class="text-[13px] leading-tight mt-1"
+        style="color: var(--mat-sys-on-surface-variant); opacity: 0.75"
+      >
+        {{ description }}
+      </span>
+    }
+  </div>
+
+  <!-- Right: Icons Buttons -->
+  <div class="flex items-center justify-center gap-1 [&_.mat-mdc-icon-button]:flex [&_.mat-mdc-icon-button]:items-center [&_.mat-mdc-icon-button]:justify-center">
+    <ng-content></ng-content>
+  </div>
+</div>

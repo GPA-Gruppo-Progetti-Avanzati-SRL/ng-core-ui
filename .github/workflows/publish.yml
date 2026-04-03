@@ -1,0 +1,45 @@
+name: Publish ng-core-ui to npm
+
+on:
+  push:
+    tags:
+      - '[0-9]*'
+
+jobs:
+  publish:
+    environment: 'release'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # for npm provenance
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build library + schematics
+        run: bun run build:lib
+
+      - name: Verify tag matches library version
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          PKG_VERSION=$(node -p "require('./projects/ng-core-ui/package.json').version")
+          if [ "$TAG" != "$PKG_VERSION" ]; then
+            echo "Tag ($TAG) does not match library version ($PKG_VERSION)"
+            exit 1
+          fi
+
+      - name: Publish to npm
+        run: npm publish ./dist/ng-core-ui --provenance --access public

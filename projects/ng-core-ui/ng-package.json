@@ -6,6 +6,8 @@
   },
   "assets": [
     "styles/**/*.scss",
-    "assets/**/*.woff2"
+    "assets/**/*.woff2",
+    "schematics/collection.json",
+    "schematics/ng-add/schema.json"
   ]
 }

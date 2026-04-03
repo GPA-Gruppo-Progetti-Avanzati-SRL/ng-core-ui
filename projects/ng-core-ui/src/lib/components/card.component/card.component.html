@@ -1,4 +1,4 @@
-<div class="h-full">
+<div class="block w-[260px] min-w-[260px] max-w-[260px] h-[404px] min-h-[404px] max-h-[404px] overflow-hidden">
   <div
     class="flex h-full flex-col rounded-[18px]
            border border-[color:var(--mat-sys-outline-variant)]
@@ -17,12 +17,11 @@
     <!-- Icon -->
     <div class="flex-1 flex items-center justify-center">
       <mat-icon
-          aria-hidden="true"
-          class="text-[color:var(--mat-sys-primary)]"
-        >
-          {{ icon }}
+        aria-hidden="true"
+        class="card-icon text-[color:var(--mat-sys-primary)]"
+      >
+        {{ icon }}
       </mat-icon>
-
     </div>
 
     <hr class="mt-4 mb-3 border-t border-[color:var(--mat-sys-outline-variant)]" />
@@ -38,9 +37,9 @@
       <div class="flex justify-end">
         <button
           mat-flat-button
-          class="min-w-[140px] px-6 py-2 text-[13px] font-medium shadow-none
-                bg-[color:var(--mat-sys-tertiary)] text-[color:var(--mat-sys-on-tertiary)]"
-          (click)="buttonAction()"
+          class="btn-card min-w-[140px] px-6 py-2 text-[13px] font-medium shadow-none
+                 bg-[color:var(--mat-sys-tertiary)] text-[color:var(--mat-sys-on-tertiary)]"
+          (click)="buttonClick.emit()"
         >
           {{ buttonLabel }}
         </button>

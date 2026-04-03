@@ -1,0 +1,27 @@
+@if (whoami()) {
+  <div class="layout-grid">
+    <main class="main-content">
+      <mat-toolbar color="primary" class="toolbar">
+        <span class="title">{{ currentPageTitle() }}</span>
+        <span class="spacer"></span>
+
+        <span class="user-name">{{ whoami()?.user }}</span>
+
+        <a mat-icon-button [href]="environment()?.logoutPath || '#'" aria-label="Logout">
+          <mat-icon>logout</mat-icon>
+        </a>
+      </mat-toolbar>
+
+      <div class="content">
+        <router-outlet />
+        <div class="app-info">
+          Version : {{ appVersion }} - Sha: {{ appSha }}
+        </div>
+      </div>
+    </main>
+  </div>
+} @else {
+  <div class="content">
+    <router-outlet />
+  </div>
+}

@@ -160,7 +160,7 @@ $hand-made-palette:(
     60: color.scale(#EBDD49, $lightness:  calc(100% / 60) * 20),
     70: color.scale(#EBDD49, $lightness:  calc(100% / 60) * 30),
     80: color.scale(#EBDD49, $lightness:  calc(100% / 60) * 40),
-    90: color.scale(#EBDD49, $lightness:  calc(100% / 60) * 50),
+    90: color.scale(#EBDD49, $lightness:  calc(100% / 60) * 50), //background:topbarcomponent
     95: color.scale(#EBDD49, $lightness:  calc(100% / 60) * 55),
     98: color.scale(#EBDD49, $lightness:  calc(100% / 60) * 58),
     99: color.scale(#EBDD49, $lightness:  calc(100% / 60) * 59),
