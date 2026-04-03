@@ -16,7 +16,7 @@ cd my-app
 ### 2. Aggiungi la libreria
 
 ```bash
-ng add ng-core-ui
+ng add @gpa-gruppo-progetti-avanzati-srl/ng-core-ui
 ```
 
 Il comando chiede solo l'**AppId** dell'applicazione (stringa identificativa usata per il decrypt del token):

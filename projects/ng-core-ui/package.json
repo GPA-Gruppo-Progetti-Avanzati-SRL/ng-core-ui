@@ -1,5 +1,5 @@
 {
-  "name": "ng-core-ui",
+  "name": "@gpa-gruppo-progetti-avanzati-srl/ng-core-ui",
   "version": "0.0.13",
   "peerDependencies": {
     "@angular/common": "^21.2.7",
