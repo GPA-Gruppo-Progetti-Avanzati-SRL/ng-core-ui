@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'lib-card',
+  selector: 'core-card',
   imports: [CommonModule, MatIconModule, MatButtonModule],
   templateUrl: './card.component.html',
   styleUrl: './card.component.css',

@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'lib-topbar',
+  selector: 'core-topbar',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './topbar.component.html',
