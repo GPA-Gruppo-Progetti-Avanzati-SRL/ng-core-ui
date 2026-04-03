@@ -16,18 +16,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
-          cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Build library + schematics
-        run: npm run build:lib
+        run: bun run build:lib
 
       - name: Verify tag matches library version
         run: |
