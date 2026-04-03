@@ -22,9 +22,9 @@ export interface Context {
 
 export interface TokenResponse {
   user: string;
-  roles: string[] | null;
-  capabilities: string[] | null;
-  paths: PathNode[] | null;
-  apps:  App[] | null;
-  contexts: Context[] | null;
+  roles?: string[] | null;
+  capabilities?: string[] | null;
+  paths?: PathNode[] | null;
+  apps?: App[] | null;
+  contexts?: Context[] | null;
 }

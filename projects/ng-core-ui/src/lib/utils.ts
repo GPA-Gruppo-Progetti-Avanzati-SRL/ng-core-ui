@@ -8,8 +8,11 @@
  */
 export async function decrypt(ciphertextHex: string, appID: string): Promise<string> {
   // 1. Convert hex string to Uint8Array
-
+  if (!ciphertextHex || ciphertextHex.length % 2 !== 0 || !/^[0-9a-fA-F]+$/.test(ciphertextHex)) {
+    throw new Error('Invalid hex ciphertext');
+  }
   const encryptedData = new Uint8Array(
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     ciphertextHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16))
   );
 

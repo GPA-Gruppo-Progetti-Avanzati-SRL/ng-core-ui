@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
+  standalone: true,
   selector: 'core-card',
   imports: [CommonModule, MatIconModule, MatButtonModule],
   templateUrl: './card.component.html',
@@ -14,5 +15,5 @@ export class CardComponent {
   @Input() subtitle?: string = '';
   @Input() icon: string = 'info';
   @Input() buttonLabel: string = 'Procedi';
-  @Input() buttonAction: () => void = () => {};
+  @Output() buttonClick = new EventEmitter<void>();
 }

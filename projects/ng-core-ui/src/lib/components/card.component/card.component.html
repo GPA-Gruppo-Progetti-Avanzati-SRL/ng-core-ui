@@ -39,7 +39,7 @@
           mat-flat-button
           class="btn-card min-w-[140px] px-6 py-2 text-[13px] font-medium shadow-none
                  bg-[color:var(--mat-sys-tertiary)] text-[color:var(--mat-sys-on-tertiary)]"
-          (click)="buttonAction()"
+          (click)="buttonClick.emit()"
         >
           {{ buttonLabel }}
         </button>

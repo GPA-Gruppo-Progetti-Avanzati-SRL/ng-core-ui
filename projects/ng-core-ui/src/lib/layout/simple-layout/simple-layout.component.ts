@@ -6,15 +6,15 @@ import {
   OnInit,
   ViewEncapsulation
 } from '@angular/core';
-import { RouterOutlet, Router } from '@angular/router';
-import {SystemService} from '../system/system.service';
+import { RouterOutlet } from '@angular/router';
+import {SystemService} from '../../system/system.service';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
-import {LIB_APP_ID, LIB_APP_VERSION,LIB_APP_SHA} from '../main';
+import {LIB_APP_ID, LIB_APP_VERSION,LIB_APP_SHA} from '../../main';
 
 @Component({
   selector: 'app-simple-layout',
@@ -33,9 +33,7 @@ import {LIB_APP_ID, LIB_APP_VERSION,LIB_APP_SHA} from '../main';
 })
 export class SimpleLayoutComponent implements OnInit {
 
-  private router :Router = inject(Router);
-
-  private system :SystemService = inject(SystemService);
+  private system: SystemService = inject(SystemService);
 
   public appId :string =    inject(LIB_APP_ID);
   public appSha:string =  inject(LIB_APP_SHA);
@@ -57,6 +55,6 @@ export class SimpleLayoutComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.system.bootstrap();
+    this.system.bootstrap().catch(err => console.error('Bootstrap error in SimpleLayout', err));
   }
 }

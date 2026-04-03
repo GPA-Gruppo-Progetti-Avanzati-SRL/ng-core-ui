@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); proj=d[''''projects''''].get\\(''''ng-core-ui'''',{}\\); build=proj.get\\(''''architect'''',{}\\).get\\(''''build'''',{}\\); print\\(json.dumps\\(build, indent=2\\)\\)\")"
+    ]
+  }
+}

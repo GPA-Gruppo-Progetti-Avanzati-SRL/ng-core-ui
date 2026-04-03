@@ -3,7 +3,7 @@ import { HttpClient , HttpHeaders} from '@angular/common/http';
 import { App, Context, PathNode, TokenResponse } from './system.models';
 import { Environment } from './environment';
 import { firstValueFrom } from 'rxjs';
-import {LIB_APP_ID, LIB_APP_VERSION,LIB_APP_SHA} from '../main';
+import {LIB_APP_ID, LIB_APP_VERSION, LIB_APP_SHA, LIB_TOKEN_URL, LIB_ENVIRONMENT_URL} from '../main';
 import { decrypt } from '../utils';
 import { StyleManagerService } from './style-manager.service';
 
@@ -11,9 +11,11 @@ import { StyleManagerService } from './style-manager.service';
 @Injectable({ providedIn: 'root' })
 export class SystemService {
   private readonly http: HttpClient = inject(HttpClient);
-  private  readonly appId: string = inject(LIB_APP_ID);
-  private  readonly appSha: string = inject(LIB_APP_SHA);
+  private readonly appId: string = inject(LIB_APP_ID);
+  private readonly appSha: string = inject(LIB_APP_SHA);
   private readonly appVersion: string = inject(LIB_APP_VERSION);
+  private readonly tokenUrl: string = inject(LIB_TOKEN_URL);
+  private readonly environmentUrl: string = inject(LIB_ENVIRONMENT_URL);
   private readonly styleManager: StyleManagerService = inject(StyleManagerService);
 
   constructor() {
@@ -38,7 +40,7 @@ export class SystemService {
   readonly environmentSig = signal<Environment | null>(null);
   readonly environmentProperties = computed(() => this.environmentSig()?.properties || {});
 
-  getEnvironmentProperty(key: string): any {
+  getEnvironmentProperty(key: string): unknown {
     return this.environmentProperties()[key];
   }
 
@@ -67,7 +69,7 @@ export class SystemService {
   }
 
   async loadEnvironment(): Promise<Environment> {
-    const data = await firstValueFrom(this.http.get<Environment>('/environment/environment.json'));
+    const data = await firstValueFrom(this.http.get<Environment>(this.environmentUrl));
     console.debug("environment", data);
     this.environmentSig.set(data);
     return data;
@@ -75,17 +77,22 @@ export class SystemService {
 
   async loadToken(): Promise<TokenResponse> {
     const headers = new HttpHeaders().set('AppId', this.appId);
-    const encryptedToken = await firstValueFrom(this.http.get('/api/token', { headers, responseType: 'text' }));
+    const encryptedToken = await firstValueFrom(this.http.get(this.tokenUrl, { headers, responseType: 'text' }));
     const decryptedJson = await decrypt(encryptedToken, this.appId);
-    const data: TokenResponse = JSON.parse(decryptedJson);
+    let data: TokenResponse;
+    try {
+      data = JSON.parse(decryptedJson) as TokenResponse;
+    } catch {
+      throw new Error('Token decryption returned invalid JSON');
+    }
     console.debug("token", data);
 
     this.whoamiSig.set({
       user: data.user,
-      roles: data.roles,
-      capabilities: data.capabilities
+      roles: data.roles ?? [],
+      capabilities: data.capabilities ?? []
     });
-    this.pathsSig.set(data.paths);
+    this.pathsSig.set(data.paths ?? []);
 
     const menuNodes = (data.paths ?? []).filter(p => p.ismenu);
     const sortedMenu = this.sortPathNodes(menuNodes);
@@ -102,14 +109,14 @@ export class SystemService {
   private bootstrapPromise: Promise<void> | null = null;
 
   async bootstrap(): Promise<void> {
-    if (this.bootstrapPromise) {
-      return this.bootstrapPromise;
-    }
-
-
     // Se i dati sono già presenti, evitiamo il ricaricamento
     if (this.whoamiSig() && this.pathsSig() && this.appsSig()) {
       return Promise.resolve();
+    }
+
+    // Se c'è già un bootstrap in corso, restituiamo la stessa promise
+    if (this.bootstrapPromise) {
+      return this.bootstrapPromise;
     }
 
     console.debug('Bootstrap starting...');
@@ -120,7 +127,7 @@ export class SystemService {
       console.debug('Bootstrap finished');
     }).catch(err => {
       console.error('Bootstrap failed', err);
-      this.bootstrapPromise = null; // Permetti riprovo se fallisce
+      this.bootstrapPromise = null; // Permetti riprovo esplicito
       throw err;
     });
 
