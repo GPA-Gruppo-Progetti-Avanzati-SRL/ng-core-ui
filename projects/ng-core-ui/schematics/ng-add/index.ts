@@ -9,10 +9,12 @@ import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
 const LIB = '@gpa-gruppo-progetti-avanzati-srl/ng-core-ui';
 
-// Peer dependencies dichiarate nel package.json della libreria (letto a runtime dal dist)
+// Versioni target lette dal campo ng-add.targetVersions del package.json della libreria.
+// Le peerDependencies dichiarano range larghi (>=19) per non bloccare npm install;
+// i valori esatti da impostare nell'app consumatrice stanno qui.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const LIB_PEER_DEPS: Record<string, string> =
-  (require('../../package.json') as { peerDependencies?: Record<string, string> }).peerDependencies ?? {};
+const LIB_TARGET_VERSIONS: Record<string, string> =
+  (require('../../package.json') as { 'ng-add'?: { targetVersions?: Record<string, string> } })['ng-add']?.targetVersions ?? {};
 
 interface Schema {
   project?: string;
@@ -31,7 +33,7 @@ function alignDependencies(): Rule {
     const deps: Record<string, string> = pkgJson.dependencies ?? {};
     const devDeps: Record<string, string> = pkgJson.devDependencies ?? {};
 
-    const angularVersion = LIB_PEER_DEPS['@angular/core'] ?? '^21.0.0';
+    const angularVersion = LIB_TARGET_VERSIONS['@angular/core'] ?? '^21.0.0';
     // I build tool (@angular/build, @angular/cli, @angular/compiler-cli) seguono
     // un versioning proprio: usare solo il major evita errori "version not found"
     const majorMatch = angularVersion.match(/\d+/);
@@ -44,7 +46,7 @@ function alignDependencies(): Rule {
     for (const section of [deps, devDeps]) {
       for (const pkg of Object.keys(section)) {
         if (pkg.startsWith('@angular/')) {
-          const target = LIB_PEER_DEPS[pkg] ?? (BUILD_TOOLS.has(pkg) ? angularMajorVersion : angularVersion);
+          const target = LIB_TARGET_VERSIONS[pkg] ?? (BUILD_TOOLS.has(pkg) ? angularMajorVersion : angularVersion);
           if (section[pkg] !== target) {
             context.logger.info(`  ✔ Allineato ${pkg}: ${section[pkg]} → ${target}`);
             section[pkg] = target;
@@ -58,7 +60,7 @@ function alignDependencies(): Rule {
     const angularExtras = ['@angular/animations', '@angular/material'];
     for (const pkg of angularExtras) {
       if (!deps[pkg] && !devDeps[pkg]) {
-        const target = LIB_PEER_DEPS[pkg] ?? angularVersion;
+        const target = LIB_TARGET_VERSIONS[pkg] ?? angularVersion;
         deps[pkg] = target;
         context.logger.info(`  ✔ Aggiunta dipendenza: ${pkg}@${target}`);
         changed = true;
@@ -66,7 +68,7 @@ function alignDependencies(): Rule {
     }
 
     // Aggiorna o aggiunge le peerDependencies non-Angular (tailwindcss, postcss, typescript…)
-    const nonAngularPeers = Object.entries(LIB_PEER_DEPS).filter(([pkg]) => !pkg.startsWith('@angular/'));
+    const nonAngularPeers = Object.entries(LIB_TARGET_VERSIONS).filter(([pkg]) => !pkg.startsWith('@angular/'));
     for (const [pkg, version] of nonAngularPeers) {
       if (deps[pkg] && deps[pkg] !== version) {
         context.logger.info(`  ✔ Allineato ${pkg}: ${deps[pkg]} → ${version}`);
