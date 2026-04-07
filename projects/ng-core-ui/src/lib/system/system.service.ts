@@ -1,9 +1,10 @@
 import {Injectable, computed, inject, signal, effect} from '@angular/core';
 import { HttpClient , HttpHeaders} from '@angular/common/http';
 import { App, Context, PathNode, TokenResponse } from './system.models';
+import { CoreAction } from './routes';
 import { Environment } from './environment';
 import { firstValueFrom } from 'rxjs';
-import {LIB_APP_ID, LIB_APP_VERSION, LIB_APP_SHA, LIB_TOKEN_URL, LIB_ENVIRONMENT_URL} from '../main';
+import {LIB_TOKEN_URL, LIB_ENVIRONMENT_URL} from '../main';
 import { decrypt } from '../utils';
 import { StyleManagerService } from './style-manager.service';
 
@@ -11,17 +12,11 @@ import { StyleManagerService } from './style-manager.service';
 @Injectable({ providedIn: 'root' })
 export class SystemService {
   private readonly http: HttpClient = inject(HttpClient);
-  private readonly appId: string = inject(LIB_APP_ID);
-  private readonly appSha: string = inject(LIB_APP_SHA);
-  private readonly appVersion: string = inject(LIB_APP_VERSION);
   private readonly tokenUrl: string = inject(LIB_TOKEN_URL);
   private readonly environmentUrl: string = inject(LIB_ENVIRONMENT_URL);
   private readonly styleManager: StyleManagerService = inject(StyleManagerService);
 
   constructor() {
-    console.log("App "+ this.appId);
-    console.log("Sha "+ this.appSha);
-    console.log("Version "+ this.appVersion);
     console.log("SystemService Initialized");
 
     // Automatically apply theme class to body when environment changes
@@ -45,6 +40,16 @@ export class SystemService {
   }
 
   // Endpoints consentiti (tutti i path ricevuti)
+  private readonly capabilitiesSet = computed(() =>
+    new Set(this.whoamiSig()?.capabilities ?? [])
+  );
+
+  canDo(action: CoreAction | string): boolean {
+    const appId = this.environmentSig()?.appId ?? '';
+    const id = typeof action === 'string' ? action : action.id;
+    return this.capabilitiesSet().has(`${appId}-${id}`.toUpperCase());
+  }
+
   readonly allowedEndpoints = computed(() => {
     const list = this.pathsSig();
     if (!list) return new Set<string>();
@@ -76,9 +81,14 @@ export class SystemService {
   }
 
   async loadToken(): Promise<TokenResponse> {
-    const headers = new HttpHeaders().set('AppId', this.appId);
+    const env = this.environmentSig();
+    if (!env?.appId) {
+      throw new Error('AppId not found in environment');
+    }
+    const appId = env.appId;
+    const headers = new HttpHeaders().set('AppId', appId);
     const encryptedToken = await firstValueFrom(this.http.get(this.tokenUrl, { headers, responseType: 'text' }));
-    const decryptedJson = await decrypt(encryptedToken, this.appId);
+    const decryptedJson = await decrypt(encryptedToken, appId);
     let data: TokenResponse;
     try {
       data = JSON.parse(decryptedJson) as TokenResponse;
@@ -120,16 +130,17 @@ export class SystemService {
     }
 
     console.debug('Bootstrap starting...');
-    this.bootstrapPromise = Promise.all([
-      this.loadToken(),
-      this.loadEnvironment()
-    ]).then(() => {
-      console.debug('Bootstrap finished');
-    }).catch(err => {
-      console.error('Bootstrap failed', err);
-      this.bootstrapPromise = null; // Permetti riprovo esplicito
-      throw err;
-    });
+    this.bootstrapPromise = (async () => {
+      try {
+        await this.loadEnvironment();
+        await this.loadToken();
+        console.debug('Bootstrap finished');
+      } catch (err) {
+        console.error('Bootstrap failed', err);
+        this.bootstrapPromise = null; // Permetti riprovo esplicito
+        throw err;
+      }
+    })();
 
     return this.bootstrapPromise;
   }

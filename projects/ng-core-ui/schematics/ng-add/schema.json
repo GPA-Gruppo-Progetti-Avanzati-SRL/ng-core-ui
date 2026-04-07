@@ -1,18 +1,13 @@
 {
   "$schema": "http://json-schema.org/schema",
   "id": "NgCoreUiNgAddSchema",
-  "title": "ng add ng-core-ui",
+  "title": "ng add @gpa-gruppo-progetti-avanzati-srl/ng-core-ui",
   "type": "object",
   "properties": {
-    "appId": {
-      "type": "string",
-      "description": "ID applicazione (usato per decrypt del token)",
-      "x-prompt": "Inserisci l'AppId dell'applicazione:"
-    },
     "project": {
       "type": "string",
       "description": "Nome del progetto Angular (opzionale, usa il default di angular.json)"
     }
   },
-  "required": ["appId"]
+  "required": []
 }

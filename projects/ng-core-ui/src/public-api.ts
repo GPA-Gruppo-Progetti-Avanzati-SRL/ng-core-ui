@@ -4,6 +4,7 @@ export * from './lib/system/environment';
 export * from './lib/system/system.service';
 export * from './lib/system/style-manager.service';
 export * from './lib/system/menu.guard';
+export * from './lib/system/routes';
 export * from './lib/not-found/not-found.component';
 export * from './lib/forbidden/forbidden.component';
 export * from './lib/layout/main-layout/main-layout.component';

@@ -1,3 +1,6 @@
+declare const AppSha: string;
+declare const AppVersion: string;
+
 import {
   Component,
   computed,
@@ -8,13 +11,11 @@ import {
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {SystemService} from '../../system/system.service';
-
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatListModule } from '@angular/material/list';
-import { MatCardModule } from '@angular/material/card';
-import {LIB_APP_ID, LIB_APP_VERSION,LIB_APP_SHA} from '../../main';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {MatListModule} from '@angular/material/list';
+import {MatCardModule} from '@angular/material/card';
+import {MatToolbarModule} from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-simple-layout',
@@ -35,19 +36,17 @@ export class SimpleLayoutComponent implements OnInit {
 
   private system: SystemService = inject(SystemService);
 
-  public appId :string =    inject(LIB_APP_ID);
-  public appSha:string =  inject(LIB_APP_SHA);
-  public appVersion:string =  inject(LIB_APP_VERSION);
-
   whoami = this.system.whoamiSig;
   environment = this.system.environmentSig;
   apps = this.system.appsSig;
   contexts = this.system.contextsSig;
-  currentAppId = this.appId;
+  currentAppId = computed(() => this.environment()?.appId || '');
+  appSha = computed(() => AppSha);
+  appVersion = computed(() => AppVersion);
 
   currentPageTitle = computed(() => {
     const apps = this.apps();
-    const currentApp = apps?.find(app => app.id === this.currentAppId);
+    const currentApp = apps?.find(app => app.id === this.currentAppId());
     if (currentApp) {
       return currentApp.description || currentApp.id;
     }

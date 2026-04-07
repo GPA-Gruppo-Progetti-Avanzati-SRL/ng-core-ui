@@ -47,7 +47,7 @@
             <h3>Applicazioni</h3>
             <mat-nav-list>
               @for (app of apps(); track app.id) {
-                @if (app.id === currentAppId) {
+                @if (app.id === currentAppId()) {
                   <a mat-list-item class="extra-menu-item disabled-app" [attr.aria-label]="app.description || app.id">
                     <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
                     <span class="app-label">{{ app.description || app.id }}</span>
@@ -69,7 +69,7 @@
       <div class="content">
         <router-outlet />
         <div class="app-info">
-          Version : {{ appVersion }} - Sha: {{ appSha }}
+          Version : {{ appVersion() }} - Sha: {{ appSha() }}
         </div>
       </div>
     </main>

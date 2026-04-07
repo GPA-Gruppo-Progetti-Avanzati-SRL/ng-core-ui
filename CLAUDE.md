@@ -47,13 +47,15 @@ main.ts         # provideGPAUICore() provider function
 
 ### Bootstrap Flow
 
-Consuming apps call `provideGPAUICore(AppId, AppSha, AppVersion)` in their root config. This sets injection tokens used by `SystemService` to:
+Consuming apps call `provideGPAUICore({ appId })` in their root config. This sets injection tokens used by `SystemService` to:
 
 1. `loadToken()` — fetches an encrypted token from `/api/token`, decrypts it with AES-GCM using the AppId as key, and parses the result into `PathNode[]` (allowed route permissions) and `App[]` (app switcher entries).
 2. `loadEnvironment()` — fetches `/environment/environment.json` for runtime config.
 3. Both are deduplicated via a `bootstrapping` flag to prevent race conditions.
 
 State is exposed as Angular signals: `whoamiSig`, `pathsSig`, `menuTreeSig`, `appsSig`, `contextsSig`, `environmentSig`.
+
+Note: `AppSha` and `AppVersion` are expected to be available globally (e.g., defined via build system) and are not passed to the provider function.
 
 ### Route Guards
 
