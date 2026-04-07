@@ -35,5 +35,8 @@
   },
   "sideEffects": false,
   "schematics": "./schematics/collection.json",
+  "ng-update": {
+    "migrations": "./schematics/migrations.json"
+  },
   "repository": "https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui"
 }
