@@ -12,7 +12,7 @@ export interface GpaCoreOptions {
   environmentUrl?: string;
 }
 
-export function provideGPAUICore(options: GpaCoreOptions): EnvironmentProviders {
+export function provideGPAUICore(options?: GpaCoreOptions): EnvironmentProviders {
   return makeEnvironmentProviders([
     ...(options?.tokenUrl ? [{ provide: LIB_TOKEN_URL, useValue: options.tokenUrl }] : []),
     ...(options?.environmentUrl ? [{ provide: LIB_ENVIRONMENT_URL, useValue: options.environmentUrl }] : []),

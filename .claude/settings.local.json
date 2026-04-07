@@ -3,7 +3,10 @@
     "allow": [
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); proj=d[''''projects''''].get\\(''''ng-core-ui'''',{}\\); build=proj.get\\(''''architect'''',{}\\).get\\(''''build'''',{}\\); print\\(json.dumps\\(build, indent=2\\)\\)\")",
       "Bash(grep -v \"^\\\\.$|^\\\\.\\\\.$|cache|\\\\.git\")",
-      "Bash(bun run:*)"
+      "Bash(bun run:*)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); p=list\\(d[''''projects''''].keys\\(\\)\\)[0]; print\\(json.dumps\\(d[''''projects''''][p][''''architect''''][''''build''''], indent=2\\)\\)\")",
+      "Bash(npx tsc:*)",
+      "Bash(echo \"exit: $?\")"
     ]
   }
 }

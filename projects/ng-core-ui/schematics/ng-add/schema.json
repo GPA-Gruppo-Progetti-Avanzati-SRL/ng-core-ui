@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "id": "NgCoreUiNgAddSchema",
+  "$id": "NgCoreUiNgAddSchema",
   "title": "ng add @gpa-gruppo-progetti-avanzati-srl/ng-core-ui",
   "type": "object",
   "properties": {

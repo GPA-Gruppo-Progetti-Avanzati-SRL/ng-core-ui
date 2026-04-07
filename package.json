@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "build:lib": "ng build ng-core-ui --configuration production && npm run build:schematics",
+    "build:lib": "ng build ng-core-ui --configuration production && bun run build:schematics",
     "build:schematics": "tsc -p projects/ng-core-ui/schematics/tsconfig.json"
   },
   "prettier": {
