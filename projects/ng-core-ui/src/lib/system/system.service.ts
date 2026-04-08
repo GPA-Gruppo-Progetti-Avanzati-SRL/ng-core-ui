@@ -87,8 +87,8 @@ export class SystemService {
     }
     const appId = env.appId;
     const headers = new HttpHeaders().set('AppId', appId);
-    const encryptedToken = await firstValueFrom(this.http.get(this.tokenUrl, { headers, responseType: 'text' }));
-    const decryptedJson = await decrypt(encryptedToken, appId);
+    const rawToken = await firstValueFrom(this.http.get(this.tokenUrl, { headers, responseType: 'text' }));
+    const decryptedJson = env.encryptToken ? await decrypt(rawToken, appId) : rawToken;
     let data: TokenResponse;
     try {
       data = JSON.parse(decryptedJson) as TokenResponse;

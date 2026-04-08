@@ -7,6 +7,35 @@
     "project": {
       "type": "string",
       "description": "Nome del progetto Angular (opzionale, usa il default di angular.json)"
+    },
+    "frontdoor": {
+      "type": "boolean",
+      "description": "Configura l'app per Opem Front Door (baseHref, tokenUrl, environmentUrl e deployUrl specifici)",
+      "default": false,
+      "x-prompt": "Configurare l'app per Opem Front Door? (default: No)"
+    },
+    "deployUrl": {
+      "type": "string",
+      "description": "deployUrl per Front Door in angular.json (solo se Front Door abilitato). Default: __static_path_to_webapps__/__appName__/__appVersion__/. Sovrascrivibile via --deployUrl=...",
+      "default": ""
+    },
+    "baseHref": {
+      "type": "string",
+      "description": "baseHref production (senza FD: __BASE_HREF__ | con FD: /__appType__/__domainId__/__siteId__/__siteScope__/__language__/__appId__/)",
+      "default": "",
+      "x-prompt": "baseHref production? [senza FD: __BASE_HREF__ | con FD: /__appType__/__domainId__/__siteId__/__siteScope__/__language__/__appId__/] (lascia vuoto per default automatico)"
+    },
+    "tokenUrl": {
+      "type": "string",
+      "description": "URL endpoint token (senza FD: /api/token | con FD: /api/core/acl)",
+      "default": "",
+      "x-prompt": "tokenUrl? [senza FD: /api/token | con FD: /api/core/acl] (lascia vuoto per default automatico)"
+    },
+    "environmentUrl": {
+      "type": "string",
+      "description": "URL environment.json (senza FD: /environment/environment.json | con FD: /api/core/environment)",
+      "default": "",
+      "x-prompt": "environmentUrl? [senza FD: /environment/environment.json | con FD: /api/core/environment] (lascia vuoto per default automatico)"
     }
   },
   "required": []

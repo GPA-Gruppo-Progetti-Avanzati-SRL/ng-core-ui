@@ -3,7 +3,7 @@
 *.txt
 *.ps1
 *.sh
-
+.claude
 # Compiled output
 /dist
 /tmp
