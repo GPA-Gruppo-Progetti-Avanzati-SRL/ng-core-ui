@@ -1,6 +1,7 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 @use 'poste-colors' as pi-theme;
+@use 'color-bridge';
 
 @include mat.core();
 
@@ -26,6 +27,8 @@ $poste-theme: mat.define-theme((
   --layout-sidenav-border: none;
   --layout-toolbar-border: none;
   --mat-sys-surface-variant: var(--mat-sys-tertiary-container);
+
+  @include color-bridge.apply();
 }
 
 .error-snackbar {

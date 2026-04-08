@@ -1,6 +1,7 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 @use 'gpa-colors' as gpa-theme;
+@use 'color-bridge';
 
 @include mat.core();
 
@@ -23,6 +24,8 @@ $gpa-theme: mat.define-theme((
 
   --layout-sidenav-border: none;
   --layout-toolbar-border: none;
+
+  @include color-bridge.apply();
 }
 
 .error-snackbar {

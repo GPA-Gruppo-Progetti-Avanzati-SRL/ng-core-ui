@@ -1,0 +1,43 @@
+/// Maps Angular Material MD3 --mat-sys-* tokens to Tailwind --color-* tokens.
+/// Include inside the theme selector (.gpa, .poste, etc.) where --mat-sys-*
+/// variables are already in scope from mat.system-level-colors().
+///
+/// This mixin is the authoritative source for the bridge mapping.
+/// The @theme block in mat-theme-bridge.css mirrors this list solely for
+/// Tailwind utility generation (bg-surface, text-primary, etc.).
+@mixin apply() {
+  --color-primary:                  var(--mat-sys-primary);
+  --color-on-primary:               var(--mat-sys-on-primary);
+  --color-primary-container:        var(--mat-sys-primary-container);
+  --color-on-primary-container:     var(--mat-sys-on-primary-container);
+
+  --color-secondary:                var(--mat-sys-secondary);
+  --color-on-secondary:             var(--mat-sys-on-secondary);
+  --color-secondary-container:      var(--mat-sys-secondary-container);
+  --color-on-secondary-container:   var(--mat-sys-on-secondary-container);
+
+  --color-tertiary:                 var(--mat-sys-tertiary);
+  --color-on-tertiary:              var(--mat-sys-on-tertiary);
+  --color-tertiary-container:       var(--mat-sys-tertiary-container);
+  --color-on-tertiary-container:    var(--mat-sys-on-tertiary-container);
+
+  --color-background:               var(--mat-sys-background);
+  --color-on-background:            var(--mat-sys-on-background);
+  --color-surface:                  var(--mat-sys-surface);
+  --color-on-surface:               var(--mat-sys-on-surface);
+  --color-surface-variant:          var(--mat-sys-surface-variant);
+  --color-on-surface-variant:       var(--mat-sys-on-surface-variant);
+  --color-surface-container-low:    var(--mat-sys-surface-container-low);
+  --color-surface-container:        var(--mat-sys-surface-container);
+  --color-surface-container-high:   var(--mat-sys-surface-container-high);
+  --color-inverse-surface:          var(--mat-sys-inverse-surface);
+  --color-on-inverse-surface:       var(--mat-sys-inverse-on-surface);
+
+  --color-outline:                  var(--mat-sys-outline);
+  --color-outline-variant:          var(--mat-sys-outline-variant);
+
+  --color-error:                    var(--mat-sys-error);
+  --color-on-error:                 var(--mat-sys-on-error);
+  --color-error-container:          var(--mat-sys-error-container);
+  --color-on-error-container:       var(--mat-sys-on-error-container);
+}

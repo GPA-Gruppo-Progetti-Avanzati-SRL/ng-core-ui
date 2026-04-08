@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <div class="p-8">
+      <div class="text-2xl font-semibold mb-2 text-on-surface">Not Found</div>
       <div class="text-on-surface-variant">The requested page could not be found.</div>
     </div>
   `,
