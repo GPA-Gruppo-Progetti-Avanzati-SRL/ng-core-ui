@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "build:lib": "bun run build:components-css && ng build ng-core-ui --configuration production && bun run build:schematics",
+    "build:lib": "node scripts/build-components-css.mjs && ng build ng-core-ui --configuration production && tsc -p projects/ng-core-ui/schematics/tsconfig.json",
     "build:components-css": "node scripts/build-components-css.mjs",
     "build:schematics": "tsc -p projects/ng-core-ui/schematics/tsconfig.json"
   },

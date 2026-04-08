@@ -10,8 +10,6 @@
     "styles/mat-theme-bridge.css",
     "assets/**/*.woff2",
     "tailwind.config.js",
-    "src/**/*.html",
-    "src/**/*.ts",
     "schematics/collection.json",
     "schematics/migrations.json",
     "schematics/ng-add/schema.json",
