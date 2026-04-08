@@ -7,6 +7,7 @@
   "assets": [
     "styles/**/*.scss",
     "styles/components.css",
+    "styles/mat-theme-bridge.css",
     "assets/**/*.woff2",
     "tailwind.config.js",
     "src/**/*.html",
