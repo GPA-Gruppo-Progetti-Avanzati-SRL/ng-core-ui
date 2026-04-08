@@ -1,6 +1,6 @@
 import {Injectable, computed, inject, signal, effect} from '@angular/core';
 import { HttpClient , HttpHeaders} from '@angular/common/http';
-import { App, Context, PathNode, TokenResponse } from './system.models';
+import { App, Site, PathNode, TokenResponse } from './system.models';
 import { CoreAction } from './routes';
 import { Environment } from './environment';
 import { firstValueFrom } from 'rxjs';
@@ -31,7 +31,7 @@ export class SystemService {
   readonly pathsSig = signal<PathNode[] | null>(null);
   readonly menuTreeSig = signal<PathNode[] | null>(null);
   readonly appsSig = signal<App[] | null>(null);
-  readonly contextsSig = signal<Context[] | null>(null);
+  readonly sitesSig = signal<Site[] | null>(null);
   readonly environmentSig = signal<Environment | null>(null);
   readonly environmentProperties = computed(() => this.environmentSig()?.properties || {});
 
@@ -111,7 +111,7 @@ export class SystemService {
     const sortedApps = this.sortApps(data.apps ?? []);
     this.appsSig.set(sortedApps);
 
-    this.contextsSig.set(data.contexts ?? []);
+    this.sitesSig.set(data.sites ?? []);
 
     return data;
   }

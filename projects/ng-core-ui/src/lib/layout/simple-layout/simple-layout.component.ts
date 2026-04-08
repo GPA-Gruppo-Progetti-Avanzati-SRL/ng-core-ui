@@ -39,20 +39,11 @@ export class SimpleLayoutComponent implements OnInit {
 
   whoami = this.system.whoamiSig;
   environment = this.system.environmentSig;
-  apps = this.system.appsSig;
-  contexts = this.system.contextsSig;
-  currentAppId = computed(() => this.environment()?.appId || '');
+  sites = this.system.sitesSig;
   appSha = computed(() => AppSha);
   appVersion = computed(() => AppVersion);
 
-  currentPageTitle = computed(() => {
-    const apps = this.apps();
-    const currentApp = apps?.find(app => app.id === this.currentAppId());
-    if (currentApp) {
-      return currentApp.description || currentApp.id;
-    }
-    return 'Enterprise App';
-  });
+  currentPageTitle = computed(() => this.environment()?.appDescription || 'Enterprise App');
 
   ngOnInit() {
     this.system.bootstrap().catch(err => console.error('Bootstrap error in SimpleLayout', err));

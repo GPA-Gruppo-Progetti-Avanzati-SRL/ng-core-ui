@@ -67,19 +67,7 @@ export class MainLayoutComponent implements OnInit {
     { initialValue: this.router.url}
   );
 
-  currentPageTitle = computed(() => {
-    const apps = this.apps();
-    const currentApp = apps?.find(app => app.id === this.currentAppId());
-    if (currentApp) {
-      return currentApp.description || currentApp.id;
-    }
-    const url = this.currentUrl();
-    if (!url) return 'Enterprise App';
-    const normalizedUrl = this.system.normalizePath(url);
-    const nodes = this.menuTree();
-    const activeNode = nodes?.find((n: PathNode) => this.endpointFor(n) === normalizedUrl);
-    return activeNode?.description || activeNode?.id || 'Enterprise App';
-  });
+  currentPageTitle = computed(() => this.environment()?.appDescription || 'Enterprise App');
 
   // MenuRoots già ordinati dal SystemService
   sortedMenuRoots = this.menuTree;

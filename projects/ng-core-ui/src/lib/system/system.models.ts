@@ -15,16 +15,21 @@ export interface App {
   order?: number;
 }
 
-export interface Context {
+export interface Site {
   id: string;
-  label: string;
+  name?: string;
+  icon?: string;
+  path?: string;
+  order?: number;
 }
 
 export interface TokenResponse {
+
   user: string;
   roles?: string[] | null;
   capabilities?: string[] | null;
   paths?: PathNode[] | null;
   apps?: App[] | null;
-  contexts?: Context[] | null;
+  sites?: Site[] | null;
 }
+
