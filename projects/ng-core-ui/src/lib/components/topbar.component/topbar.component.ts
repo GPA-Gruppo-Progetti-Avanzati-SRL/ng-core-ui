@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.css',
+  host: { class: 'ui' },
 })
 export class TopbarComponent {
   @Input() title: string = '';

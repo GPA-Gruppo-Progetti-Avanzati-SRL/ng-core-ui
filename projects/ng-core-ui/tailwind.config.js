@@ -4,10 +4,10 @@
 
 export default {
   content: [
-    './src/**/*.ts'
+    './src/**/*.ts',
+    './src/**/*.html',
   ],
   darkMode: 'class',
   important: '.ui',
   plugins: [],
-  prefix: 'ui:',
 }

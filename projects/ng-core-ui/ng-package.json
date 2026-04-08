@@ -6,10 +6,15 @@
   },
   "assets": [
     "styles/**/*.scss",
+    "styles/components.css",
     "assets/**/*.woff2",
+    "tailwind.config.js",
+    "src/**/*.html",
+    "src/**/*.ts",
     "schematics/collection.json",
     "schematics/migrations.json",
     "schematics/ng-add/schema.json",
     "schematics/package.json"
   ]
 }
+

@@ -10,6 +10,8 @@ import { updateAppConfig }            from './steps/update-app-config';
 import { createRoutesConfig }         from './steps/create-routes-config';
 import { createHomeComponent }        from './steps/create-home-component';
 import { cleanAppHtml }               from './steps/clean-app-html';
+import { createFontsScss }            from './steps/create-fonts-scss';
+import { createTailwindAppCss }       from './steps/create-tailwind-app-css';
 import { createGenerateRoutesScript } from './steps/create-generate-routes-script';
 
 export function ngAdd(options: Schema): Rule {
@@ -27,6 +29,8 @@ export function ngAdd(options: Schema): Rule {
       createRoutesConfig(),
       createHomeComponent(),
       cleanAppHtml(),
+      createFontsScss(),
+      createTailwindAppCss(),
       createGenerateRoutesScript(),
     ])(tree, context);
   };

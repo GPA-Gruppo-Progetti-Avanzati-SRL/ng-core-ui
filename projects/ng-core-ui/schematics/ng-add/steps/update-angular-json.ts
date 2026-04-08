@@ -43,28 +43,35 @@ export function updateAngularJson(options: Schema): Rule {
         context.logger.info('  ✔ Impostato preserveSymlinks: true');
       }
 
-      // Stili
+      // Ordine stili:
+      //  1. src/fonts.scss        — @font-face via url() relativi a node_modules (deployUrl-aware)
+      //  2. src/tailwind-app.css  — utilities Tailwind solo per l'app (puro CSS → PostCSS)
+      //  3. components.css        — utilities Tailwind pre-buildate della libreria
+      //  4. themes.scss           — tema Angular Material + override
       buildOptions.styles = buildOptions.styles ?? [];
-      const themeEntry = `node_modules/${LIB}/styles/themes.scss`;
+      const themeEntry      = `node_modules/${LIB}/styles/themes.scss`;
+      const componentsEntry = `node_modules/${LIB}/styles/components.css`;
+      const tailwindAppEntry = 'src/tailwind-app.css';
+      const fontsEntry      = 'src/fonts.scss';
       if (!buildOptions.styles.includes(themeEntry)) {
         buildOptions.styles.unshift(themeEntry);
         context.logger.info(`  ✔ Aggiunto ${themeEntry} agli stili`);
       }
-
-      // Assets ng-core-ui
-      buildOptions.assets = buildOptions.assets ?? [];
-      const assetEntry = {
-        glob: '**/*',
-        input: `node_modules/${LIB}/assets`,
-        output: 'assets/ng-core-ui',
-      };
-      const hasAsset = buildOptions.assets.some(
-        (a: unknown) => typeof a === 'object' && (a as { input?: string }).input === assetEntry.input
-      );
-      if (!hasAsset) {
-        buildOptions.assets.push(assetEntry);
-        context.logger.info(`  ✔ Aggiunto asset mapping per ng-core-ui`);
+      if (!buildOptions.styles.includes(componentsEntry)) {
+        buildOptions.styles.unshift(componentsEntry);
+        context.logger.info(`  ✔ Aggiunto ${componentsEntry} agli stili`);
       }
+      if (!buildOptions.styles.includes(tailwindAppEntry)) {
+        buildOptions.styles.unshift(tailwindAppEntry);
+        context.logger.info(`  ✔ Aggiunto ${tailwindAppEntry} agli stili`);
+      }
+      if (!buildOptions.styles.includes(fontsEntry)) {
+        buildOptions.styles.unshift(fontsEntry);
+        context.logger.info(`  ✔ Aggiunto ${fontsEntry} agli stili`);
+      }
+
+      // Font e icone sono referenziati via url() in src/fonts.scss:
+      // Angular li include nel bundle con hash e applica deployUrl automaticamente.
     }
 
     tree.overwrite(angularJsonPath, JSON.stringify(angularJson, null, 2) + '\n');

@@ -6,6 +6,7 @@
 .claude
 # Compiled output
 /dist
+/projects/ng-core-ui/styles/components.css
 /tmp
 /out-tsc
 /bazel-out

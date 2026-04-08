@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [CommonModule, MatIconModule, MatButtonModule],
   templateUrl: './card.component.html',
   styleUrl: './card.component.css',
+  host: { class: 'ui' },
 })
 export class CardComponent {
   @Input() title: string = '';

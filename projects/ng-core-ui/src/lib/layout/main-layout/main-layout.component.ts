@@ -39,6 +39,7 @@ import { MatCardModule } from '@angular/material/card';
   styleUrls: ['./main-layout.component.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'ui' },
 })
 export class MainLayoutComponent implements OnInit {
 

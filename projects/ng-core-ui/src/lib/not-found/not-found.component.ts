@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
     <div class="p-8">
       <div class="text-surface-500">The requested page could not be found.</div>
     </div>
-  `
+  `,
+  host: { class: 'ui' },
 })
 export class NotFoundComponent {}
