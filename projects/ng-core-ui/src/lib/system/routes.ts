@@ -1,3 +1,4 @@
+
 import { Routes } from '@angular/router';
 import { Type } from '@angular/core';
 
@@ -7,19 +8,11 @@ import { SimpleLayoutComponent } from '../layout/simple-layout/simple-layout.com
 import { ForbiddenComponent } from '../forbidden/forbidden.component';
 import { NotFoundComponent } from '../not-found/not-found.component';
 
-export interface CoreAction {
-  id: string;
-  description?: string;
-}
+export type { CoreAction, CoreRouteBase, CoreRouteEntry } from './routes-json';
+export { toRoutesJson } from './routes-json';
+import type { CoreRouteBase } from './routes-json';
 
-
-export interface CoreRoute {
-  id: string;
-  description?: string;
-  icon?: string;
-  path?: string;
-  order?: number;
-  ismenu?: boolean;
+export interface CoreRoute extends CoreRouteBase {
   loadComponent?: () => Promise<Type<unknown> | { default: Type<unknown> }>;
 }
 
@@ -27,10 +20,6 @@ export interface CoreRoutesOptions {
   layout?: 'main' | 'simple';
   guard?: boolean;
 }
-
-export type CoreRouteEntry =
-  | ({ type: 'ui' } & Omit<CoreRoute, 'loadComponent'>)
-  | { type: 'ui_action'; id: string; description?: string };
 
 export function toRoutes(routes: CoreRoute[], options?: CoreRoutesOptions): Routes {
   const layout = options?.layout ?? 'main';
@@ -53,22 +42,3 @@ export function toRoutes(routes: CoreRoute[], options?: CoreRoutesOptions): Rout
   ];
 }
 
-export function toRoutesJson(routes: CoreRoute[], actions?: CoreAction[]): CoreRouteEntry[] {
-  const ui: CoreRouteEntry[] = routes.map(({ id, description, icon, path, order, ismenu }) => ({
-    type: 'ui',
-    id: id.toUpperCase(),
-    ...(description !== undefined && { description }),
-    ...(icon !== undefined && { icon }),
-    path: path != null ? (path === '' ? '/' : path.startsWith('/') ? path : `/${path}`) : undefined,
-    ...(order !== undefined && { order }),
-    ...(ismenu !== undefined && { ismenu }),
-  }));
-
-  const ui_action: CoreRouteEntry[] = (actions ?? []).map(a => ({
-    type: 'ui_action' as const,
-    id: a.id.toUpperCase(),
-    ...(a.description !== undefined && { description: a.description }),
-  }));
-
-  return [...ui, ...ui_action];
-}

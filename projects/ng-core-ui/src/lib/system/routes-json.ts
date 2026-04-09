@@ -1,0 +1,43 @@
+/**
+ * Pure TypeScript utilities for serializing route/action definitions to JSON.
+ * No Angular dependencies — safe to import from Node.js / Bun build scripts.
+ */
+
+export interface CoreAction {
+  id: string;
+  description?: string;
+}
+
+/** Subset of CoreRoute used for JSON serialization (no loadComponent). */
+export interface CoreRouteBase {
+  id: string;
+  description?: string;
+  icon?: string;
+  path?: string;
+  order?: number;
+  ismenu?: boolean;
+}
+
+export type CoreRouteEntry =
+  | ({ type: 'ui' } & Omit<CoreRouteBase, never>)
+  | { type: 'ui_action'; id: string; description?: string };
+
+export function toRoutesJson(routes: CoreRouteBase[], actions?: CoreAction[]): CoreRouteEntry[] {
+  const ui: CoreRouteEntry[] = routes.map(({ id, description, icon, path, order, ismenu }) => ({
+    type: 'ui',
+    id: id.toUpperCase(),
+    ...(description !== undefined && { description }),
+    ...(icon !== undefined && { icon }),
+    path: path != null ? (path === '' ? '/' : path.startsWith('/') ? path : `/${path}`) : undefined,
+    ...(order !== undefined && { order }),
+    ...(ismenu !== undefined && { ismenu }),
+  }));
+
+  const ui_action: CoreRouteEntry[] = (actions ?? []).map(a => ({
+    type: 'ui_action' as const,
+    id: a.id.toUpperCase(),
+    ...(a.description !== undefined && { description: a.description }),
+  }));
+
+  return [...ui, ...ui_action];
+}
