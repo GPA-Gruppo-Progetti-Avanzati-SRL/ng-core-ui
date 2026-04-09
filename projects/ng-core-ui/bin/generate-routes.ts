@@ -1,0 +1,32 @@
+/**
+ * Generate routes.json for backend permission seeding.
+ * Usage (from the consuming app root):
+ *   bun node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-routes.mjs
+ *
+ * Reads APP_ROUTES (and optionally APP_ACTIONS) from the consuming app's
+ * src/app/app.routes.config.ts and writes dist/caps/ui/routes.json.
+ */
+import { toRoutesJson } from '../src/lib/system/routes-json';
+import { mkdirSync, writeFileSync } from 'fs';
+import { join } from 'path';
+
+const appRoot = process.cwd();
+
+// Dynamic import resolves relative to the consuming app's CWD.
+const routesConfigPath = join(appRoot, 'src/app/app.routes.config.ts');
+const actionsConfigPath = join(appRoot, 'src/app/app.actions.config.ts');
+
+const { APP_ROUTES } = await import(routesConfigPath);
+
+let APP_ACTIONS: { id: string; description?: string }[] | undefined;
+try {
+  const actionsModule = await import(actionsConfigPath);
+  APP_ACTIONS = actionsModule.APP_ACTIONS;
+} catch {
+  // APP_ACTIONS is optional — no-op if file doesn't exist
+}
+
+const outDir = join(appRoot, 'dist', 'caps', 'ui');
+mkdirSync(outDir, { recursive: true });
+writeFileSync(join(outDir, 'routes.json'), JSON.stringify(toRoutesJson(APP_ROUTES, APP_ACTIONS), null, 2));
+console.log('routes.json written to', join(outDir, 'routes.json'));

@@ -114,7 +114,7 @@ provideRouter(toRoutes(APP_ROUTES)),
 provideGPAUICore(),
 ```
 
-`toRoutesJson(APP_ROUTES)` is used by `scripts/generate-routes.ts` to emit `dist/caps/ui/routes.json` for backend permission seeding.
+`toRoutesJson(APP_ROUTES)` is called by the library's pre-built script to emit `dist/caps/ui/routes.json` for backend permission seeding. Consuming apps run it via `npm run generate-routes` (which calls `bun node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-routes.mjs`), added to their `package.json` by the `ng-add` schematic.
 
 ### Styling
 
@@ -133,6 +133,7 @@ The library publishes these assets alongside the compiled JS:
 - `styles/components.css` — pre-built Tailwind output
 - `styles/mat-theme-bridge.css` — `@theme {}` block for Tailwind utility generation
 - `tailwind.config.js` — shared Tailwind config for consuming apps
+- `bin/generate-routes.mjs` — pre-built script for emitting `dist/caps/ui/routes.json`
 - `assets/**/*.woff2` — Roboto fonts (300/regular/500/600) and Material Icons
 
 ### Key Conventions
@@ -158,7 +159,7 @@ All exports go through `projects/ng-core-ui/src/public-api.ts`. When adding a ne
 5. **createDeclarations** — creates `src/declarations.d.ts` with `AppSha`/`AppVersion` globals.
 6. **updateAppConfig** — rewrites `src/app/app.config.ts` with `provideGPAUICore()`, `provideRouter(toRoutes(APP_ROUTES))`, `provideHttpClient()`.
 7. **createRoutesConfig** — creates `src/app/app.routes.config.ts` with a starter `APP_ROUTES: CoreRoute[]`.
-8. **createGenerateRoutesScript** — creates `scripts/generate-routes.ts` for emitting `routes.json`.
+8. **createGenerateRoutesScript** — adds a `"generate-routes"` script to the app's `package.json` that runs the library's pre-built `bin/generate-routes.mjs` via bun.
 9. **createHomeComponent** — creates `src/app/pages/home/home.component.ts` and `.html`.
 10. **cleanAppHtml** — replaces `app.html` / `app.component.html` with just `<router-outlet />`.
 11. **createFontsScss** — creates `src/fonts.scss` with Roboto and Material Icons `@font-face` declarations.
