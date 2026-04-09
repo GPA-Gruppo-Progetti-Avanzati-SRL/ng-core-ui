@@ -6,6 +6,6 @@ export const contextInterceptor: HttpInterceptorFn = (req, next) => {
   const system = inject(SystemService);
   const headers: Record<string, string> = { 'X-Context': window.location.href };
   const appId = system.environmentSig()?.appId;
-  if (appId) headers['X-App-Id'] = appId;
+  if (appId) headers['X-AppId'] = appId;
   return next(req.clone({ setHeaders: headers }));
 };
