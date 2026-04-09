@@ -8,7 +8,6 @@ import { MatButtonModule } from '@angular/material/button';
   selector: 'core-card',
   imports: [CommonModule, MatIconModule, MatButtonModule],
   templateUrl: './card.component.html',
-  styleUrl: './card.component.css',
   host: { class: 'ui' },
 })
 export class CardComponent {
