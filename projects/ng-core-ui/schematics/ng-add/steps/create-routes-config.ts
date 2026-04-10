@@ -1,11 +1,13 @@
-import { Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
+import { Rule, SchematicContext, SchematicsException, Tree } from '@angular-devkit/schematics';
 import { LIB } from '../constants';
+import { Schema } from '../types';
 
-const ROUTES_CONFIG_TEMPLATE = `import type { CoreRoute } from '${LIB}';
+function buildRoutesConfig(appId: string): string {
+  return `import type { CoreRoute } from '${LIB}';
 
 export const APP_ROUTES: CoreRoute[] = [
   {
-    id: 'home',
+    id: 'cap:${appId}:ui:home',
     path: '',
     description: 'Home',
     icon: 'home',
@@ -15,7 +17,7 @@ export const APP_ROUTES: CoreRoute[] = [
   },
   // Aggiungi qui le altre rotte della tua applicazione, es:
   // {
-  //   id: 'dashboard',
+  //   id: 'cap:${appId}:ui:dashboard',
   //   path: 'dashboard',
   //   description: 'Dashboard',
   //   icon: 'dashboard',
@@ -25,12 +27,21 @@ export const APP_ROUTES: CoreRoute[] = [
   // },
 ];
 `;
+}
 
-export function createRoutesConfig(): Rule {
+export function createRoutesConfig(options: Schema): Rule {
   return (tree: Tree, context: SchematicContext) => {
+    const angularJson = JSON.parse(tree.read('angular.json')!.toString('utf-8'));
+    const projectName: string =
+      options.project ?? angularJson.defaultProject ?? Object.keys(angularJson.projects)[0];
+
+    if (!projectName) {
+      throw new SchematicsException('Impossibile determinare il nome del progetto Angular.');
+    }
+
     const path = 'src/app/app.routes.config.ts';
     if (!tree.exists(path)) {
-      tree.create(path, ROUTES_CONFIG_TEMPLATE);
+      tree.create(path, buildRoutesConfig(projectName));
       context.logger.info('  ✔ Creato src/app/app.routes.config.ts');
     } else {
       context.logger.info('  ✔ app.routes.config.ts già presente');
