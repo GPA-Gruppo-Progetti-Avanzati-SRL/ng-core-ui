@@ -27,7 +27,7 @@ export function ngAdd(options: Schema): Rule {
       updateStylesScss(),
       createDeclarations(),
       updateAppConfig(options),
-      createRoutesConfig(),
+      createRoutesConfig(options),
       createHomeComponent(),
       cleanAppHtml(),
       createFontsScss(),

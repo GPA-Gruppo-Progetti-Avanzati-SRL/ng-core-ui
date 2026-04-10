@@ -5,6 +5,11 @@
       "description": "Aggiunge e configura ng-core-ui in un progetto Angular",
       "factory": "./ng-add/index#ngAdd",
       "schema": "./ng-add/schema.json"
+    },
+    "page": {
+      "description": "Genera una nuova pagina (componente + rotta CoreRoute) nell'app",
+      "factory": "./generate-page/index#generatePage",
+      "schema": "./generate-page/schema.json"
     }
   }
 }

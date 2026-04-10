@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "$id": "NgCoreUiGeneratePageSchema",
+  "title": "ng generate @gpa-gruppo-progetti-avanzati-srl/ng-core-ui:page",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nome della pagina in kebab-case (es. 'user-list'). Determina il path della rotta, il nome dei file e il selettore del componente.",
+      "$default": { "$source": "argv", "index": 0 },
+      "x-prompt": "Nome della pagina (kebab-case, es: user-list):"
+    },
+    "description": {
+      "type": "string",
+      "description": "Descrizione leggibile della pagina, usata come label nel menu.",
+      "x-prompt": "Descrizione della pagina (label menu, es: 'Lista Utenti'):"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Nome icona Material (es: 'people'). Default: 'chevron_right'.",
+      "default": "chevron_right",
+      "x-prompt": "Icona Material (es: people, dashboard, settings) [default: chevron_right]:"
+    },
+    "ismenu": {
+      "type": "boolean",
+      "description": "Mostra la pagina nel menu laterale.",
+      "default": true,
+      "x-prompt": "Mostrare nel menu laterale? (default: Sì)"
+    },
+    "order": {
+      "type": "number",
+      "description": "Ordine nel menu laterale (numero intero).",
+      "x-prompt": "Ordine nel menu (numero intero, es: 1):"
+    }
+  },
+  "required": ["name", "description", "order"]
+}

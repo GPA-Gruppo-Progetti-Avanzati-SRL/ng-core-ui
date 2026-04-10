@@ -1,7 +1,7 @@
 ﻿@if (whoami()) {
   <div class="layout-grid" [class.expanded]="isExpanded()">
 
-    <aside class="sidenav" [class.collapsed]="!isExpanded()" role="navigation" aria-label="Primary">
+    <aside #sidenav class="sidenav" [class.collapsed]="!isExpanded()" role="navigation" aria-label="Primary">
       <mat-nav-list class="nav-list">
         @for (link of sortedMenuRoots(); track link) {
           <a
