@@ -278,15 +278,44 @@ aside.sidenav {
     opacity: 1;
   }
 
-  .close-btn {
-    align-self: flex-end;
-    margin-bottom: 8px;
+}
 
-    mat-icon,
-    .mat-icon {
-      color: var(--mat-sys-inverse-on-surface);
-    }
+/* Logo nascosto di default; ogni tema lo attiva impostando --layout-logo-url */
+.app-logo-link {
+  display: none;
+  justify-content: center;
+  margin: 8px 0 20px;
+  text-decoration: none;
+}
+
+.app-logo-container {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  background-color: var(--mat-sys-surface);
+  background-image: var(--layout-logo-url);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 1);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+    transform: scale(1.05);
   }
+}
+
+.extra-footer {
+  flex-shrink: 0;
+  padding: 0 !important;
+}
+
+mat-divider.apps-divider {
+  border-top-color: rgba(255, 255, 255, 0.2) !important;
+  margin: 4px 16px 12px;
 }
 
 .extra-content {
