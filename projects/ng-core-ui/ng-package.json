@@ -9,6 +9,7 @@
     "styles/components.css",
     "styles/mat-theme-bridge.css",
     "assets/**/*.woff2",
+    "assets/themes/**",
     "tailwind.config.js",
     "bin/generate-routes.mjs",
     "schematics/collection.json",

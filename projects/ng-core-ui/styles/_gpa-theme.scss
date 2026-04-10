@@ -24,8 +24,13 @@ $gpa-theme: mat.define-theme((
 
   --layout-sidenav-border: none;
   --layout-toolbar-border: none;
+  --layout-logo-url: url('../assets/themes/gpa/logo-gpa.svg');
 
   @include color-bridge.apply();
+
+  .app-logo-link {
+    display: flex;
+  }
 }
 
 .error-snackbar {

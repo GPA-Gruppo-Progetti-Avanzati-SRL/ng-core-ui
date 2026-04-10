@@ -40,9 +40,10 @@
 
         <!-- Sidenav destra -->
         <div class="extra-sidenav" [class.open]="extraSidenavOpen()" tabindex="-1" role="complementary" aria-label="Menu laterale destro">
-          <button mat-icon-button class="close-btn" (click)="closeExtraSidenav()" aria-label="Chiudi menu laterale destro">
-            <mat-icon>close</mat-icon>
-          </button>
+          <a href="/" (click)="closeExtraSidenav()" class="app-logo-link" aria-label="Vai alla home">
+            <div class="app-logo-container"></div>
+          </a>
+          <mat-divider class="apps-divider"></mat-divider>
           <div class="extra-content">
             <mat-nav-list>
               @for (app of apps(); track app.id) {
@@ -60,6 +61,13 @@
               }
             </mat-nav-list>
           </div>
+          <mat-divider class="apps-divider"></mat-divider>
+          <mat-nav-list class="extra-footer">
+            <a mat-list-item class="extra-menu-item" [href]="environment()?.logoutPath || '#'" aria-label="Logout">
+              <mat-icon>logout</mat-icon>
+              <span class="app-label">Logout</span>
+            </a>
+          </mat-nav-list>
         </div>
 
         <div class="extra-sidenav-backdrop" [class.open]="extraSidenavOpen()" (click)="closeExtraSidenav()" tabindex="-1" aria-label="Chiudi menu laterale destro"></div>
