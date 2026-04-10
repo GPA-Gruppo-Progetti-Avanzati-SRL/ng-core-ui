@@ -23,10 +23,7 @@ $poste-theme: mat.define-theme((
   @include mat.all-component-themes($poste-theme);
   @include mat.system-level-colors($poste-theme);
   @include mat.system-level-typography($poste-theme);
-  @include mat.button-overrides((
-    filled-container-color: var(--mat-sys-tertiary),
-    filled-label-text-color: var(--mat-sys-on-tertiary),
-  ));
+
 
   --layout-sidenav-border: none;
   --layout-toolbar-border: none;

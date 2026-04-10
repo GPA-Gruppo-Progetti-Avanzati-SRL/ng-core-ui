@@ -8,6 +8,12 @@
     button-color: var(--mat-sys-on-error),
   ))
 }
+.ui {
+  @include mat.button-overrides((
+    filled-container-color: var(--mat-sys-tertiary),
+    filled-label-text-color: var(--mat-sys-on-tertiary),
+  ));
+}
 
 .mat-mdc-unelevated-button .mdc-button__ripple {
   border-radius: 8px !important;
@@ -39,3 +45,4 @@
   align-items: center !important;
   justify-content: center !important;
 }
+
