@@ -13,6 +13,7 @@ import { cleanAppHtml }               from './steps/clean-app-html';
 import { createFontsScss }            from './steps/create-fonts-scss';
 import { createTailwindAppCss }       from './steps/create-tailwind-app-css';
 import { createGenerateRoutesScript } from './steps/create-generate-routes-script';
+import { createDockerfile }           from './steps/create-dockerfile';
 
 export function ngAdd(options: Schema): Rule {
   return (tree: Tree, context: SchematicContext) => {
@@ -32,6 +33,7 @@ export function ngAdd(options: Schema): Rule {
       createFontsScss(),
       createTailwindAppCss(),
       createGenerateRoutesScript(),
+      createDockerfile(options),
     ])(tree, context);
   };
 }

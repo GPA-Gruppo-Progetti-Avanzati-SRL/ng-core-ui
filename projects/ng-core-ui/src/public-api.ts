@@ -6,6 +6,7 @@ export * from './lib/system/system.service';
 export * from './lib/system/style-manager.service';
 export * from './lib/system/menu.guard';
 export * from './lib/system/routes';
+export { contextInterceptor } from './lib/system/context-interceptor';
 
 //DEFAULT PAGES
 export * from './lib/not-found/not-found.component';
