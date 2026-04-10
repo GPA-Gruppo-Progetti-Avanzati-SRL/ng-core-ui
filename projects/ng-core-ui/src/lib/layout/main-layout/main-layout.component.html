@@ -44,7 +44,6 @@
             <mat-icon>close</mat-icon>
           </button>
           <div class="extra-content">
-            <h3>Applicazioni</h3>
             <mat-nav-list>
               @for (app of apps(); track app.id) {
                 @if (app.id === currentAppId()) {
