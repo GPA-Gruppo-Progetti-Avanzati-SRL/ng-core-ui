@@ -1,92 +1,32 @@
 {
-  "session_id": "session-2026-04-13-1008",
-  "started": "2026-04-13T08:08:03.801Z",
+  "session_id": "session-2026-04-13-1057",
+  "started": "2026-04-13T08:57:41.432Z",
   "files_read": {
-    "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/styles/_gpa-theme.scss": {
+    "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/src/lib/system/menu.guard.ts": {
       "count": 1,
-      "tokens": 258,
-      "first_read": "2026-04-13T08:10:01.246Z"
+      "tokens": 405,
+      "first_read": "2026-04-13T08:58:10.356Z"
     },
-    "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/styles/_poste-theme.scss": {
+    "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/src/lib/system/system.service.ts": {
       "count": 1,
-      "tokens": 307,
-      "first_read": "2026-04-13T08:10:01.570Z"
-    },
-    "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/ng-package.json": {
-      "count": 1,
-      "tokens": 477,
-      "first_read": "2026-04-13T08:10:07.079Z"
-    },
-    "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/schematics/ng-add/steps/update-angular-json.ts": {
-      "count": 1,
-      "tokens": 1092,
-      "first_read": "2026-04-13T08:10:16.356Z"
-    },
-    "/Users/lutrib/gpa-ng-workspace/scripts/build-components-css.mjs": {
-      "count": 1,
-      "tokens": 243,
-      "first_read": "2026-04-13T08:12:12.335Z"
-    },
-    "/Users/lutrib/gpa-ng-workspace/package.json": {
-      "count": 1,
-      "tokens": 477,
-      "first_read": "2026-04-13T08:12:12.658Z"
+      "tokens": 1759,
+      "first_read": "2026-04-13T08:58:18.496Z"
     }
   },
   "files_written": [
     {
-      "file": "/Users/lutrib/gpa-ng-workspace/scripts/embed-logos.mjs",
-      "action": "create",
-      "tokens": 520,
-      "at": "2026-04-13T08:13:11.647Z"
-    },
-    {
-      "file": "/Users/lutrib/gpa-ng-workspace/README.md",
-      "action": "create",
-      "tokens": 2014,
-      "at": "2026-04-13T08:13:19.520Z"
-    },
-    {
-      "file": "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/styles/_gpa-theme.scss",
+      "file": "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/src/lib/system/menu.guard.ts",
       "action": "edit",
-      "tokens": 34,
-      "at": "2026-04-13T08:13:29.906Z"
-    },
-    {
-      "file": "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/styles/_poste-theme.scss",
-      "action": "edit",
-      "tokens": 34,
-      "at": "2026-04-13T08:13:35.103Z"
-    },
-    {
-      "file": "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/styles/_gpa-theme.scss",
-      "action": "edit",
-      "tokens": 12,
-      "at": "2026-04-13T08:13:43.631Z"
-    },
-    {
-      "file": "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/styles/_poste-theme.scss",
-      "action": "edit",
-      "tokens": 13,
-      "at": "2026-04-13T08:13:48.888Z"
-    },
-    {
-      "file": "/Users/lutrib/gpa-ng-workspace/package.json",
-      "action": "edit",
-      "tokens": 114,
-      "at": "2026-04-13T08:13:59.469Z"
+      "tokens": 605,
+      "at": "2026-04-13T08:59:21.350Z"
     }
   ],
   "edit_counts": {
-    "scripts/embed-logos.mjs": 1,
-    "README.md": 1,
-    "projects/ng-core-ui/styles/_gpa-theme.scss": 2,
-    "projects/ng-core-ui/styles/_poste-theme.scss": 2,
-    "package.json": 1
+    "projects/ng-core-ui/src/lib/system/menu.guard.ts": 1
   },
-  "anatomy_hits": 6,
+  "anatomy_hits": 2,
   "anatomy_misses": 0,
   "repeated_reads_warned": 0,
   "cerebrum_warnings": 0,
-  "stop_count": 3
+  "stop_count": 1
 }

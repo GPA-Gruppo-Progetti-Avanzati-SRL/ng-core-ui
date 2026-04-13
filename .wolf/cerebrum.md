@@ -18,6 +18,8 @@
 <!-- Mistakes made and corrected. Each entry prevents the same mistake recurring. -->
 <!-- Format: [YYYY-MM-DD] Description of what went wrong and what to do instead. -->
 
+- [2026-04-13] **MenuGuard: route con parametri dinamici (:id) non matchate.** Il guard confrontava solo `state.url` (con il valore reale, es. `/items/edit/123`) contro `allowedEndpoints` (che contiene il template, es. `/items/edit/:id`). Fix: aggiunto `getTemplateUrl()` che ricostruisce il path template dall'`ActivatedRouteSnapshot` e controlla anche quello.
+
 ## Decision Log
 
 <!-- Significant technical decisions with rationale. Why X was chosen over Y. -->

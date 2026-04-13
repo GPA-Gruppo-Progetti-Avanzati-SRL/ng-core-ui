@@ -29,12 +29,33 @@ export class MenuGuard implements CanActivateChild {
 
     // Se l'URL è la root '', normalizzato a '/', controlla se '/' o '' è consentito
     const isRoot = path === '/';
-    const isAllowed = allowed.has(path) || (isRoot && (allowed.has('') || allowed.has('/')));
+
+    // Ricostruisce il path template (con placeholder :param) dalla catena di snapshot
+    // per matchare rotte con parametri dinamici (es. /items/edit/:id)
+    const templatePath = this.getTemplateUrl(childRoute);
+
+    const isAllowed = allowed.has(path) || allowed.has(templatePath) || (isRoot && (allowed.has('') || allowed.has('/')));
 
     if (isAllowed) {
       return true;
     }
     // Non consentito (rotta esiste ma non è permessa) => 403 Forbidden interno al layout
     return this.router.parseUrl('/forbidden');
+  }
+
+  private getTemplateUrl(route: ActivatedRouteSnapshot): string {
+    const chain: ActivatedRouteSnapshot[] = [];
+    let r: ActivatedRouteSnapshot | null = route;
+    while (r) {
+      chain.unshift(r);
+      r = r.parent;
+    }
+    const parts: string[] = [];
+    for (const snap of chain) {
+      if (snap.routeConfig?.path) {
+        parts.push(snap.routeConfig.path);
+      }
+    }
+    return this.system.normalizePath('/' + parts.join('/'));
   }
 }

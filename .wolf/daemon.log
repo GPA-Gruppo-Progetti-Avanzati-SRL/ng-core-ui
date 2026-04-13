@@ -6,3 +6,4 @@
 [2026-04-13T08:07:53.274Z] [INFO] File watcher started on .wolf/
 [2026-04-13T08:07:53.275Z] [INFO] OpenWolf daemon started
 [2026-04-13T08:07:53.275Z] [INFO] Dashboard server listening on port 18791
+[2026-04-13T08:57:37.136Z] [INFO] Config changed — hot-reload not fully implemented yet
