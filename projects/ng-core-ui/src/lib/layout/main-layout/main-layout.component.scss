@@ -270,7 +270,7 @@ aside.sidenav {
   transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
   display: flex;
   flex-direction: column;
-  padding: 12px 8px 16px 8px;
+  padding: 12px 8px 6px 8px;
   pointer-events: none;
   opacity: 0;
   overflow: hidden;
@@ -313,9 +313,29 @@ aside.sidenav {
 
 .extra-footer {
   flex-shrink: 0;
-  padding: 8px 0 0 !important;
+  padding: 4px 0 0 !important;
   display: flex;
   justify-content: center;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.extra-footer .extra-menu-item {
+  min-height: unset !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.extra-footer .extra-menu-item .mdc-list-item__content,
+.extra-footer .extra-menu-item .mdc-list-item__primary-text,
+.extra-footer .extra-menu-item .mat-mdc-list-item-unscoped-content {
+  justify-content: center !important;
+}
+
+.extra-footer .extra-menu-item mat-icon,
+.extra-footer .extra-menu-item .mat-icon {
+  margin: 0 0 2px 0 !important;
 }
 
 mat-divider.apps-divider {
@@ -344,18 +364,16 @@ mat-divider.apps-divider {
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-
   width: 100%;
   min-width: 0 !important;
   min-height: 72px !important;
   height: auto !important;
-  padding: 8px 8px !important;
+  padding: 3px 2px !important;
   margin: 0 !important;
   border-radius: 4px !important;
   --mdc-list-list-item-container-shape: 4px;
   box-sizing: border-box;
   overflow: hidden;
-
   color: var(--mat-sys-inverse-on-surface);
   background: transparent;
   transition: background-color 0.15s ease;
@@ -478,7 +496,8 @@ mat-divider.apps-divider {
 
 .app-info {
   flex-shrink: 0;
-  padding: 12px 16px 0;
+  margin-top: 4px;
+  padding: 0 16px 0;
   font-size: 10px;
   color: var(--mat-sys-on-primary);
   opacity: 0.8;
