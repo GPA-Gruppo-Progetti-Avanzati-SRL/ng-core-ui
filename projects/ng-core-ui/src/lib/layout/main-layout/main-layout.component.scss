@@ -273,8 +273,7 @@ aside.sidenav {
   padding: 12px 8px 16px 8px;
   pointer-events: none;
   opacity: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   box-sizing: border-box;
 
   &.open {
@@ -282,7 +281,6 @@ aside.sidenav {
     pointer-events: auto;
     opacity: 1;
   }
-
 }
 
 /* Logo nascosto di default; ogni tema lo attiva impostando --layout-logo-url */
@@ -326,18 +324,19 @@ mat-divider.apps-divider {
 }
 
 .extra-content {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
 }
 
 .extra-content mat-nav-list {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
-  padding: 0 !important;
+  gap: 12px;
+  padding: 8px 0 !important;
 }
 
 .extra-menu-item {
@@ -478,8 +477,8 @@ mat-divider.apps-divider {
 }
 
 .app-info {
-  margin-top: 20px;
-  padding: 8px 16px 0;
+  flex-shrink: 0;
+  padding: 12px 16px 0;
   font-size: 10px;
   color: var(--mat-sys-on-primary);
   opacity: 0.8;
