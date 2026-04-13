@@ -47,3 +47,4 @@ testem.log
 .DS_Store
 Thumbs.db
 projects/ng-core-ui/README.md
+/projects/ng-core-ui/styles/_logos.scss
