@@ -2,6 +2,7 @@
 @use '@angular/material' as mat;
 @use 'poste-colors' as pi-theme;
 @use 'color-bridge';
+@use 'logos';
 
 @include mat.core();
 
@@ -28,7 +29,7 @@ $poste-theme: mat.define-theme((
   --layout-sidenav-border: none;
   --layout-toolbar-border: none;
   --mat-sys-surface-variant: var(--mat-sys-tertiary-container);
-  --layout-logo-url: url('../assets/themes/poste/logo-poste.png');
+  --layout-logo-url: url("#{logos.$poste}");
 
   @include color-bridge.apply();
 

@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "bugs": [
+    {
+      "id": "bug-001",
+      "timestamp": "2026-04-13T08:13:43.631Z",
+      "error_message": "Incorrect value in code",
+      "file": "projects/ng-core-ui/styles/_gpa-theme.scss",
+      "root_cause": "Had '../assets/themes/gpa/logo-gpa.svg'",
+      "fix": "Changed to \"#{logos.$gpa}\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "scss"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-04-13T08:13:43.631Z"
+    },
+    {
+      "id": "bug-002",
+      "timestamp": "2026-04-13T08:13:48.888Z",
+      "error_message": "Incorrect value in code",
+      "file": "projects/ng-core-ui/styles/_poste-theme.scss",
+      "root_cause": "Had '../assets/themes/poste/logo-poste.png'",
+      "fix": "Changed to \"#{logos.$poste}\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "scss"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-04-13T08:13:48.888Z"
+    },
+    {
+      "id": "bug-003",
+      "timestamp": "2026-04-13T08:13:59.472Z",
+      "error_message": "Incorrect value in code",
+      "file": "package.json",
+      "root_cause": "Had \"cp README.md projects/ng-core-ui/README.md && nod",
+      "fix": "Changed to \"cp README.md projects/ng-core-ui/README.md && nod",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "json"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-04-13T08:13:59.472Z"
+    }
+  ]
+}

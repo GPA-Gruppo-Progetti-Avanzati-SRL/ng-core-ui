@@ -3,7 +3,7 @@
 Libreria UI condivisa per le applicazioni GPA. Fornisce layout, componenti, gestione token/ambiente, routing pre-configurati, temi Angular Material 3 e utility Tailwind CSS v4.
 
 - **Pacchetto:** `@gpa-gruppo-progetti-avanzati-srl/ng-core-ui`
-- **Versione:** 0.0.23
+- **Versione:** 0.0.26
 - **Angular:** 21.x · **Material:** 21.x · **Tailwind:** 4.x
 
 ---
@@ -25,18 +25,19 @@ ng add @gpa-gruppo-progetti-avanzati-srl/ng-core-ui
 
 Vengono configurati automaticamente:
 
-| File | Cosa viene fatto |
-|------|-----------------|
-| `package.json` | Allinea `@angular/material`, `tailwindcss`, `@tailwindcss/postcss` alle versioni target |
+| File / azione | Cosa viene fatto |
+|---------------|-----------------|
+| `package.json` | Allinea `@angular/material`, `tailwindcss`, `@tailwindcss/postcss` alle versioni target; aggiunge gli script `generate-routes` e `generate-page` |
 | `.postcssrc.json` | Creato con plugin `@tailwindcss/postcss` |
-| `angular.json` | Aggiunge stili (`fonts.scss`, `tailwind-app.css`, `components.css`, `themes.scss`), mapping assets, budget raddoppiati |
-| `src/tailwind-app.css` | Entry point Tailwind per l'app (utilities + `@custom-variant ui`) |
+| `angular.json` | Aggiunge stili (`fonts.scss`, `tailwind-app.css`, `components.css`, `themes.scss`), mapping assets, budget raddoppiati, `preserveSymlinks` |
+| `src/tailwind-app.css` | Entry point Tailwind per l'app (utilities + `mat-theme-bridge.css` + `@custom-variant ui`) |
 | `src/fonts.scss` | `@font-face` per Roboto e Material Icons |
 | `src/styles.scss` | Aggiunge `@use "tailwindcss"` e `@source` per ng-core-ui |
 | `src/declarations.d.ts` | Dichiara `AppSha` e `AppVersion` (costanti build-time) |
 | `src/app/app.config.ts` | `provideRouter(toRoutes(APP_ROUTES))`, `provideGPAUICore()`, `provideHttpClient()` |
-| `src/app/app.routes.config.ts` | Configurazione rotte (`CoreRoute[]`) |
-| `scripts/generate-routes.ts` | Script per generare `routes.json` a build time |
+| `src/app/app.routes.config.ts` | Configurazione rotte (`CoreRoute[]`) con home route iniziale |
+| `src/app/pages/home/` | Componente home di esempio |
+| `src/app/app.html` | Sostituito con `<router-outlet />` |
 
 ### 3. Dichiara le rotte
 
@@ -47,21 +48,41 @@ import type { CoreRoute } from '@gpa-gruppo-progetti-avanzati-srl/ng-core-ui';
 
 export const APP_ROUTES: CoreRoute[] = [
   {
-    id: 'dashboard',
-    path: 'dashboard',
-    description: 'Dashboard',
-    icon: 'dashboard',
+    id: 'cap:my-app:ui:home',
+    path: '',
+    description: 'Home',
+    icon: 'home',
     ismenu: true,
-    order: 1,
+    order: 0,
     loadComponent: () =>
-      import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent),
+      import('./pages/home/home.component').then(m => m.HomeComponent),
   },
 ];
 ```
 
-Le rotte vengono automaticamente avvolte in `MainLayoutComponent` con `MenuGuard`, che verifica i permessi ricevuti dal token. Le rotte `/forbidden` e `**` sono aggiunte automaticamente.
+> **Convenzione ID:** `cap:<appId>:ui:<pageName>` — l'`appId` deve coincidere con quello in `environment.json`.
 
-### 4. Dichiara le capability UI (opzionale)
+Le rotte vengono automaticamente avvolte in `MainLayoutComponent` con `MenuGuard`, che verifica i permessi ricevuti dal token. Le rotte `/forbidden` e `**` sono aggiunte automaticamente da `toRoutes()`.
+
+### 4. Genera una nuova pagina
+
+```bash
+npm run generate-page
+```
+
+Lo schematic crea il componente, il template e aggiunge la `CoreRoute` in `app.routes.config.ts`.
+
+Opzioni disponibili (tutte interattive se omesse):
+
+| Opzione | Descrizione |
+|---------|-------------|
+| `--name` | Nome pagina in kebab-case (es. `user-list`) |
+| `--description` | Etichetta nel menu |
+| `--icon` | Nome icona Material (default: `chevron_right`) |
+| `--ismenu` | Mostra nel menu laterale (default: `true`) |
+| `--order` | Ordine nel menu (intero) |
+
+### 5. Dichiara le capability UI (opzionale)
 
 ```typescript
 import type { CoreAction } from '@gpa-gruppo-progetti-avanzati-srl/ng-core-ui';
@@ -83,26 +104,34 @@ canCreate = this.system.canDo('create');
 
 Il metodo confronta l'id come `APPID-ACTIONID` (uppercase) contro le capability presenti nel token.
 
-### 5. Configura `environment.json`
+### 6. Configura `environment.json`
 
 La libreria legge `appId` dal file di ambiente a runtime:
 
 ```json
 {
   "appId": "my-app",
+  "appDescription": "La mia applicazione",
   "theme": "gpa",
   "logoutPath": "/logout"
 }
 ```
 
-### 6. Genera `routes.json` a build time
+Campi opzionali:
+
+| Campo | Descrizione |
+|-------|-------------|
+| `encryptToken` | Se `true` il token è cifrato con AES-GCM usando `appId` come chiave |
+| `properties` | Mappa arbitraria di configurazione app-specific |
+
+### 7. Genera `routes.json` a build time
 
 ```bash
-npx ts-node scripts/generate-routes.ts
+npm run generate-routes
 # → dist/caps/ui/routes.json
 ```
 
-### 7. Build con costanti build-time
+### 8. Build con costanti build-time
 
 ```bash
 ng build --configuration production \
@@ -123,6 +152,8 @@ provideGPAUICore({
 })
 ```
 
+Default: `tokenUrl = /api/token`, `environmentUrl = /environment/environment.json`.
+
 ### Temi
 
 La libreria supporta due temi: `gpa` e `poste`. Il tema viene applicato automaticamente in base al campo `theme` in `environment.json`:
@@ -134,6 +165,10 @@ La libreria supporta due temi: `gpa` e `poste`. Il tema viene applicato automati
 `StyleManagerService` aggiunge la classe corrispondente su `<body>`. I temi definiscono i token Angular Material 3 (`--mat-sys-*`) e li espongono come variabili Tailwind (`--color-*`) tramite il mixin `color-bridge.apply()` incluso in ogni file tema SCSS.
 
 > **Nota WebKit/Safari:** i mapping `--color-*: var(--mat-sys-*)` sono dichiarati dentro i selettori `.gpa`/`.poste` (non su `:root`) perché WebKit risolve i `var()` nelle custom properties eagerly durante l'ereditarietà.
+
+### Logo applicazione
+
+Ogni tema espone la variabile `--layout-logo-url`. Il file logo va in `assets/themes/<theme>/logo-<theme>.<ext>` con nome **univoco** tra i temi (esbuild piattisce tutti gli asset in `media/`).
 
 ### Layout alternativo
 
@@ -185,8 +220,8 @@ La pubblicazione su npm avviene automaticamente via GitHub Actions (trusted OIDC
 ```bash
 # 1. Aggiorna la versione in projects/ng-core-ui/package.json
 # 2. Committa e tagga
-git tag 0.0.23
-git push origin 0.0.23
+git tag 0.0.26
+git push origin 0.0.26
 ```
 
 Per buildare localmente:
