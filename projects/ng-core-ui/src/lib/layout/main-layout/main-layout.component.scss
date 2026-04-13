@@ -315,22 +315,29 @@ aside.sidenav {
 
 .extra-footer {
   flex-shrink: 0;
-  padding: 0 !important;
+  padding: 8px 0 0 !important;
+  display: flex;
+  justify-content: center;
 }
 
 mat-divider.apps-divider {
   border-top-color: rgba(255, 255, 255, 0.2) !important;
-  margin: 4px 16px 12px;
+  // margin: 4px 16px 12px;
 }
 
 .extra-content {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  align-items: stretch;
-  justify-content: flex-start;
-  min-width: 0;
+}
+
+.extra-content mat-nav-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 0 !important;
 }
 
 .extra-menu-item {
@@ -341,11 +348,10 @@ mat-divider.apps-divider {
 
   width: 100%;
   min-width: 0 !important;
+  min-height: 72px !important;
   height: auto !important;
-  min-height: 88px !important;
-  max-height: none !important;
-  padding: 12px 8px !important;
-  margin: 0;
+  padding: 8px 8px !important;
+  margin: 0 !important;
   border-radius: 4px !important;
   --mdc-list-list-item-container-shape: 4px;
   box-sizing: border-box;
@@ -425,11 +431,11 @@ mat-divider.apps-divider {
   align-self: center !important;
   flex-shrink: 0;
 
-  width: 36px !important;
-  height: 36px !important;
-  min-width: 36px !important;
-  font-size: 36px !important;
-  line-height: 36px !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  font-size: 48px !important;
+  line-height: 48px !important;
   margin: 0 0 8px 0 !important;
   padding: 0 !important;
 
@@ -472,8 +478,10 @@ mat-divider.apps-divider {
 }
 
 .app-info {
-  padding: 8px 16px;
+  margin-top: 20px;
+  padding: 8px 16px 0;
   font-size: 10px;
   color: var(--mat-sys-on-primary);
   opacity: 0.8;
+  text-align: center;
 }
