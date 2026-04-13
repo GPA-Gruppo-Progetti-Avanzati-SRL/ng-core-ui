@@ -13,15 +13,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const libDir = resolve(__dirname, '../projects/ng-core-ui');
 
 function svgToDataUri(filePath) {
-  const svg = readFileSync(filePath, 'utf8');
-  const encoded = svg
-    .replace(/\s+/g, ' ')
-    .replace(/"/g, "'")
-    .replace(/%/g, '%25')
-    .replace(/#/g, '%23')
-    .replace(/</g, '%3C')
-    .replace(/>/g, '%3E');
-  return `data:image/svg+xml,${encoded.trim()}`;
+  const data = readFileSync(filePath);
+  return `data:image/svg+xml;base64,${data.toString('base64')}`;
 }
 
 function pngToDataUri(filePath) {

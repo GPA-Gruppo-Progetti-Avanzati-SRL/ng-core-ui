@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-04-13T08:59:21.339Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-04-13T09:08:44.098Z
 > Files: 89 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
@@ -162,4 +162,4 @@
 - `build-bin.mjs` — Bundles projects/ng-core-ui/bin/generate-routes.ts (~355 tok)
 - `build-components-css.mjs` — Generates projects/ng-core-ui/styles/components.css (~243 tok)
 - `decode-token.ts` — Decifra un token AES-GCM (hex) prodotto dall'endpoint /api/token (~961 tok)
-- `embed-logos.mjs` — Generates projects/ng-core-ui/styles/_logos.scss (~485 tok)
+- `embed-logos.mjs` — Generates projects/ng-core-ui/styles/_logos.scss (~438 tok)

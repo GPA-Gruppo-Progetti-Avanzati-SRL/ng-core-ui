@@ -25,3 +25,6 @@
 | 10:59 | Edited projects/ng-core-ui/src/lib/system/menu.guard.ts | added optional chaining | ~605 |
 | 11:00 | Fix MenuGuard: route con :id non matchate — aggiunto getTemplateUrl() per confronto path template | menu.guard.ts | completed | ~200 |
 | 11:00 | Session end: 1 writes across 1 files (menu.guard.ts) | 2 reads | ~2769 tok |
+| 11:08 | Edited scripts/embed-logos.mjs | 7→8 lines | ~55 |
+| 11:08 | Edited scripts/embed-logos.mjs | modified svgToDataUri() | ~38 |
+| 11:09 | Session end: 3 writes across 2 files (menu.guard.ts, embed-logos.mjs) | 4 reads | ~3413 tok |

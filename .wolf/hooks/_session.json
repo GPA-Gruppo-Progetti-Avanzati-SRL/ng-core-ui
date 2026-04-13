@@ -11,6 +11,16 @@
       "count": 1,
       "tokens": 1759,
       "first_read": "2026-04-13T08:58:18.496Z"
+    },
+    "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/styles/_logos.scss": {
+      "count": 3,
+      "tokens": 60,
+      "first_read": "2026-04-13T09:07:49.749Z"
+    },
+    "/Users/lutrib/gpa-ng-workspace/scripts/embed-logos.mjs": {
+      "count": 1,
+      "tokens": 485,
+      "first_read": "2026-04-13T09:08:07.487Z"
     }
   },
   "files_written": [
@@ -19,14 +29,27 @@
       "action": "edit",
       "tokens": 605,
       "at": "2026-04-13T08:59:21.350Z"
+    },
+    {
+      "file": "/Users/lutrib/gpa-ng-workspace/scripts/embed-logos.mjs",
+      "action": "edit",
+      "tokens": 59,
+      "at": "2026-04-13T09:08:20.163Z"
+    },
+    {
+      "file": "/Users/lutrib/gpa-ng-workspace/scripts/embed-logos.mjs",
+      "action": "edit",
+      "tokens": 40,
+      "at": "2026-04-13T09:08:44.108Z"
     }
   ],
   "edit_counts": {
-    "projects/ng-core-ui/src/lib/system/menu.guard.ts": 1
+    "projects/ng-core-ui/src/lib/system/menu.guard.ts": 1,
+    "scripts/embed-logos.mjs": 2
   },
-  "anatomy_hits": 2,
+  "anatomy_hits": 4,
   "anatomy_misses": 0,
-  "repeated_reads_warned": 0,
+  "repeated_reads_warned": 2,
   "cerebrum_warnings": 0,
-  "stop_count": 1
+  "stop_count": 2
 }

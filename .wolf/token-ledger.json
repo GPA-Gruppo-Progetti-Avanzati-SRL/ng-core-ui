@@ -2,14 +2,14 @@
   "version": 1,
   "created_at": "2026-04-13T08:06:04.126Z",
   "lifetime": {
-    "total_tokens_estimated": 15886,
-    "total_reads": 18,
-    "total_writes": 10,
+    "total_tokens_estimated": 19299,
+    "total_reads": 22,
+    "total_writes": 13,
     "total_sessions": 2,
-    "anatomy_hits": 18,
+    "anatomy_hits": 22,
     "anatomy_misses": 0,
-    "repeated_reads_blocked": 0,
-    "estimated_savings_vs_bare_cli": 3600
+    "repeated_reads_blocked": 2,
+    "estimated_savings_vs_bare_cli": 4520
   },
   "sessions": [
     {
@@ -235,6 +235,62 @@
         "writes_count": 1,
         "repeated_reads_blocked": 0,
         "anatomy_lookups": 2
+      }
+    },
+    {
+      "id": "session-2026-04-13-1057",
+      "started": "2026-04-13T08:57:41.432Z",
+      "ended": "2026-04-13T09:09:10.494Z",
+      "reads": [
+        {
+          "file": "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/src/lib/system/menu.guard.ts",
+          "tokens_estimated": 405,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/src/lib/system/system.service.ts",
+          "tokens_estimated": 1759,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/styles/_logos.scss",
+          "tokens_estimated": 60,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/lutrib/gpa-ng-workspace/scripts/embed-logos.mjs",
+          "tokens_estimated": 485,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/Users/lutrib/gpa-ng-workspace/projects/ng-core-ui/src/lib/system/menu.guard.ts",
+          "tokens_estimated": 605,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/lutrib/gpa-ng-workspace/scripts/embed-logos.mjs",
+          "tokens_estimated": 59,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/lutrib/gpa-ng-workspace/scripts/embed-logos.mjs",
+          "tokens_estimated": 40,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 2709,
+        "output_tokens_estimated": 704,
+        "reads_count": 4,
+        "writes_count": 3,
+        "repeated_reads_blocked": 2,
+        "anatomy_lookups": 4
       }
     }
   ],

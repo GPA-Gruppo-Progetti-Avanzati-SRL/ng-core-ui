@@ -64,6 +64,22 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-04-13T08:59:21.350Z"
+    },
+    {
+      "id": "bug-005",
+      "timestamp": "2026-04-13T09:08:44.109Z",
+      "error_message": "Significant refactor of ",
+      "file": "scripts/embed-logos.mjs",
+      "root_cause": "10 lines replaced/restructured",
+      "fix": "Rewrote 12→4 lines (10 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "mjs"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-04-13T09:08:44.109Z"
     }
   ]
 }
