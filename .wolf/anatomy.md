@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-04-13T09:08:44.098Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-04-13T09:16:25.514Z
 > Files: 89 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
@@ -119,8 +119,8 @@
 
 ## projects/ng-core-ui/src/lib/layout/main-layout/
 
-- `main-layout.component.html` (~950 tok)
-- `main-layout.component.scss` — Styles: 57 rules, 4 vars (~3093 tok)
+- `main-layout.component.html` (~952 tok)
+- `main-layout.component.scss` — Styles: 57 rules, 4 vars (~2873 tok)
 - `main-layout.component.ts` — Misura la larghezza naturale dell'aside (label visibili) senza causare flash visivi. (~1381 tok)
 
 ## projects/ng-core-ui/src/lib/layout/simple-layout/

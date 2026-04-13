@@ -80,6 +80,54 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-04-13T09:08:44.109Z"
+    },
+    {
+      "id": "bug-006",
+      "timestamp": "2026-04-13T09:14:20.408Z",
+      "error_message": "Significant refactor of ",
+      "file": "projects/ng-core-ui/src/lib/layout/main-layout/main-layout.component.html",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 6→3 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "html"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-04-13T09:14:20.408Z"
+    },
+    {
+      "id": "bug-007",
+      "timestamp": "2026-04-13T09:14:39.927Z",
+      "error_message": "Significant refactor of ",
+      "file": "projects/ng-core-ui/src/lib/layout/main-layout/main-layout.component.scss",
+      "root_cause": "5 lines replaced/restructured",
+      "fix": "Rewrote 10→6 lines (5 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "scss"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-04-13T09:14:39.927Z"
+    },
+    {
+      "id": "bug-008",
+      "timestamp": "2026-04-13T09:15:30.960Z",
+      "error_message": "CSS fix: color",
+      "file": "projects/ng-core-ui/src/lib/layout/main-layout/main-layout.component.scss",
+      "root_cause": "color: #d32f2f → #e8f1fb",
+      "fix": "Changed color: #d32f2f → #e8f1fb",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "scss"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-04-13T09:16:25.525Z"
     }
   ]
 }

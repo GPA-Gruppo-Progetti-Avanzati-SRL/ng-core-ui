@@ -68,6 +68,9 @@
               <span class="app-label">Logout</span>
             </a>
           </mat-nav-list>
+          <div class="app-info">
+            Version: {{ appVersion() }} - Sha: {{ appSha() }}
+          </div>
         </div>
 
         <div class="extra-sidenav-backdrop" [class.open]="extraSidenavOpen()" (click)="closeExtraSidenav()" tabindex="-1" aria-label="Chiudi menu laterale destro"></div>
@@ -75,9 +78,6 @@
 
       <div class="content">
         <router-outlet />
-        <div class="app-info">
-          Version : {{ appVersion() }} - Sha: {{ appSha() }}
-        </div>
       </div>
     </main>
 
