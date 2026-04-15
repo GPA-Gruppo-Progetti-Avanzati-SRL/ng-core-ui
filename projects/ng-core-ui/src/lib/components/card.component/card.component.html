@@ -15,7 +15,7 @@
 
     <hr class="mt-1 mb-2 border-t border-outline-variant" />
 
-<div class="flex items-center justify-center py-1">
+<div class="flex items-center justify-center py-3">
   <mat-icon
     aria-hidden="true"
     class="material-icons notranslate block !m-0 !p-0 !w-[195px] !h-[195px] !min-w-[195px] !min-h-[195px] !text-[195px] !leading-none"
@@ -29,14 +29,13 @@
 
     <div class="mt-1 flex flex-col">
       <p
-        matTooltip="{{ subtitle }}"
-  matTooltipPosition="above"
-        class="m-0 line-clamp-3 text-[13px] leading-[1.4] break-words text-on-surface-variant cursor-default"
-      >
+        [matTooltip]="subtitle || ''"
+        matTooltipPosition="above"
+        class="m-0 min-h-[55px] line-clamp-3 text-[13px] leading-[1.4] break-words text-on-surface-variant cursor-default">
         {{ subtitle }}
       </p>
 
-      <div class="mt-4 flex justify-end">
+      <div class="mt-2 flex justify-end">
         <button
           mat-flat-button
           class="min-w-35 px-6 py-2 text-[13px] font-medium shadow-none bg-tertiary text-on-tertiary"
