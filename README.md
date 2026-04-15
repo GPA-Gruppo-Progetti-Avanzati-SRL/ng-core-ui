@@ -156,15 +156,21 @@ Default: `tokenUrl = /api/token`, `environmentUrl = /environment/environment.jso
 
 ### Temi
 
-La libreria supporta due temi: `gpa` e `poste`. Il tema viene applicato automaticamente in base al campo `theme` in `environment.json`:
+La libreria supporta tre temi: `gpa`, `poste` e `bnl`. Il tema viene applicato automaticamente in base al campo `theme` in `environment.json`:
 
 ```json
-{ "theme": "poste" }
+{ "theme": "bnl" }
 ```
+
+| Tema | Colore primario | Colore terziario |
+|------|----------------|-----------------|
+| `gpa` | `#274c77` (blu) | `#cae9ff` (celeste) |
+| `poste` | `#1B44B5` (blu Poste) | `#EBDD49` (giallo) |
+| `bnl` | `#06975e` (verde BNL) | `#aff452` (lime) |
 
 `StyleManagerService` aggiunge la classe corrispondente su `<body>`. I temi definiscono i token Angular Material 3 (`--mat-sys-*`) e li espongono come variabili Tailwind (`--color-*`) tramite il mixin `color-bridge.apply()` incluso in ogni file tema SCSS.
 
-> **Nota WebKit/Safari:** i mapping `--color-*: var(--mat-sys-*)` sono dichiarati dentro i selettori `.gpa`/`.poste` (non su `:root`) perché WebKit risolve i `var()` nelle custom properties eagerly durante l'ereditarietà.
+> **Nota WebKit/Safari:** i mapping `--color-*: var(--mat-sys-*)` sono dichiarati dentro i selettori `.gpa`/`.poste`/`.bnl` (non su `:root`) perché WebKit risolve i `var()` nelle custom properties eagerly durante l'ereditarietà.
 
 ### Logo applicazione
 
