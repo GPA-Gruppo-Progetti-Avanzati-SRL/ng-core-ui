@@ -19,6 +19,7 @@ export * from './lib/layout/simple-layout/simple-layout.component';
 // COMPONENTI
 export * from './lib/components/card.component/card.component';
 export * from './lib/components/topbar.component/topbar.component';
+export * from './lib/components/page-header.component/page-header.component';
 
 
 export * from './lib/main'

@@ -2,8 +2,8 @@ import { Rule, SchematicContext, SchematicsException, Tree } from '@angular-devk
 import { Schema } from '../types';
 
 export const FRONTDOOR_BASE_HREF        = '/__appType__/__domainId__/__siteId__/__siteScope__/__language__/__appId__/';
-export const FRONTDOOR_TOKEN_URL        = '/api/core/acl';
-export const FRONTDOOR_ENVIRONMENT_URL  = '/api/core/environment';
+export const FRONTDOOR_TOKEN_URL        = '/api/corectx/acl';
+export const FRONTDOOR_ENVIRONMENT_URL  = '/api/corectx/environment';
 export const FRONTDOOR_DEPLOY_URL       = '__static_path_to_webapps__/__appName__/__appVersion__/';
 
 export function configureFrontdoor(options: Schema): Rule {
