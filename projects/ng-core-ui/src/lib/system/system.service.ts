@@ -111,7 +111,8 @@ export class SystemService {
     const sortedApps = this.sortApps(data.apps ?? []);
     this.appsSig.set(sortedApps);
 
-    this.sitesSig.set(data.sites ?? []);
+    const sortedSites = this.sortSites(data.sites ?? []);
+    this.sitesSig.set(sortedSites);
 
     return data;
   }
@@ -177,5 +178,19 @@ export class SystemService {
     });
   }
 
+  private sortSites(sites: Site[] | null): Site[] {
+    if (!sites || !sites.length) return [];
+    const toKey = (a: Site) => (a.id.toLowerCase());
+    const getOrder = (a: Site) => (a.order ?? 0);
+
+    return [...sites].sort((a, b) => {
+      const ao = getOrder(a);
+      const bo = getOrder(b);
+      if (ao !== bo) return ao - bo;
+      const ak = toKey(a);
+      const bk = toKey(b);
+      return ak.localeCompare(bk);
+    });
+  }
 
 }

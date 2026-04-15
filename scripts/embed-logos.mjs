@@ -33,6 +33,11 @@ const themes = [
     file: resolve(libDir, 'assets/themes/logos/poste.png'),
     encode: pngToDataUri,
   },
+  {
+    varName: 'bnl',
+    file: resolve(libDir, 'assets/themes/logos/bnl.svg'),
+    encode: svgToDataUri,
+  },
 ];
 
 const lines = [

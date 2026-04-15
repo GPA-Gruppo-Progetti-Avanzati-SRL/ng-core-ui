@@ -11,7 +11,7 @@
 /tmp
 /out-tsc
 /bazel-out
-
+.wolf
 # Node
 /node_modules
 npm-debug.log

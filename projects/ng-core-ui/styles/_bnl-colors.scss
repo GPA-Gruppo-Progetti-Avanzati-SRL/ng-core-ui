@@ -1,0 +1,134 @@
+// BNL theme color palettes.
+// Primary: #06975e (BNL brand green), Tertiary: #aff452 (BNL accent lime)
+
+@use 'sass:map';
+@use 'sass:color';
+@use '@angular/material' as mat;
+
+$_palettes: (
+  secondary: (
+    0:   #000000,
+    10:  #002116,
+    20:  #003826,
+    25:  #00432e,
+    30:  #005237,
+    35:  #006042,
+    40:  #006e4c,
+    50:  #008b61,
+    60:  #00a877,
+    70:  #3ec48e,
+    80:  #6cdfa9,
+    90:  #98f2c4,
+    95:  #bef8d8,
+    98:  #e0fdef,
+    99:  #f1fff8,
+    100: #ffffff,
+  ),
+  neutral: (
+    0:   #000000,
+    10:  #191c1a,
+    20:  #2e312e,
+    25:  #393c39,
+    30:  #454744,
+    35:  #505350,
+    40:  #5c5f5c,
+    50:  #757875,
+    60:  #8f928f,
+    70:  #aaadaa,
+    80:  #c5c8c5,
+    90:  #e1e4e1,
+    95:  #f0f3f0,
+    98:  #f8fbf8,
+    99:  #fbfefb,
+    100: #ffffff,
+  ),
+  neutral-variant: (
+    0:   #000000,
+    10:  #151d19,
+    20:  #2a322d,
+    25:  #353d38,
+    30:  #404944,
+    35:  #4c544f,
+    40:  #58605b,
+    50:  #707973,
+    60:  #8a938d,
+    70:  #a4aea8,
+    80:  #bfc9c2,
+    90:  #dbe5de,
+    95:  #e9f3ec,
+    98:  #f1fbf4,
+    99:  #f5fef7,
+    100: #ffffff,
+  ),
+  error: (
+    0:   #000000,
+    10:  #410002,
+    20:  #690005,
+    25:  #7e0007,
+    30:  #93000a,
+    35:  #a80710,
+    40:  #ba1a1a,
+    50:  #de3730,
+    60:  #ff5449,
+    70:  #ff897d,
+    80:  #ffb4ab,
+    90:  #ffdad6,
+    95:  #ffedea,
+    98:  #fff8f7,
+    99:  #fffbff,
+    100: #ffffff,
+  ),
+);
+
+$hand-made-palette: (
+  primary: (
+    0:   #000000,
+    10:  color.scale(#06975e, $lightness: - calc(100% / 40) * 30),
+    20:  color.scale(#06975e, $lightness: - calc(100% / 40) * 20),
+    25:  color.scale(#06975e, $lightness: - calc(100% / 40) * 15),
+    30:  color.scale(#06975e, $lightness: - calc(100% / 40) * 10),
+    35:  color.scale(#06975e, $lightness: - calc(100% / 40) * 5),
+    40:  #06975e,
+    50:  color.scale(#06975e, $lightness:  calc(100% / 60) * 10),
+    60:  color.scale(#06975e, $lightness:  calc(100% / 60) * 20),
+    70:  color.scale(#06975e, $lightness:  calc(100% / 60) * 30),
+    80:  color.scale(#06975e, $lightness:  calc(100% / 60) * 40),
+    90:  color.scale(#06975e, $lightness:  calc(100% / 60) * 50),
+    95:  color.scale(#06975e, $lightness:  calc(100% / 60) * 55),
+    98:  color.scale(#06975e, $lightness:  calc(100% / 60) * 58),
+    99:  color.scale(#06975e, $lightness:  calc(100% / 60) * 59),
+    100: #ffffff,
+  ),
+
+  tertiary: (
+    0:   #000000,
+    10:  color.scale(#aff452, $lightness: - calc(100% / 40) * 30),
+    20:  color.scale(#aff452, $lightness: - calc(100% / 40) * 20),
+    25:  color.scale(#aff452, $lightness: - calc(100% / 40) * 15),
+    30:  color.scale(#aff452, $lightness: - calc(100% / 40) * 10),
+    35:  color.scale(#aff452, $lightness: - calc(100% / 40) * 5),
+    40:  #aff452,
+    50:  color.scale(#aff452, $lightness:  calc(100% / 60) * 10),
+    60:  color.scale(#aff452, $lightness:  calc(100% / 60) * 20),
+    70:  color.scale(#aff452, $lightness:  calc(100% / 60) * 30),
+    80:  color.scale(#aff452, $lightness:  calc(100% / 60) * 40),
+    90:  color.scale(#aff452, $lightness:  calc(100% / 60) * 50),
+    95:  color.scale(#aff452, $lightness:  calc(100% / 60) * 55),
+    98:  color.scale(#aff452, $lightness:  calc(100% / 60) * 58),
+    99:  color.scale(#aff452, $lightness:  calc(100% / 60) * 59),
+    100: #06975e,
+  ),
+);
+
+$_rest: (
+  secondary:       map.get($_palettes, secondary),
+  neutral:         map.get($_palettes, neutral),
+  neutral-variant: map.get($_palettes, neutral-variant),
+  error:           map.get($_palettes, error),
+);
+
+// ── Exported palettes ─────────────────────────────────────────────────────────
+$primary-palette:   map.merge(map.get($hand-made-palette, primary),  $_rest);
+$tertiary-palette:  map.merge(map.get($hand-made-palette, tertiary), $_rest);
+$secondary-palette: map.merge(map.get($_palettes, secondary),        $_rest);
+$error-palette:     map.merge(map.get($_palettes, error),            $_rest);

@@ -20,6 +20,7 @@ export interface App {
 export interface Site {
   id: string;
   name?: string;
+  description?: string;
   icon?: string;
   path?: string;
   order?: number;
