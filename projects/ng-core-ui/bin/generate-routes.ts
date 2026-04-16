@@ -1,7 +1,7 @@
 /**
  * Generate routes.json for backend permission seeding.
  * Usage (from the consuming app root):
- *   bun node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-routes.mjs
+ *   node node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-routes.mjs
  *
  * Reads APP_ROUTES (and optionally APP_ACTIONS) from the consuming app's
  * src/app/app.routes.config.ts and writes dist/caps/ui/routes.json.
@@ -9,12 +9,14 @@
 import { toRoutesJson } from '../src/lib/system/routes-json';
 import { mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { pathToFileURL } from 'url';
 
 const appRoot = process.cwd();
 
-// Dynamic import resolves relative to the consuming app's CWD.
-const routesConfigPath = join(appRoot, 'src/app/app.routes.config.ts');
-const actionsConfigPath = join(appRoot, 'src/app/app.actions.config.ts');
+// pathToFileURL is required on Windows: import() does not accept backslash paths
+// (e.g. C:\Users\...) — they must be converted to file:// URLs first.
+const routesConfigPath = pathToFileURL(join(appRoot, 'src/app/app.routes.config.ts')).href;
+const actionsConfigPath = pathToFileURL(join(appRoot, 'src/app/app.actions.config.ts')).href;
 
 const { APP_ROUTES } = await import(routesConfigPath);
 

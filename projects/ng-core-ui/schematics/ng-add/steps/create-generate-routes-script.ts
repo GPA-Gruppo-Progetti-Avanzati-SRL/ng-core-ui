@@ -2,7 +2,7 @@ import { Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
 import { LIB } from '../constants';
 
 const SCRIPTS: Record<string, string> = {
-  'generate-routes': `bun node_modules/${LIB}/bin/generate-routes.mjs`,
+  'generate-routes': `node node_modules/${LIB}/bin/generate-routes.mjs`,
   'generate-page':   `ng generate ${LIB}:page`,
 };
 

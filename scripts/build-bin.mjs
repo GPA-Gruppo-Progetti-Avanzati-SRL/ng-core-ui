@@ -24,7 +24,7 @@ await build({
   // Do NOT bundle the dynamic imports (app-specific routes/actions files).
   // esbuild can't resolve them at build time anyway since they're runtime paths.
   banner: {
-    js: '// @gpa-gruppo-progetti-avanzati-srl/ng-core-ui — generate-routes\n// Run from the consuming app root: bun node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-routes.mjs',
+    js: '// @gpa-gruppo-progetti-avanzati-srl/ng-core-ui — generate-routes\n// Run from the consuming app root: node node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-routes.mjs',
   },
 });
 

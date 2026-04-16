@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "build:lib": "cp README.md projects/ng-core-ui/README.md && node scripts/build-components-css.mjs && node scripts/build-bin.mjs && node scripts/embed-logos.mjs && ng build ng-core-ui --configuration production && tsc -p projects/ng-core-ui/schematics/tsconfig.json",
+    "build:lib": "node -e \"require('fs').copyFileSync('README.md','projects/ng-core-ui/README.md')\" && node scripts/build-components-css.mjs && node scripts/build-bin.mjs && node scripts/embed-logos.mjs && ng build ng-core-ui --configuration production && tsc -p projects/ng-core-ui/schematics/tsconfig.json",
     "build:components-css": "node scripts/build-components-css.mjs",
     "build:embed-logos": "node scripts/embed-logos.mjs",
     "build:schematics": "tsc -p projects/ng-core-ui/schematics/tsconfig.json"

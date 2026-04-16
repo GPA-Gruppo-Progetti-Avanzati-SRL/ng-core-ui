@@ -18,7 +18,7 @@ import { createDockerfile }           from './steps/create-dockerfile';
 export function ngAdd(options: Schema): Rule {
   return (tree: Tree, context: SchematicContext) => {
     context.logger.info('');
-    context.logger.info('📦 Configurazione ng-core-ui...');
+    context.logger.info('Configurazione ng-core-ui...');
     return chain([
       alignDependencies(),
       setupTailwind(),
