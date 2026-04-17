@@ -5,7 +5,7 @@ import { DOCUMENT } from '@angular/common';
 export class StyleManagerService {
   private readonly document: Document = inject(DOCUMENT);
   private readonly body: HTMLElement = this.document.body;
-  private readonly knownThemes: string[] = ['gpa', 'poste', 'bnl'];
+  private readonly knownThemes: string[] = ['gpa', 'cobalt', 'forest'];
 
   /**
    * Applies the specified theme class to the body and removes other known themes.

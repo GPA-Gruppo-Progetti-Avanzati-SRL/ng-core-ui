@@ -138,7 +138,7 @@ provideGPAUICore(),
 
 ### Styling
 
-- **Angular Material 3** with a custom color theme using MD3 `light-dark()` CSS variables. Known brand themes: `gpa`, `poste`, `bnl` — each with its own `_<theme>-colors.scss` + `_<theme>-theme.scss` pair in `projects/ng-core-ui/styles/`. `StyleManagerService` toggles CSS classes on `<body>`.
+- **Angular Material 3** with a custom color theme using MD3 `light-dark()` CSS variables. Known brand themes: `gpa`, `cobalt`, `forest` — each with its own `_<theme>-colors.scss` + `_<theme>-theme.scss` pair in `projects/ng-core-ui/styles/`. `StyleManagerService` toggles CSS classes on `<body>`.
 - **Tailwind CSS v4** via PostCSS (`@tailwindcss/postcss`). Utilities use `important: '.ui'` so they apply only inside `.ui` elements. Tailwind config uses `darkMode: 'class'`.
 - **mat-theme-bridge.css** — contains a `@theme {}` block that registers `--color-*` tokens (e.g., `--color-surface`, `--color-primary`) with Tailwind so it generates semantic utilities (`bg-surface`, `text-on-primary`, etc.). This block is **for Tailwind utility generation only** — it does NOT provide the actual CSS variable values at runtime.
 - **`_color-bridge.scss` + mixin** — the actual runtime bridge. Contains a single `color-bridge.apply()` mixin that declares `--color-*: var(--mat-sys-*)` mappings. Included via `@include color-bridge.apply()` inside `.gpa {}`, `.poste {}` and `.bnl {}` in the respective theme SCSS files. This ensures the `var()` references resolve correctly in all browsers including WebKit/Safari, where declaring them on `:root` fails because `--mat-sys-*` variables are not in scope at that level.

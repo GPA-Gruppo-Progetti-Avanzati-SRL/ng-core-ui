@@ -1,14 +1,14 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
-@use 'bnl-colors' as bnl-theme;
+@use 'forest-colors' as forest-theme;
 @use 'color-bridge';
 @include mat.core();
 
-$bnl-theme: mat.define-theme((
+$forest-theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary:  bnl-theme.$primary-palette,
-    tertiary: bnl-theme.$tertiary-palette,
+    primary:  forest-theme.$primary-palette,
+    tertiary: forest-theme.$tertiary-palette,
   ),
   typography: (
     brand-family: 'Roboto, sans-serif',
@@ -16,10 +16,10 @@ $bnl-theme: mat.define-theme((
   )
 ));
 
-.bnl {
-  @include mat.all-component-themes($bnl-theme);
-  @include mat.system-level-colors($bnl-theme);
-  @include mat.system-level-typography($bnl-theme);
+.forest {
+  @include mat.all-component-themes($forest-theme);
+  @include mat.system-level-colors($forest-theme);
+  @include mat.system-level-typography($forest-theme);
 
   --layout-sidenav-border: none;
   --layout-toolbar-border: none;
