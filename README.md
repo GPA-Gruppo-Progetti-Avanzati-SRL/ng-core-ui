@@ -3,7 +3,7 @@
 Libreria UI condivisa per le applicazioni GPA. Fornisce layout, componenti, gestione token/ambiente, routing pre-configurati, temi Angular Material 3 e utility Tailwind CSS v4.
 
 - **Pacchetto:** `@gpa-gruppo-progetti-avanzati-srl/ng-core-ui`
-- **Versione:** 0.0.26
+- **Versione:** 0.0.29
 - **Angular:** 21.x · **Material:** 21.x · **Tailwind:** 4.x
 
 ---
@@ -196,26 +196,116 @@ Configura automaticamente `deployUrl`, `tokenUrl` (`/api/core/acl`) e `environme
 
 ## Componenti disponibili
 
+### Layout e navigazione
+
 | Componente | Selettore | Descrizione |
 |-----------|-----------|-------------|
 | `MainLayoutComponent` | — | Shell completa: sidenav + toolbar + app-switcher |
 | `SimpleLayoutComponent` | — | Shell minimale: solo toolbar |
 | `CardComponent` | `core-card` | Card con icona, titolo, sottotitolo e bottone |
-| `TopbarComponent` | `core-topbar` | Topbar con slot per azioni custom |
+| `TopbarComponent` | `core-topbar` | Topbar di sezione con slot per azioni custom |
+| `PageHeaderComponent` | `core-page-header` | Intestazione pagina con titolo e sottotitolo |
 | `NotFoundComponent` | — | Pagina 404 |
 | `ForbiddenComponent` | — | Pagina 403 |
 
-### Esempio `core-card`
+### Toast (`core-toast`)
+
+Componente standalone da inserire nel template dove serve. Comunica con `ToastService` iniettato ovunque nell'app.
+
+```typescript
+// nel component
+readonly toast = inject(ToastService);
+
+this.toast.success('Salvataggio completato');
+this.toast.error('Operazione fallita', 6000);   // durata custom in ms
+this.toast.info('Nessuna modifica rilevata');
+this.toast.warning('Sessione in scadenza');
+```
 
 ```html
-<core-card
-  title="Anagrafica"
-  subtitle="Gestione clienti e fornitori"
-  icon="people"
-  buttonLabel="Apri"
-  (buttonClick)="navigate()"
-/>
+<!-- nel template della pagina o del layout -->
+<core-toast />
 ```
+
+I colori sono semantici e fissi indipendentemente dal tema attivo (verde/rosso/blu/giallo).
+
+### Loading overlay (`core-loading-overlay`)
+
+Spinner che copre il container padre. Il container deve avere `position: relative`.
+
+```html
+<div class="relative">
+  <core-loading-overlay />
+  <!-- contenuto della sezione -->
+</div>
+```
+
+`LoadingService` gestisce un contatore: più chiamate concorrenti a `show()` richiedono altrettante `hide()` prima che lo spinner scompaia.
+
+```typescript
+readonly loading = inject(LoadingService);
+
+// controllo manuale
+this.loading.show();
+this.loading.hide();
+```
+
+Per attivarlo automaticamente su tutte le chiamate HTTP, aggiungere `loadingInterceptor` in `app.config.ts`:
+
+```typescript
+provideHttpClient(withInterceptors([contextInterceptor, loadingInterceptor]))
+```
+
+### DataTable (`core-datatable`)
+
+Tabella generica con paginazione server-side, integrata con la convenzione API GPA:
+- Request: `?page=N&pageSize=M` (1-based)
+- Response body: `{ body: T[] }`
+- Response header: `total-elements: <count>`
+
+```typescript
+// Definizione colonne
+readonly columns: DatatableColumn[] = [
+  { key: 'nome',    label: 'Nome' },
+  { key: 'cognome', label: 'Cognome' },
+  { key: 'eta',     label: 'Età', width: '80px' },
+];
+
+// Loader con helper integrato
+readonly loader = createPagedLoader<Person>(
+  inject(HttpClient),
+  '/api/v1/persons',
+);
+
+// Con filtri dinamici (riletti ad ogni cambio pagina)
+readonly loader = createPagedLoader<Person>(
+  inject(HttpClient),
+  '/api/v1/persons',
+  () => ({ luogodiNascita: this.cittaSig() }),
+);
+```
+
+```html
+<core-datatable [columns]="columns" [load]="loader" />
+
+<!-- Con ref per refresh manuale (es. dopo un salvataggio) -->
+<core-datatable #table [columns]="columns" [load]="loader" />
+```
+
+```typescript
+// Refresh manuale
+@ViewChild('table') table!: DatatableComponent;
+this.table.refresh();
+```
+
+Input disponibili:
+
+| Input | Tipo | Default | Descrizione |
+|-------|------|---------|-------------|
+| `columns` | `DatatableColumn[]` | — | Definizione colonne (obbligatorio) |
+| `load` | `DatatableLoader` | — | Funzione di caricamento (obbligatorio) |
+| `pageSizeOptions` | `number[]` | `[10, 25, 50]` | Opzioni per il selettore pageSize |
+| `initialPageSize` | `number` | `10` | Dimensione pagina iniziale |
 
 ---
 
@@ -226,8 +316,8 @@ La pubblicazione su npm avviene automaticamente via GitHub Actions (trusted OIDC
 ```bash
 # 1. Aggiorna la versione in projects/ng-core-ui/package.json
 # 2. Committa e tagga
-git tag 0.0.26
-git push origin 0.0.26
+git tag 0.0.29
+git push origin 0.0.29
 ```
 
 Per buildare localmente:

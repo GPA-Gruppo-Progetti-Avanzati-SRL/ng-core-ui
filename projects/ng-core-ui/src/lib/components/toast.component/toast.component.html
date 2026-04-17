@@ -1,0 +1,19 @@
+<div class="fixed top-17 right-2 z-9999 flex flex-col gap-2 pointer-events-none w-96">
+  @for (msg of svc.messages(); track msg.id) {
+    <div
+      class="flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg w-full pointer-events-auto"
+      [style.background-color]="cfg[msg.type].bg"
+      [style.color]="cfg[msg.type].fg"
+    >
+      <mat-icon class="shrink-0 !text-[20px] !w-5 !h-5 !leading-none">{{ cfg[msg.type].icon }}</mat-icon>
+      <span class="flex-1 text-sm leading-snug">{{ msg.message }}</span>
+      <button
+        class="shrink-0 flex opacity-60 hover:opacity-100 transition-opacity cursor-pointer -mr-1 border-none bg-transparent p-0"
+        [style.color]="cfg[msg.type].fg"
+        (click)="svc.dismiss(msg.id)"
+      >
+        <mat-icon class="!text-[18px] !w-[18px] !h-[18px] !leading-none">close</mat-icon>
+      </button>
+    </div>
+  }
+</div>

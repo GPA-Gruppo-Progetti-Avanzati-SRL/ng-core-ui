@@ -1,3 +1,5 @@
+import {ToastComponent} from '../../components/toast.component/toast.component';
+
 declare const AppSha: string;
 declare const AppVersion: string;
 
@@ -26,11 +28,16 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import {ConfirmComponent} from '../../components/confirm.component/confirm.component';
+import {AlertComponent} from '../../components/alert.component/alert.component';
 
 @Component({
   selector: 'app-main-layout',
   imports: [
     MatButtonModule,
+    ToastComponent,
+    ConfirmComponent,
+    AlertComponent,
     MatIconModule,
     MatSidenavModule,
     MatToolbarModule,

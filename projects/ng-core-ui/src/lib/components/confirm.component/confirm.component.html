@@ -1,0 +1,40 @@
+@if (svc.state(); as s) {
+  <!-- backdrop -->
+  <div
+    class="fixed inset-0 z-[9998] bg-black/40 backdrop-blur-sm"
+    (click)="svc.respond(false)"
+  ></div>
+
+  <!-- dialog -->
+  <div class="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none">
+    <div class="pointer-events-auto w-96 rounded-2xl border border-outline-variant bg-surface shadow-xl flex flex-col gap-4 p-6">
+
+      <!-- titolo -->
+      <p class="m-0 text-base font-semibold text-on-surface">{{ s.title }}</p>
+
+      <!-- messaggio -->
+      <p class="m-0 text-sm leading-relaxed text-on-surface-variant">{{ s.message }}</p>
+
+      <!-- bottoni -->
+      <div class="flex justify-end gap-2">
+        <button
+          mat-flat-button
+          class="text-on-surface-variant transition-all duration-150 hover:scale-[1.03] hover:bg-black/10"
+          (click)="svc.respond(false)"
+        >
+          {{ s.cancelLabel }}
+        </button>
+        <button
+          mat-flat-button
+          class="transition-all duration-150 hover:scale-[1.03] hover:brightness-90"
+          [style.background-color]="s.type === 'danger' ? '#7f1d1d' : ''"
+          [style.color]="s.type === 'danger' ? '#fee2e2' : ''"
+          (click)="svc.respond(true)"
+        >
+          {{ s.confirmLabel }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

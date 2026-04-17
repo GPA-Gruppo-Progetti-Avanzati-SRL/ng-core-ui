@@ -15,11 +15,24 @@ export * from './lib/forbidden/forbidden.component';
 export * from './lib/layout/main-layout/main-layout.component';
 export * from './lib/layout/simple-layout/simple-layout.component';
 
-
 // COMPONENTI
 export * from './lib/components/card.component/card.component';
 export * from './lib/components/topbar.component/topbar.component';
 export * from './lib/components/page-header.component/page-header.component';
+export * from './lib/components/toast.component/toast.service';
+export * from './lib/components/toast.component/toast.component';
+export * from './lib/components/loading-overlay.component/loading-overlay.component';
+export * from './lib/components/confirm.component/confirm.service';
+export * from './lib/components/confirm.component/confirm.component';
+export * from './lib/components/alert.component/alert.service';
+export * from './lib/components/alert.component/alert.component';
+export * from './lib/components/datatable.component/datatable.component';
+export * from './lib/components/datatable.component/datatable-loader';
+
+// LOADING
+export * from './lib/system/loading.service';
+export { loadingInterceptor } from './lib/system/loading.interceptor';
 
 
+export * from './lib/utils';
 export * from './lib/main'

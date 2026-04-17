@@ -1,0 +1,41 @@
+@if (svc.state(); as s) {
+  <!-- backdrop -->
+  <div
+    class="fixed inset-0 z-[9998] bg-black/40 backdrop-blur-sm"
+    (click)="svc.close()"
+  ></div>
+
+  <!-- dialog -->
+  <div class="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none">
+    <div class="pointer-events-auto w-96 rounded-2xl border border-outline-variant bg-surface shadow-xl flex flex-col overflow-hidden">
+
+      <!-- header colorato con icona -->
+      <div
+        class="flex items-center gap-3 px-6 py-4"
+        [style.background-color]="cfg[s.type].bg"
+        [style.color]="cfg[s.type].fg"
+      >
+        <mat-icon class="shrink-0 !text-[22px] !w-[22px] !h-[22px] !leading-none">{{ cfg[s.type].icon }}</mat-icon>
+        <p class="m-0 text-base font-semibold">{{ s.title }}</p>
+      </div>
+
+      <!-- corpo -->
+      <div class="flex flex-col gap-5 px-6 py-5">
+        <p class="m-0 text-sm leading-relaxed text-on-surface-variant">{{ s.message }}</p>
+
+        <div class="flex justify-end">
+          <button
+            mat-flat-button
+            class="transition-all duration-150 hover:scale-[1.03] hover:brightness-90"
+            [style.background-color]="cfg[s.type].bg"
+            [style.color]="cfg[s.type].fg"
+            (click)="svc.close()"
+          >
+            {{ s.closeLabel }}
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+}

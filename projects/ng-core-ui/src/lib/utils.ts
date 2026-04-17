@@ -62,3 +62,14 @@ export async function decrypt(ciphertextHex: string, appID: string): Promise<str
 //         console.error('Decryption failed:', err);
 //     }
 // })();
+
+/**
+ * Costruisce un path API concatenando i segmenti non vuoti con '/'.
+ *
+ * @example
+ * buildApiPath('/api', 'opem', 'v1', 'persons') // '/api/opem/v1/persons'
+ * buildApiPath('/api', '',     'v1', 'persons') // '/api/v1/persons'
+ */
+export function buildApiPath(...segments: string[]): string {
+  return segments.filter(Boolean).join('/');
+}

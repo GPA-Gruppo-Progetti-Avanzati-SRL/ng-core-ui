@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an Angular 21 monorepo containing **ng-core-ui** (v0.0.25), a reusable UI component library for GPA (Gruppo Progetti Avanzati) internal applications. It is published via ng-packagr and consumed by other Angular apps.
+This is an Angular 21 monorepo containing **ng-core-ui** (v0.0.29), a reusable UI component library for GPA (Gruppo Progetti Avanzati) internal applications. It is published via ng-packagr and consumed by other Angular apps.
 
 ## Commands
 
@@ -48,7 +48,18 @@ ng lint
 
 ```
 system/         # Core bootstrap logic and state
+  loading.service.ts      # LoadingService — contatore XHR con signal
+  loading.interceptor.ts  # loadingInterceptor — auto show/hide su HTTP
+  context-interceptor.ts  # contextInterceptor — inietta X-Context/X-AppId
+  menu.guard.ts           # MenuGuard — verifica permessi da pathsSig
+  ...
 components/     # Reusable presentational UI components
+  card.component/
+  topbar.component/
+  page-header.component/
+  toast.component/        # ToastService + ToastComponent (core-toast)
+  loading-overlay.component/  # LoadingOverlayComponent (core-loading-overlay)
+  datatable.component/    # DatatableComponent + createPagedLoader (core-datatable)
 layout/         # Full-page layout wrappers (main-layout, simple-layout)
 not-found/      # 404 page
 forbidden/      # 403 page
@@ -122,7 +133,7 @@ provideRouter(toRoutes(APP_ROUTES)),
 provideGPAUICore(),
 ```
 
-`toRoutesJson(APP_ROUTES)` is called by the library's pre-built script to emit `dist/caps/ui/routes.json` for backend permission seeding. Consuming apps run it via `npm run generate-routes` (which calls `bun node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-routes.mjs`), added to their `package.json` by the `ng-add` schematic.
+`toRoutesJson(APP_ROUTES)` is called by the library's pre-built script to emit `dist/caps/ui/routes.json` for backend permission seeding. Consuming apps run it via `npm run generate-routes` (which calls `node node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-routes.mjs`), added to their `package.json` by the `ng-add` schematic.
 
 ### Styling
 
@@ -162,14 +173,43 @@ The library publishes these assets alongside the compiled JS:
 - `assets/**/*.woff2` — Roboto fonts (300/regular/500/600) and Material Icons
 - `assets/themes/**` — per-theme logo images
 
+### UI Components Reference
+
+| Componente | Selettore | Exported from |
+|---|---|---|
+| `MainLayoutComponent` | — (layout) | `layout/main-layout` |
+| `SimpleLayoutComponent` | — (layout) | `layout/simple-layout` |
+| `CardComponent` | `core-card` | `components/card.component` |
+| `TopbarComponent` | `core-topbar` | `components/topbar.component` |
+| `PageHeaderComponent` | `core-page-header` | `components/page-header.component` |
+| `ToastComponent` | `core-toast` | `components/toast.component` |
+| `LoadingOverlayComponent` | `core-loading-overlay` | `components/loading-overlay.component` |
+| `DatatableComponent` | `core-datatable` | `components/datatable.component` |
+
+**Services:**
+- `ToastService` — `success/error/info/warning(message, duration?)`. Colori semantici fissi (verde/rosso/blu/giallo), indipendenti dal tema.
+- `LoadingService` — `show()/hide()` con contatore. `isLoading: Signal<boolean>`.
+- `loadingInterceptor` — `HttpInterceptorFn` che chiama `show/hide` automaticamente su ogni XHR.
+
+**DataTable API:**
+- `DatatableColumn { key, label, width?, format?, component? }` — `key` supporta notazione dot per oggetti annidati (es. `address.city`). `format?: (row) => string` per valori calcolati da più campi (priorità su `key`). `component` è un `Type<any>` Angular opzionale per celle con layout custom (priorità massima).
+- `DatatableAction<T> { icon, tooltip?, onClick, hidden?, disabled? }` — bottone icona per riga. `onClick/hidden/disabled` ricevono la riga come argomento.
+- `DatatableLoader<T>` — `(page: number, pageSize: number) => Observable<{ items: T[], total: number }>`.
+- `createPagedLoader<T>(http, url, extraParams?)` — factory che wrappa la convenzione GPA: response `{ body: T[] }` + header `total-elements`. `extraParams` è una funzione rieseguita ad ogni load (utile per filtri signal-based).
+- `DatatableComponent.refresh()` — metodo pubblico per forzare il reload della pagina corrente.
+- **Colonne custom**: passare `component: MyCellComponent` su `DatatableColumn`. Il componente deve esporre `value = input<unknown>()` e `row = input<unknown>()`. Viene renderizzato via `NgComponentOutlet` con `inputs` — nessun template markup aggiuntivo nel consuming component.
+
 ### Key Conventions
 
 - **Standalone components only** — no NgModules.
 - **OnPush change detection** on all components.
-- **Angular signals** for reactive state (not Subject/BehaviorSubject).
+- **Angular signals** for reactive state (not Subject/BehaviorSubject). Per flussi RxJS dentro i componenti (es. `switchMap` per cancel XHR) si usa `Subject` + `takeUntilDestroyed(destroyRef)`.
 - Component selectors use the `core-` prefix (e.g., `core-card`, `core-topbar`).
 - Each component lives in its own subfolder named `<name>.component/`.
 - Route IDs follow `cap:<appId>:ui:<page>` convention.
+- **No per-component CSS files** — stili espressi come classi Tailwind direttamente nel template HTML.
+- **`ViewEncapsulation.None`** su tutti i componenti — gli stili globali del tema sono in `themes.scss`.
+- **Dopo ogni aggiunta di nuove classi Tailwind** nei template, eseguire `npm run build:components-css` per rigenerare `styles/components.css`.
 
 ### Public API
 

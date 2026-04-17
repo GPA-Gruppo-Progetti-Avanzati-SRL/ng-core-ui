@@ -1,0 +1,71 @@
+<div class="overflow-hidden rounded-xl border border-outline-variant bg-surface flex flex-col">
+
+  <div class="relative overflow-auto">
+
+    @if (isLoading()) {
+      <div class="absolute inset-0 z-10 flex items-center justify-center bg-surface/60 backdrop-blur-sm">
+        <mat-spinner diameter="36" />
+      </div>
+    }
+
+    <table mat-table [dataSource]="paddedData()" class="w-full">
+
+      @for (col of columns(); track col.key) {
+        <ng-container [matColumnDef]="col.key">
+          <th mat-header-cell *matHeaderCellDef [style.width]="col.width ?? ''">{{ col.label }}</th>
+          <td mat-cell *matCellDef="let row">
+            @if (!row._empty) {
+              @if (col.component) {
+                <ng-container [ngComponentOutlet]="col.component" [ngComponentOutletInputs]="cellInputs(row, col.key)" />
+              } @else if (col.format) {
+                {{ col.format(row) }}
+              } @else {
+                {{ getValue(row, col.key) }}
+              }
+            }
+          </td>
+        </ng-container>
+      }
+
+      @if (actions().length) {
+        <ng-container [matColumnDef]="ACTIONS_COL">
+          <th mat-header-cell *matHeaderCellDef class="w-px"></th>
+          <td mat-cell *matCellDef="let row">
+            @if (!row._empty) {
+              <div class="flex flex-row items-center">
+                @for (action of actions(); track action.icon) {
+                  @if (!action.hidden?.(row)) {
+                    <button
+                      mat-icon-button
+                      [matTooltip]="action.tooltip ?? ''"
+                      [disabled]="action.disabled?.(row) ?? false"
+                      (click)="onActionClick(action, row)"
+                    >
+                      <mat-icon>{{ action.icon }}</mat-icon>
+                    </button>
+                  }
+                }
+              </div>
+            }
+          </td>
+        </ng-container>
+      }
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns(); sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns()"
+          [class.pointer-events-none]="row._empty"></tr>
+
+    </table>
+
+  </div>
+
+  <mat-paginator
+    class="border-t border-outline-variant"
+    [length]="total()"
+    [pageSize]="pageSize()"
+    [pageSizeOptions]="pageSizeOptions()"
+    (page)="onPageChange($event)"
+    showFirstLastButtons
+  />
+
+</div>
