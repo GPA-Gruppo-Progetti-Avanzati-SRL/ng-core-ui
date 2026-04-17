@@ -36,7 +36,7 @@
       "description": "URL environment.json (senza FD: /environment/environment.json | con FD: /api/core/environment)",
       "default": "",
       "x-prompt": "environmentUrl? [senza FD: /environment/environment.json | con FD: /api/core/environment] (lascia vuoto per default automatico)"
-    },
+    }
   },
   "required": []
 }

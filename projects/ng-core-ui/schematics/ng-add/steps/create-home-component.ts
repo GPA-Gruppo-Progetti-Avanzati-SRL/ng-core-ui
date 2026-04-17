@@ -7,6 +7,7 @@ import {
   PageHeaderComponent,
   SystemService,
 } from '@gpa-gruppo-progetti-avanzati-srl/ng-core-ui';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -16,13 +17,14 @@ import {
 })
 export class HomeComponent {
   private readonly system = inject(SystemService);
+  private readonly router = inject(Router)
   readonly menu = computed(() => (this.system.menuTreeSig() ?? []).filter(p => p.path !== '/'));
   readonly homeTitle = computed(() => this.system.getEnvironmentProperty('homeTitle') as string);
   readonly homeSubTitle = computed(
     () => this.system.getEnvironmentProperty('homeSubTitle') as string,
   );
   navigate(path: string): void {
-    if (path) window.location.href = path;
+     if (path) this.router.navigateByUrl(path);
   }
 }
 `;
