@@ -40,9 +40,11 @@
 
         <!-- Sidenav destra -->
         <div class="extra-sidenav" [class.open]="extraSidenavOpen()" tabindex="-1" role="complementary" aria-label="Menu laterale destro">
-          <a href="/" (click)="closeExtraSidenav()" class="app-logo-link" aria-label="Vai alla home">
-            <div class="app-logo-container"></div>
-          </a>
+          @if (environment()?.logoUrl) {
+            <a href="/" (click)="closeExtraSidenav()" class="app-logo-link" aria-label="Vai alla home">
+              <img class="app-logo-img" [src]="environment()!.logoUrl" alt="Logo" />
+            </a>
+          }
           <mat-divider class="apps-divider"></mat-divider>
           <div class="extra-content">
             <mat-nav-list>

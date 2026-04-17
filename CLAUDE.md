@@ -106,6 +106,7 @@ interface Environment {
   appDescription: string;
   theme: string;
   logoutPath: string;
+  logoUrl?: string;             // optional URL for app-switcher logo (HTTPS, CDN, relative path)
   encryptToken?: boolean;       // if true, token response is AES-GCM encrypted
   properties?: Record<string, unknown>; // arbitrary app-specific config
 }
@@ -147,19 +148,10 @@ provideGPAUICore(),
 
 ### Theme Logo (App-switcher)
 
-Each theme SCSS file defines `--layout-logo-url` and shows the `.app-logo-link` element:
+The logo is driven by `logoUrl` in `environment.json` — no SCSS/asset embedding required.
 
-```scss
-.gpa {
-  --layout-logo-url: url("#{logos.$gpa}");
-  // ...
-  .app-logo-link { display: flex; }
-}
-```
-
-- `.app-logo-link` is `display: none` by default in the component SCSS; each theme activates it.
-- The logo uses `background-image: var(--layout-logo-url)` with `background-size: cover` so it fills and is clipped by the `border-radius: 50%` container.
-- Image files live in `assets/themes/logos/<theme>.<ext>` and are embedded as base64 data URIs by `scripts/embed-logos.mjs` into `styles/_logos.scss` (run via `npm run build:embed-logos`). File names **must be unique** across themes because esbuild flattens all assets into `media/` — same filename from two themes causes a build collision.
+- If `environment.logoUrl` is set, an `<img>` with circular style (96×96 px, `border-radius: 50%`, `object-fit: cover`) is shown in the app-switcher panel.
+- If `logoUrl` is absent or `undefined`, no logo element renders.
 - The logo link uses `href="/"` (not `routerLink`) so it navigates to the true site root, independent of the app's `baseHref`.
 
 ### Exported Assets (`ng-package.json`)
@@ -171,7 +163,6 @@ The library publishes these assets alongside the compiled JS:
 - `tailwind.config.js` — shared Tailwind config for consuming apps
 - `bin/generate-routes.mjs` — pre-built script for emitting `dist/caps/ui/routes.json`
 - `assets/**/*.woff2` — Roboto fonts (300/regular/500/600) and Material Icons
-- `assets/themes/**` — per-theme logo images
 
 ### UI Components Reference
 
