@@ -3,7 +3,7 @@
 Libreria UI condivisa per le applicazioni GPA. Fornisce layout, componenti, gestione token/ambiente, routing pre-configurati, temi Angular Material 3 e utility Tailwind CSS v4.
 
 - **Pacchetto:** `@gpa-gruppo-progetti-avanzati-srl/ng-core-ui`
-- **Versione:** 0.0.34
+- **Versione:** 0.0.35
 - **Angular:** 21.x · **Material:** 21.x · **Tailwind:** 4.x
 - **Documentazione completa:** [github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki)
 
