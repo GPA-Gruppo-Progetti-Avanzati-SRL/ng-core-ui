@@ -17,4 +17,8 @@ export class CardComponent {
   @Input() icon: string = 'info';
   @Input() buttonLabel: string = 'Procedi';
   @Output() buttonClick = new EventEmitter<void>();
+
+  isSubtitleTooltipDisabled(el: HTMLElement): boolean {
+    return el.scrollHeight <= el.clientHeight;
+  }
 }

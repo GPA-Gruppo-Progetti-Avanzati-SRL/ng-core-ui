@@ -6,12 +6,11 @@
   >
     <!-- Title -->
     <h2
-  [matTooltip]="title"
-  matTooltipPosition="above"
-  class="m-0 line-clamp-1 pb-1 text-[22px] leading-7 font-normal tracking-[0.01em] text-on-surface cursor-default"
->
-  {{ title }}
-</h2>
+      [matTooltip]="title"
+      matTooltipPosition="above"
+      class="m-0 truncate pb-1 text-[22px] leading-7 font-normal tracking-[0.01em] text-on-surface cursor-default">
+        {{ title }}
+    </h2>
 
     <hr class="mt-1 mb-2 border-t border-outline-variant" />
 
@@ -29,7 +28,9 @@
 
     <div class="mt-1 flex flex-col">
       <p
+        #subtitleEl
         [matTooltip]="subtitle || ''"
+        [matTooltipDisabled]="isSubtitleTooltipDisabled(subtitleEl)"
         matTooltipPosition="above"
         class="m-0 min-h-[55px] line-clamp-3 text-[13px] leading-[1.4] break-words text-on-surface-variant cursor-default">
         {{ subtitle }}
