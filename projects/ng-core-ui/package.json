@@ -1,6 +1,6 @@
 {
   "name": "@gpa-gruppo-progetti-avanzati-srl/ng-core-ui",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "peerDependencies": {
     "@angular/common": ">=19.0.0",
     "@angular/router": ">=19.0.0",
