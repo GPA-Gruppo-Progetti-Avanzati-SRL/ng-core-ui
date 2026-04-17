@@ -62,6 +62,8 @@ export class DatatableComponent implements OnInit {
   readonly actions         = input<DatatableAction<any>[]>([]);
   readonly pageSizeOptions = input<number[]>([10, 25, 50]);
   readonly initialPageSize = input<number>(10);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  readonly rowBackground   = input<(row: any) => string | null>();
 
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _trigger$   = new Subject<void>();

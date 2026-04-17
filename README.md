@@ -422,6 +422,7 @@ La tabella mantiene sempre la stessa altezza indipendentemente dal numero di rig
 | `columns` | `DatatableColumn[]` | — | Definizione colonne (obbligatorio) |
 | `load` | `DatatableLoader` | — | Funzione di caricamento (obbligatorio) |
 | `actions` | `DatatableAction[]` | `[]` | Bottoni azione per riga |
+| `rowBackground` | `(row) => string \| null` | — | Colore di sfondo CSS della riga in base all'oggetto |
 | `pageSizeOptions` | `number[]` | `[10, 25, 50]` | Opzioni per il selettore pageSize |
 | `initialPageSize` | `number` | `10` | Dimensione pagina iniziale |
 
@@ -565,6 +566,29 @@ readonly actions: DatatableAction<Person>[] = [
 | `onClick` | `(row) => void` | Handler al click |
 | `hidden` | `(row) => boolean?` | Nasconde il bottone per la riga |
 | `disabled` | `(row) => boolean?` | Disabilita il bottone per la riga |
+
+#### Colore di sfondo per riga
+
+Usare `rowBackground` per colorare la riga in base all'oggetto. La funzione restituisce un valore CSS diretto (`string`) oppure `null` per nessun colore. Le righe filler vengono ignorate automaticamente.
+
+```typescript
+readonly rowBackground = (row: Ordine): string | null => {
+  if (row.scaduto)    return '#fee2e2';  // rosso chiaro
+  if (row.inScadenza) return '#fef9c3';  // giallo chiaro
+  return null;
+};
+
+// oppure con rgb/rgba per trasparenza
+readonly rowBackground = (row: Pratica): string | null => {
+  if (row.priorita === 'alta')   return 'rgba(239,68,68,0.08)';
+  if (row.stato   === 'chiusa')  return 'rgba(0,0,0,0.04)';
+  return null;
+};
+```
+
+```html
+<core-datatable [columns]="columns" [load]="loader" [rowBackground]="rowBackground" />
+```
 
 #### Loader e filtri dinamici
 

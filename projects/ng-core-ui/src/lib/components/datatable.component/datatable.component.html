@@ -53,7 +53,8 @@
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns(); sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns()"
-          [class.pointer-events-none]="row._empty"></tr>
+          [class.pointer-events-none]="row._empty"
+          [style.background-color]="!row._empty ? (rowBackground()?.(row) ?? null) : null"></tr>
 
     </table>
 
