@@ -1,29 +1,48 @@
 import { Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
 
-const HOME_COMPONENT_TS = `import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+const HOME_COMPONENT_TS = `import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+
+import {
+  CardComponent,
+  PageHeaderComponent,
+  SystemService,
+} from '@gpa-gruppo-progetti-avanzati-srl/ng-core-ui';
 
 @Component({
   selector: 'app-home',
-  imports: [MatIconModule],
+  imports: [CardComponent, PageHeaderComponent],
   templateUrl: './home.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent {}
+export class HomeComponent {
+  private readonly system = inject(SystemService);
+  readonly menu = computed(() => (this.system.menuTreeSig() ?? []).filter(p => p.path !== '/'));
+  readonly homeTitle = computed(() => this.system.getEnvironmentProperty('homeTitle') as string);
+  readonly homeSubTitle = computed(
+    () => this.system.getEnvironmentProperty('homeSubTitle') as string,
+  );
+  navigate(path: string): void {
+    if (path) window.location.href = path;
+  }
+}
 `;
 
-function buildHomeHtml(appName: string): string {
-  return `<div class="flex items-center justify-center min-h-[70vh]">
-  <div class="flex flex-col items-center gap-4 bg-surface border border-outline-variant p-8 py-6 rounded-xl shadow-lg">
-    <mat-icon aria-hidden="true" class="text-[64px]! text-primary mb-2">home</mat-icon>
-    <h1 class="text-[2.2rem] font-bold text-on-surface m-0">Benvenuto!</h1>
-    <p class="text-[1.1rem] text-on-surface-variant text-center m-0">
-      Questa è la home page di <strong>${appName}</strong>.<br />Seleziona una funzionalità dal menu laterale.
-    </p>
-  </div>
+const HOME_COMPONENT_HTML = `<core-page-header [title]="homeTitle()" [subtitle]="homeSubTitle()" />
+<div class="ui:flex ui:flex-wrap ui:gap-6 ui:justify-start ui:pl-8 ui:pt-4">
+  @for (path of menu(); track path.id) {
+    <core-card
+      [title]="path.description || path.id"
+      [icon]="path.icon || 'language'"
+      [subtitle]="path.description || path.id"
+      buttonLabel="Procedi"
+      (buttonClick)="navigate(path.path!)"
+    />
+  }
+  @empty {
+    <p class="ui:text-on-surface-variant ui:text-center ui:p-8">Nessun sito disponibile.</p>
+  }
 </div>
 `;
-}
 
 export function createHomeComponent(): Rule {
   return (tree: Tree, context: SchematicContext) => {
@@ -35,19 +54,8 @@ export function createHomeComponent(): Rule {
       return;
     }
 
-    // Legge il nome del progetto da package.json per personalizzare il testo
-    let appName = 'App';
-    if (tree.exists('package.json')) {
-      const pkg = JSON.parse(tree.read('package.json')!.toString('utf-8'));
-      if (pkg.name) {
-        appName = pkg.name
-          .replace(/[-_]/g, ' ')
-          .replace(/\b\w/g, (c: string) => c.toUpperCase());
-      }
-    }
-
     tree.create(tsPath, HOME_COMPONENT_TS);
-    tree.create(htmlPath, buildHomeHtml(appName));
+    tree.create(htmlPath, HOME_COMPONENT_HTML);
     context.logger.info('  ✔ Creato src/app/pages/home/home.component.ts');
     context.logger.info('  ✔ Creato src/app/pages/home/home.component.html');
   };
