@@ -39,7 +39,7 @@ export function toRoutesYaml(routes: CoreRouteBase[], actions?: CoreAction[]): s
 
 export function toRoutesJson(routes: CoreRouteBase[], actions?: CoreAction[]): CoreRouteEntry[] {
   const ui: CoreRouteEntry[] = routes.map(({ id, name, description, icon, path, order, ismenu }) => ({
-    type: 'ui',
+    category: 'ui',
     id: id.toUpperCase(),
     ...(name !== undefined && { name }),
     ...(description !== undefined && { description }),
@@ -50,7 +50,7 @@ export function toRoutesJson(routes: CoreRouteBase[], actions?: CoreAction[]): C
   }));
 
   const ui_action: CoreRouteEntry[] = (actions ?? []).map(a => ({
-    type: 'ui_action' as const,
+    category: 'ui_action' as const,
     id: a.id.toUpperCase(),
     ...(a.description !== undefined && { description: a.description }),
   }));
