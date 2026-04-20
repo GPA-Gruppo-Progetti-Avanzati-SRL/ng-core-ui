@@ -4,16 +4,21 @@
   "title": "ng generate @gpa-gruppo-progetti-avanzati-srl/ng-core-ui:page",
   "type": "object",
   "properties": {
+    "id": {
+      "type": "string",
+      "description": "Id della pagina in kebab-case (es. 'user-list'). Determina il path della rotta, il nome dei file e il selettore del componente.",
+      "$default": { "$source": "argv", "index": 0 },
+      "x-prompt": "Id della pagina (kebab-case, es: user-list):"
+    },
     "name": {
       "type": "string",
-      "description": "Nome della pagina in kebab-case (es. 'user-list'). Determina il path della rotta, il nome dei file e il selettore del componente.",
-      "$default": { "$source": "argv", "index": 0 },
-      "x-prompt": "Nome della pagina (kebab-case, es: user-list):"
+      "description": "Nome leggibile della pagina, usata come label nel menu.",
+      "x-prompt": "Nome della pagina (label menu, es: 'Lista Utenti'):"
     },
     "description": {
       "type": "string",
-      "description": "Descrizione leggibile della pagina, usata come label nel menu.",
-      "x-prompt": "Descrizione della pagina (label menu, es: 'Lista Utenti'):"
+      "description": "Descrizione dettaglio della pagina, visibile nelle card home.",
+      "x-prompt": "Descrizione dettaglio della pagina, visibile nelle card home.:"
     },
     "icon": {
       "type": "string",

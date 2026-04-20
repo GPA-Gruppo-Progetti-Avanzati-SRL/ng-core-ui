@@ -43,6 +43,7 @@ function buildRouteEntry(appId: string, kebabName: string, options: Schema): str
   return `  {
     id: 'cap:${appId}:ui:${kebabName}',
     endpoint: '/${kebabName}',
+    name: '${options.name}',
     description: '${options.description}',
     icon: '${options.icon ?? 'chevron_right'}',
     menu: ${menu},
@@ -65,7 +66,7 @@ export function generatePage(options: Schema): Rule {
       throw new SchematicsException('Impossibile determinare il nome del progetto Angular.');
     }
 
-    const kebabName = toKebabCase(options.name);
+    const kebabName = toKebabCase(options.id);
     const tsPath   = `src/app/pages/${kebabName}/${kebabName}.component.ts`;
     const htmlPath = `src/app/pages/${kebabName}/${kebabName}.component.html`;
     const routesPath = 'src/app/app.routes.config.ts';
