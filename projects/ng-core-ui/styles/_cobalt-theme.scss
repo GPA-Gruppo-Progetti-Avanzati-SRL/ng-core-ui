@@ -1,17 +1,14 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
-@use 'poste-colors' as pi-theme;
+@use 'cobalt-colors' as cobalt-theme;
 @use 'color-bridge';
-@use 'logos';
-
 @include mat.core();
 
-// Define the Poste theme using the generated palettes
-$poste-theme: mat.define-theme((
+$cobalt-theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary: pi-theme.$primary-palette,
-    tertiary: pi-theme.$tertiary-palette
+    primary: cobalt-theme.$primary-palette,
+    tertiary: cobalt-theme.$tertiary-palette
   ),
   typography: (
     brand-family: 'Roboto, sans-serif',
@@ -19,23 +16,18 @@ $poste-theme: mat.define-theme((
   )
 ));
 
-.poste {
+.cobalt {
   // Apply the material theme variables
-  @include mat.all-component-themes($poste-theme);
-  @include mat.system-level-colors($poste-theme);
-  @include mat.system-level-typography($poste-theme);
+  @include mat.all-component-themes($cobalt-theme);
+  @include mat.system-level-colors($cobalt-theme);
+  @include mat.system-level-typography($cobalt-theme);
 
 
   --layout-sidenav-border: none;
   --layout-toolbar-border: none;
   --mat-sys-surface-variant: var(--mat-sys-tertiary-container);
-  --layout-logo-url: url("#{logos.$poste}");
 
   @include color-bridge.apply();
-
-  .app-logo-link {
-    display: flex;
-  }
 }
 
 .error-snackbar {

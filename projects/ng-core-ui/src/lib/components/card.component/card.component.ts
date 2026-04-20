@@ -21,4 +21,5 @@ export class CardComponent {
   isSubtitleTooltipDisabled(el: HTMLElement): boolean {
     return el.scrollHeight <= el.clientHeight;
   }
+
 }

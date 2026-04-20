@@ -27,16 +27,16 @@
     },
     "tokenUrl": {
       "type": "string",
-      "description": "URL endpoint token (senza FD: /api/token | con FD: /api/core/acl)",
+      "description": "URL endpoint token (senza FD: /api/token | con FD: /api/corectx/acl)",
       "default": "",
-      "x-prompt": "tokenUrl? [senza FD: /api/token | con FD: /api/core/acl] (lascia vuoto per default automatico)"
+      "x-prompt": "tokenUrl? [senza FD: /api/token | con FD: /api/corectx/acl] (lascia vuoto per default automatico)"
     },
     "environmentUrl": {
       "type": "string",
-      "description": "URL environment.json (senza FD: /environment/environment.json | con FD: /api/core/environment)",
+      "description": "URL environment.json (senza FD: /environment/environment.json | con FD: /api/corectx/environment)",
       "default": "",
-      "x-prompt": "environmentUrl? [senza FD: /environment/environment.json | con FD: /api/core/environment] (lascia vuoto per default automatico)"
-    },
+      "x-prompt": "environmentUrl? [senza FD: /environment/environment.json | con FD: /api/corectx/environment] (lascia vuoto per default automatico)"
+    }
   },
   "required": []
 }

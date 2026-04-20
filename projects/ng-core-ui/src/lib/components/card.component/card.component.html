@@ -6,15 +6,13 @@
   >
     <!-- Title -->
     <h2
-      [matTooltip]="title"
-      matTooltipPosition="above"
       class="m-0 truncate pb-1 text-[22px] leading-7 font-normal tracking-[0.01em] text-on-surface cursor-default">
         {{ title }}
     </h2>
 
     <hr class="mt-1 mb-2 border-t border-outline-variant" />
 
-<div class="flex items-center justify-center py-3">
+<div class="flex items-center justify-center py-1">
   <mat-icon
     aria-hidden="true"
     class="material-icons notranslate block !m-0 !p-0 !w-[195px] !h-[195px] !min-w-[195px] !min-h-[195px] !text-[195px] !leading-none"
@@ -32,7 +30,7 @@
         [matTooltip]="subtitle || ''"
         [matTooltipDisabled]="isSubtitleTooltipDisabled(subtitleEl)"
         matTooltipPosition="above"
-        class="m-0 min-h-[55px] line-clamp-3 text-[13px] leading-[1.4] break-words text-on-surface-variant cursor-default">
+        class="m-0 min-h-10 line-clamp-2 text-[13px] leading-[1.4] break-words text-on-surface-variant cursor-default">
         {{ subtitle }}
       </p>
 

@@ -1,0 +1,28 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+@use 'forest-colors' as forest-theme;
+@use 'color-bridge';
+@include mat.core();
+
+$forest-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary:  forest-theme.$primary-palette,
+    tertiary: forest-theme.$tertiary-palette,
+  ),
+  typography: (
+    brand-family: 'Roboto, sans-serif',
+    plain-family: 'Roboto, sans-serif',
+  )
+));
+
+.forest {
+  @include mat.all-component-themes($forest-theme);
+  @include mat.system-level-colors($forest-theme);
+  @include mat.system-level-typography($forest-theme);
+
+  --layout-sidenav-border: none;
+  --layout-toolbar-border: none;
+
+  @include color-bridge.apply();
+}

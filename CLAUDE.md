@@ -106,6 +106,7 @@ interface Environment {
   appDescription: string;
   theme: string;
   logoutPath: string;
+  logoUrl?: string;             // optional URL for app-switcher logo (HTTPS, CDN, relative path)
   encryptToken?: boolean;       // if true, token response is AES-GCM encrypted
   properties?: Record<string, unknown>; // arbitrary app-specific config
 }
@@ -137,7 +138,7 @@ provideGPAUICore(),
 
 ### Styling
 
-- **Angular Material 3** with a custom color theme using MD3 `light-dark()` CSS variables. Known brand themes: `gpa`, `poste`, `bnl` — each with its own `_<theme>-colors.scss` + `_<theme>-theme.scss` pair in `projects/ng-core-ui/styles/`. `StyleManagerService` toggles CSS classes on `<body>`.
+- **Angular Material 3** with a custom color theme using MD3 `light-dark()` CSS variables. Known brand themes: `gpa`, `cobalt`, `forest` — each with its own `_<theme>-colors.scss` + `_<theme>-theme.scss` pair in `projects/ng-core-ui/styles/`. `StyleManagerService` toggles CSS classes on `<body>`.
 - **Tailwind CSS v4** via PostCSS (`@tailwindcss/postcss`). Utilities use `important: '.ui'` so they apply only inside `.ui` elements. Tailwind config uses `darkMode: 'class'`.
 - **mat-theme-bridge.css** — contains a `@theme {}` block that registers `--color-*` tokens (e.g., `--color-surface`, `--color-primary`) with Tailwind so it generates semantic utilities (`bg-surface`, `text-on-primary`, etc.). This block is **for Tailwind utility generation only** — it does NOT provide the actual CSS variable values at runtime.
 - **`_color-bridge.scss` + mixin** — the actual runtime bridge. Contains a single `color-bridge.apply()` mixin that declares `--color-*: var(--mat-sys-*)` mappings. Included via `@include color-bridge.apply()` inside `.gpa {}`, `.poste {}` and `.bnl {}` in the respective theme SCSS files. This ensures the `var()` references resolve correctly in all browsers including WebKit/Safari, where declaring them on `:root` fails because `--mat-sys-*` variables are not in scope at that level.
@@ -147,19 +148,10 @@ provideGPAUICore(),
 
 ### Theme Logo (App-switcher)
 
-Each theme SCSS file defines `--layout-logo-url` and shows the `.app-logo-link` element:
+The logo is driven by `logoUrl` in `environment.json` — no SCSS/asset embedding required.
 
-```scss
-.gpa {
-  --layout-logo-url: url("#{logos.$gpa}");
-  // ...
-  .app-logo-link { display: flex; }
-}
-```
-
-- `.app-logo-link` is `display: none` by default in the component SCSS; each theme activates it.
-- The logo uses `background-image: var(--layout-logo-url)` with `background-size: cover` so it fills and is clipped by the `border-radius: 50%` container.
-- Image files live in `assets/themes/logos/<theme>.<ext>` and are embedded as base64 data URIs by `scripts/embed-logos.mjs` into `styles/_logos.scss` (run via `npm run build:embed-logos`). File names **must be unique** across themes because esbuild flattens all assets into `media/` — same filename from two themes causes a build collision.
+- If `environment.logoUrl` is set, an `<img>` with circular style (96×96 px, `border-radius: 50%`, `object-fit: cover`) is shown in the app-switcher panel.
+- If `logoUrl` is absent or `undefined`, no logo element renders.
 - The logo link uses `href="/"` (not `routerLink`) so it navigates to the true site root, independent of the app's `baseHref`.
 
 ### Exported Assets (`ng-package.json`)
@@ -171,7 +163,6 @@ The library publishes these assets alongside the compiled JS:
 - `tailwind.config.js` — shared Tailwind config for consuming apps
 - `bin/generate-routes.mjs` — pre-built script for emitting `dist/caps/ui/routes.json`
 - `assets/**/*.woff2` — Roboto fonts (300/regular/500/600) and Material Icons
-- `assets/themes/**` — per-theme logo images
 
 ### UI Components Reference
 
@@ -227,7 +218,7 @@ All exports go through `projects/ng-core-ui/src/public-api.ts`. When adding a ne
 6. **updateAppConfig** — rewrites `src/app/app.config.ts` with `provideGPAUICore()`, `provideRouter(toRoutes(APP_ROUTES))`, `provideHttpClient()`.
 7. **createRoutesConfig** — creates `src/app/app.routes.config.ts` with a starter home route using the `cap:<projectName>:ui:home` ID convention. Reads the project name from `angular.json`.
 8. **createGenerateRoutesScript** — adds `"generate-routes"` and `"generate-page"` scripts to the app's `package.json`.
-9. **createHomeComponent** — creates `src/app/pages/home/home.component.ts` and `.html`.
+9. **createHomeComponent** — creates `src/app/pages/home/home.component.ts` and `.html`. The component injects `SystemService` and exposes: `menu` (filtered `menuTreeSig()` excluding root), `homeTitle`/`homeSubTitle` (read from `environment.properties`), and `navigate(path)`. The template renders a `core-page-header` + a `core-card` grid for each menu item.
 10. **cleanAppHtml** — replaces `app.html` / `app.component.html` with just `<router-outlet />`.
 11. **createFontsScss** — creates `src/fonts.scss` with Roboto and Material Icons `@font-face` declarations.
 12. **createTailwindAppCss** — creates `src/tailwind-app.css` importing `tailwindcss/utilities` and `mat-theme-bridge.css`.

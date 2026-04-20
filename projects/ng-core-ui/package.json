@@ -1,6 +1,6 @@
 {
   "name": "@gpa-gruppo-progetti-avanzati-srl/ng-core-ui",
-  "version": "0.0.31",
+  "version": "0.0.35",
   "peerDependencies": {
     "@angular/common": ">=19.0.0",
     "@angular/router": ">=19.0.0",
@@ -33,7 +33,6 @@
   "dependencies": {
     "tslib": "^2.8.1"
   },
-  "type": "module",
   "sideEffects": false,
   "schematics": "./schematics/collection.json",
   "ng-update": {

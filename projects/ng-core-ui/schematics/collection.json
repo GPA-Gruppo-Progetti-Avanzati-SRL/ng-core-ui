@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "$schema": "https://json.schemastore.org/angular-devkit-schematics-collection.json",
   "schematics": {
     "ng-add": {
       "description": "Aggiunge e configura ng-core-ui in un progetto Angular",
