@@ -9,10 +9,10 @@
             class="nav-item"
             [routerLink]="[endpointFor(link)]"
             [activated]="isActive(link)"
-            [attr.aria-label]="link.description || link.id"
+            [attr.aria-label]="link.name || link.id"
           >
             <mat-icon>{{ link.icon || 'chevron_right' }}</mat-icon>
-            <span class="label" [class.hidden]="!isExpanded()">{{ link.description || link.id }}</span>
+            <span class="label" [class.hidden]="!isExpanded()">{{ link.name || link.id }}</span>
           </a>
         }
       </mat-nav-list>
