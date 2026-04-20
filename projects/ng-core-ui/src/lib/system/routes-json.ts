@@ -20,11 +20,11 @@ export interface CoreRouteBase {
 }
 
 export type CoreRouteEntry =
-  | ({ type: 'ui' } & Omit<CoreRouteBase, never>)
-  | { type: 'ui_action'; id: string; description?: string };
+  | ({ category: 'ui' } & Omit<CoreRouteBase, never>)
+  | { category: 'ui_action'; id: string; description?: string };
 
 function entryToYaml(e: CoreRouteEntry): string {
-  const lines: string[] = [`  - type: ${e.type}`, `    id: ${e.id}`];
+  const lines: string[] = [`  - type: ${e.category}`, `    id: ${e.id}`];
   const rest = e as Record<string, unknown>;
   for (const key of ['name', 'description', 'icon', 'path', 'order', 'ismenu']) {
     if (rest[key] !== undefined) lines.push(`    ${key}: ${rest[key]}`);
