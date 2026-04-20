@@ -115,7 +115,8 @@ export class DatatableComponent implements OnInit {
     this._trigger$.next();
   }
 
-  refresh(): void {
+  refresh(resetPage = false): void {
+    if (resetPage) this.currentPage.set(1);
     this._trigger$.next();
   }
 
