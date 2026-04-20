@@ -36,6 +36,7 @@ export interface DatatableAction<T = unknown> {
   onClick: (row: T) => void;
   hidden?: (row: T) => boolean;
   disabled?: (row: T) => boolean;
+  buttonClass?: string;
 }
 
 export interface DatatableResult<T = unknown> {

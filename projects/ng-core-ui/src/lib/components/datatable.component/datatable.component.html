@@ -1,9 +1,8 @@
-<div class="overflow-hidden rounded-xl border border-outline-variant bg-surface flex flex-col">
-
-  <div class="relative overflow-auto">
+<div class="w-full overflow-hidden rounded-lg border border-outline-variant/60 bg-white">
+  <div class="relative overflow-x-auto">
 
     @if (isLoading()) {
-      <div class="absolute inset-0 z-10 flex items-center justify-center bg-surface/60 backdrop-blur-sm">
+      <div class="absolute inset-0 z-10 flex items-center justify-center bg-white/70 backdrop-blur-sm">
         <mat-spinner diameter="36" />
       </div>
     }
@@ -12,11 +11,26 @@
 
       @for (col of columns(); track col.key) {
         <ng-container [matColumnDef]="col.key">
-          <th mat-header-cell *matHeaderCellDef [style.width]="col.width ?? ''">{{ col.label }}</th>
-          <td mat-cell *matCellDef="let row">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            [style.width]="col.width ?? ''"
+            class="h-12 px-4 text-left text-sm font-medium text-text-muted bg-white border-b border-outline-variant/60 whitespace-nowrap"
+          >
+            {{ col.label }}
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let row"
+            class="h-14 px-4 text-sm font-normal text-text bg-white border-b border-outline-variant/30 whitespace-nowrap"
+          >
             @if (!row._empty) {
               @if (col.component) {
-                <ng-container [ngComponentOutlet]="col.component" [ngComponentOutletInputs]="cellInputs(row, col.key)" />
+                <ng-container
+                  [ngComponentOutlet]="col.component"
+                  [ngComponentOutletInputs]="cellInputs(row, col.key)"
+                />
               } @else if (col.format) {
                 {{ col.format(row) }}
               } @else {
@@ -29,10 +43,21 @@
 
       @if (actions().length) {
         <ng-container [matColumnDef]="ACTIONS_COL">
-          <th mat-header-cell *matHeaderCellDef class="w-px"></th>
-          <td mat-cell *matCellDef="let row">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="h-12 px-4 text-right text-sm font-medium text-text-muted bg-white border-b border-outline-variant/60 whitespace-nowrap"
+          >
+            Actions
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let row"
+            class="h-14 px-4 bg-white border-b border-outline-variant/30"
+          >
             @if (!row._empty) {
-              <div class="flex flex-row items-center">
+              <div class="flex items-center justify-end gap-1">
                 @for (action of actions(); track action.icon) {
                   @if (!action.hidden?.(row)) {
                     <button
@@ -40,8 +65,11 @@
                       [matTooltip]="action.tooltip ?? ''"
                       [disabled]="action.disabled?.(row) ?? false"
                       (click)="onActionClick(action, row)"
+                      class="!h-8 !w-8 rounded-full text-text-muted hover:bg-black/5 hover:text-text"
                     >
-                      <mat-icon>{{ action.icon }}</mat-icon>
+                      <mat-icon class="!text-[18px] !w-[18px] !h-[18px] !leading-none">
+                        {{ action.icon }}
+                      </mat-icon>
                     </button>
                   }
                 }
@@ -51,21 +79,27 @@
         </ng-container>
       }
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns(); sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns()"
-          [class.pointer-events-none]="row._empty"></tr>
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns(); sticky: true"
+        class="!bg-white"
+      ></tr>
 
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns()"
+        class="transition-colors hover:bg-black/[0.02]"
+        [class.pointer-events-none]="row._empty"
+      ></tr>
     </table>
-
   </div>
 
   <mat-paginator
-    class="border-t border-outline-variant"
+    class="border-t border-outline-variant/60 bg-white px-4 py-2"
     [length]="total()"
     [pageSize]="pageSize()"
     [pageSizeOptions]="pageSizeOptions()"
     (page)="onPageChange($event)"
     showFirstLastButtons
   />
-
 </div>
