@@ -3,9 +3,9 @@ export interface PathNode {
   name?: string;
   description?: string;
   icon?: string;
-  path?: string | null;
+  endpoint?: string | null;
   order?: number;
-  ismenu?: boolean;
+  menu?: boolean;
 }
 
 export interface App {

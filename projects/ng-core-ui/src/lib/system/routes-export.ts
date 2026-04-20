@@ -14,9 +14,9 @@ export interface CoreRouteBase {
   name?: string;
   description?: string;
   icon?: string;
-  path?: string;
+  endpoint?: string;
   order?: number;
-  ismenu?: boolean;
+  menu?: boolean;
 }
 
 export type CoreRouteEntry =
@@ -24,9 +24,9 @@ export type CoreRouteEntry =
   | { category: 'ui_action'; id: string; description?: string };
 
 function entryToYaml(e: CoreRouteEntry): string {
-  const lines: string[] = [`  - type: ${e.category}`, `    id: ${e.id}`];
+  const lines: string[] = [`  - category: ${e.category}`, `    id: ${e.id}`];
   const rest = e as Record<string, unknown>;
-  for (const key of ['name', 'description', 'icon', 'path', 'order', 'ismenu']) {
+  for (const key of ['name', 'description', 'icon', 'endpoint', 'order', 'menu']) {
     if (rest[key] !== undefined) lines.push(`    ${key}: ${rest[key]}`);
   }
   return lines.join('\n');
@@ -38,15 +38,15 @@ export function toRoutesYaml(routes: CoreRouteBase[], actions?: CoreAction[]): s
 }
 
 export function toRoutesList(routes: CoreRouteBase[], actions?: CoreAction[]): CoreRouteEntry[] {
-  const ui: CoreRouteEntry[] = routes.map(({ id, name, description, icon, path, order, ismenu }) => ({
+  const ui: CoreRouteEntry[] = routes.map(({ id, name, description, icon, endpoint, order, menu }) => ({
     category: 'ui',
     id: id,
     ...(name !== undefined && { name }),
     ...(description !== undefined && { description }),
     ...(icon !== undefined && { icon }),
-    path: path != null ? (path === '' ? '/' : path.startsWith('/') ? path : `/${path}`) : undefined,
+    endpoint: endpoint != null ? (endpoint === '' ? '/' : endpoint.startsWith('/') ? endpoint : `/${endpoint}`) : undefined,
     ...(order !== undefined && { order }),
-    ...(ismenu !== undefined && { ismenu }),
+    ...(menu !== undefined && { menu }),
   }));
 
   const ui_action: CoreRouteEntry[] = (actions ?? []).map(a => ({

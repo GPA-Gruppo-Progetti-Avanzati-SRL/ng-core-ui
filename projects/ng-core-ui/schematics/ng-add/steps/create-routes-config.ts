@@ -8,20 +8,21 @@ function buildRoutesConfig(appId: string): string {
 export const APP_ROUTES: CoreRoute[] = [
   {
     id: 'cap:${appId}:ui:home',
-    path: '',
+    endpoint: '',
+    name :'Home',
     description: 'Home',
     icon: 'home',
-    ismenu: true,
+    menu: true,
     order: 0,
     loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent),
   },
   // Aggiungi qui le altre rotte della tua applicazione, es:
   // {
   //   id: 'cap:${appId}:ui:dashboard',
-  //   path: 'dashboard',
+  //   endpoint: 'dashboard',
   //   description: 'Dashboard',
   //   icon: 'dashboard',
-  //   ismenu: true,
+  //   menu: true,
   //   order: 1,
   //   loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent),
   // },

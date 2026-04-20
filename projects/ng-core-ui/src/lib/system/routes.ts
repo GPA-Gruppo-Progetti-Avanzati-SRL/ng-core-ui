@@ -32,7 +32,7 @@ export function toRoutes(routes: CoreRoute[], options?: CoreRoutesOptions): Rout
       ...(guard ? { canActivateChild: [MenuGuard] } : {}),
       children: [
         ...routes.map(r => ({
-          path: r.path ?? r.id,
+          path: r.endpoint ?? '',
           loadComponent: r.loadComponent!,
         })),
         { path: 'forbidden', component: ForbiddenComponent },

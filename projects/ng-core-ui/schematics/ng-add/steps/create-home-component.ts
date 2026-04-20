@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
 export class HomeComponent {
   private readonly system = inject(SystemService);
   private readonly router = inject(Router)
-  readonly menu = computed(() => (this.system.menuTreeSig() ?? []).filter(p => p.path !== '/'));
+  readonly menu = computed(() => (this.system.menuTreeSig() ?? []).filter(p => p.endpoint !== '/'));
   readonly homeTitle = computed(() => this.system.getEnvironmentProperty('homeTitle') as string);
   readonly homeSubTitle = computed(
     () => this.system.getEnvironmentProperty('homeSubTitle') as string,
@@ -37,7 +37,7 @@ const HOME_COMPONENT_HTML = `<core-page-header [title]="homeTitle()" [subtitle]=
       [icon]="path.icon || 'language'"
       [subtitle]="path.description || path.id"
       buttonLabel="Procedi"
-      (buttonClick)="navigate(path.path!)"
+      (buttonClick)="navigate(path.endpoint!)"
     />
   }
   @empty {

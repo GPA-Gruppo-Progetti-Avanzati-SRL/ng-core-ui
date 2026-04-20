@@ -39,13 +39,13 @@ function buildComponentHtml(description: string): string {
 }
 
 function buildRouteEntry(appId: string, kebabName: string, options: Schema): string {
-  const ismenu = options.ismenu !== false;
+  const menu = options.menu !== false;
   return `  {
     id: 'cap:${appId}:ui:${kebabName}',
-    path: '${kebabName}',
+    endpoint: '/${kebabName}',
     description: '${options.description}',
     icon: '${options.icon ?? 'chevron_right'}',
-    ismenu: ${ismenu},
+    menu: ${menu},
     order: ${options.order},
     loadComponent: () => import('./pages/${kebabName}/${kebabName}.component').then(m => m.${toPascalCase(kebabName)}Component),
   },`;

@@ -93,7 +93,7 @@ export class MainLayoutComponent implements OnInit {
   }
 
   endpointFor(n: PathNode): string | null {
-    return n.path ? this.system.normalizePath(n.path) : null;
+    return n.endpoint ? this.system.normalizePath(n.endpoint) : null;
   }
 
   isActive(n: PathNode): boolean {

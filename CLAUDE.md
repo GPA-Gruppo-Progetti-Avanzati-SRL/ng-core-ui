@@ -90,7 +90,7 @@ All exposed as Angular signals on `SystemService`:
 |--------|------|-------------|
 | `whoamiSig` | `{ user, roles, capabilities } \| null` | Authenticated user info |
 | `pathsSig` | `PathNode[] \| null` | All allowed route nodes |
-| `menuTreeSig` | `PathNode[] \| null` | Filtered+sorted menu nodes (`ismenu: true`) |
+| `menuTreeSig` | `PathNode[] \| null` | Filtered+sorted menu nodes (`menu: true`) |
 | `appsSig` | `App[] \| null` | App switcher entries (sorted) |
 | `sitesSig` | `Site[] \| null` | Available sites |
 | `environmentSig` | `Environment \| null` | Runtime environment config |
@@ -125,7 +125,7 @@ Route IDs follow the convention `cap:<appId>:ui:<page>`. Apps define routes usin
 ```ts
 // app.routes.config.ts
 export const APP_ROUTES: CoreRoute[] = [
-  { id: 'cap:my-app:ui:home', path: '', description: 'Home', icon: 'home', ismenu: true, order: 0,
+  { id: 'cap:my-app:ui:home', path: '', description: 'Home', icon: 'home', menu: true, order: 0,
     loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent) },
 ];
 
@@ -252,7 +252,7 @@ All exports go through `projects/ng-core-ui/src/public-api.ts`. When adding a ne
 | `name` | yes | Page name in kebab-case (e.g. `user-list`). Drives file names, selector, class name, route path. |
 | `description` | yes | Human-readable label for the menu. |
 | `icon` | no | Material icon name. Default: `chevron_right`. |
-| `ismenu` | no | Show in sidebar menu. Default: `true`. |
+| `menu` | no | Show in sidebar menu. Default: `true`. |
 | `order` | yes | Integer menu order. |
 
 Generated route ID format: `cap:<projectName>:ui:<name>`.

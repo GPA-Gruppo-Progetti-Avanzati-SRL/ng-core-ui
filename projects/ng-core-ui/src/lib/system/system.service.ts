@@ -55,7 +55,7 @@ export class SystemService {
     if (!list) return new Set<string>();
     const acc = new Set<string>();
     for (const n of list) {
-      if (n.path) acc.add(this.normalizePath(n.path));
+      if (n.endpoint) acc.add(this.normalizePath(n.endpoint));
     }
     return acc;
   });
@@ -104,7 +104,7 @@ export class SystemService {
     });
     this.pathsSig.set(data.paths ?? []);
 
-    const menuNodes = (data.paths ?? []).filter(p => p.ismenu);
+    const menuNodes = (data.paths ?? []).filter(p => p.menu);
     const sortedMenu = this.sortPathNodes(menuNodes);
     this.menuTreeSig.set(sortedMenu);
 
