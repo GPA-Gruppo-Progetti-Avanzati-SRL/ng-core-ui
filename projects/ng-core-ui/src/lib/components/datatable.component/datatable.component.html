@@ -15,9 +15,23 @@
             mat-header-cell
             *matHeaderCellDef
             [style.width]="col.width ?? ''"
+            [class.cursor-pointer]="col.sortable"
+            [class.select-none]="col.sortable"
+            (click)="onSortChange(col)"
             class="h-12 px-4 text-left text-sm font-medium text-text-muted bg-white border-b border-outline-variant/60 whitespace-nowrap"
           >
-            {{ col.label }}
+            <span class="inline-flex items-center gap-1">
+              {{ col.label }}
+              @if (col.sortable) {
+                <mat-icon class="!text-[16px] !w-[16px] !h-[16px] !leading-none">
+                  @if (currentSort()?.field === col.key) {
+                    {{ currentSort()!.dir === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                  } @else {
+                    unfold_more
+                  }
+                </mat-icon>
+              }
+            </span>
           </th>
 
           <td
@@ -90,6 +104,7 @@
         *matRowDef="let row; columns: displayedColumns()"
         class="transition-colors hover:bg-black/[0.02]"
         [class.pointer-events-none]="row._empty"
+        [style.background-color]="!row._empty ? (rowBackground()?.(row) ?? null) : null"
       ></tr>
     </table>
   </div>

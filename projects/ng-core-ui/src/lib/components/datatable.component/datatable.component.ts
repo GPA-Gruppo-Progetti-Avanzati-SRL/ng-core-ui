@@ -24,6 +24,7 @@ export interface DatatableColumn {
   key: string;
   label: string;
   width?: string;
+  sortable?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   format?: (row: any) => string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,7 +45,13 @@ export interface DatatableResult<T = unknown> {
   total: number;
 }
 
-export type DatatableLoader<T = unknown> = (page: number, pageSize: number) => Observable<DatatableResult<T>>;
+export type DatatableSort = { field: string; dir: 'asc' | 'desc' } | null;
+
+export type DatatableLoader<T = unknown> = (
+  page: number,
+  pageSize: number,
+  sort?: DatatableSort,
+) => Observable<DatatableResult<T>>;
 
 const ACTIONS_COL = '_actions';
 
@@ -55,6 +62,7 @@ const ACTIONS_COL = '_actions';
   templateUrl: './datatable.component.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'ui' },
 })
 export class DatatableComponent implements OnInit {
   readonly columns         = input.required<DatatableColumn[]>();
@@ -76,6 +84,7 @@ export class DatatableComponent implements OnInit {
   protected readonly total            = signal(0);
   protected readonly currentPage      = signal(1);
   protected readonly pageSize         = signal(10);
+  protected readonly currentSort      = signal<DatatableSort>(null);
   protected readonly displayedColumns = computed(() => {
     const cols = this.columns().map(c => c.key);
     return this.actions().length ? [...cols, ACTIONS_COL] : cols;
@@ -92,7 +101,7 @@ export class DatatableComponent implements OnInit {
     this._trigger$.pipe(
       switchMap(() => {
         this.isLoading.set(true);
-        return this.load()(this.currentPage(), this.pageSize()).pipe(
+        return this.load()(this.currentPage(), this.pageSize(), this.currentSort()).pipe(
           catchError(() => of({ items: [], total: 0 })),
           finalize(() => this.isLoading.set(false)),
         );
@@ -113,6 +122,18 @@ export class DatatableComponent implements OnInit {
   protected onPageChange(event: PageEvent): void {
     this.currentPage.set(event.pageIndex + 1);
     this.pageSize.set(event.pageSize);
+    this._trigger$.next();
+  }
+
+  protected onSortChange(col: DatatableColumn): void {
+    if (!col.sortable) return;
+    const current = this.currentSort();
+    if (current?.field === col.key) {
+      this.currentSort.set({ field: col.key, dir: current.dir === 'asc' ? 'desc' : 'asc' });
+    } else {
+      this.currentSort.set({ field: col.key, dir: 'asc' });
+    }
+    this.currentPage.set(1);
     this._trigger$.next();
   }
 

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
-import { DatatableLoader } from './datatable.component';
+import { DatatableLoader, DatatableSort } from './datatable.component';
 
 /**
  * Crea un DatatableLoader per le API GPA che seguono la convenzione:
@@ -26,9 +26,12 @@ export function createPagedLoader<T>(
   url: string,
   extraParams?: () => Record<string, string | number>,
 ): DatatableLoader<T> {
-  return (page: number, pageSize: number) =>
-    http.get<{ body: T[] }>(url, {
-      params: { page, pageSize, ...(extraParams?.() ?? {}) },
+  return (page: number, pageSize: number, sort?: DatatableSort) => {
+    const sortParams: Record<string, string> = sort
+      ? { sort: `${sort.field}:${sort.dir}` }
+      : {};
+    return http.get<{ body: T[] }>(url, {
+      params: { page, pageSize, ...(extraParams?.() ?? {}), ...sortParams },
       observe: 'response',
     }).pipe(
       map(resp => ({
@@ -36,4 +39,5 @@ export function createPagedLoader<T>(
         total: parseInt(resp.headers.get('total-elements') ?? '0', 10),
       })),
     );
+  };
 }

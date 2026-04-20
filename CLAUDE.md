@@ -183,10 +183,11 @@ The library publishes these assets alongside the compiled JS:
 - `loadingInterceptor` — `HttpInterceptorFn` che chiama `show/hide` automaticamente su ogni XHR.
 
 **DataTable API:**
-- `DatatableColumn { key, label, width?, format?, component? }` — `key` supporta notazione dot per oggetti annidati (es. `address.city`). `format?: (row) => string` per valori calcolati da più campi (priorità su `key`). `component` è un `Type<any>` Angular opzionale per celle con layout custom (priorità massima).
+- `DatatableColumn { key, label, width?, sortable?, format?, component? }` — `key` supporta notazione dot per oggetti annidati (es. `address.city`). `sortable?: boolean` abilita click sull'header per ordinamento server-side. `format?: (row) => string` per valori calcolati da più campi (priorità su `key`). `component` è un `Type<any>` Angular opzionale per celle con layout custom (priorità massima).
+- `DatatableSort` — `{ field: string; dir: 'asc' | 'desc' } | null`. Rappresenta il sort corrente, passato come terzo argomento al loader.
 - `DatatableAction<T> { icon, tooltip?, onClick, hidden?, disabled? }` — bottone icona per riga. `onClick/hidden/disabled` ricevono la riga come argomento.
-- `DatatableLoader<T>` — `(page: number, pageSize: number) => Observable<{ items: T[], total: number }>`.
-- `createPagedLoader<T>(http, url, extraParams?)` — factory che wrappa la convenzione GPA: response `{ body: T[] }` + header `total-elements`. `extraParams` è una funzione rieseguita ad ogni load (utile per filtri signal-based).
+- `DatatableLoader<T>` — `(page: number, pageSize: number, sort?: DatatableSort) => Observable<{ items: T[], total: number }>`.
+- `createPagedLoader<T>(http, url, extraParams?)` — factory che wrappa la convenzione GPA: response `{ body: T[] }` + header `total-elements`. `extraParams` è una funzione rieseguita ad ogni load (utile per filtri signal-based). Il sort viene passato come query param `sort=field:dir`.
 - `DatatableComponent.refresh()` — metodo pubblico per forzare il reload della pagina corrente.
 - **Colonne custom**: passare `component: MyCellComponent` su `DatatableColumn`. Il componente deve esporre `value = input<unknown>()` e `row = input<unknown>()`. Viene renderizzato via `NgComponentOutlet` con `inputs` — nessun template markup aggiuntivo nel consuming component.
 
