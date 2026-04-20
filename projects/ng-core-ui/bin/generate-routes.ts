@@ -6,7 +6,7 @@
  * Reads APP_ROUTES (and optionally APP_ACTIONS) from the consuming app's
  * src/app/app.routes.config.ts and writes dist/caps/ui/routes.yaml.
  */
-import { toRoutesYaml } from '../src/lib/system/routes-json';
+import { toRoutesYaml } from '../src/lib/system/routes-export';
 import { mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { pathToFileURL } from 'url';

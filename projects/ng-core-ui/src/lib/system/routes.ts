@@ -8,9 +8,9 @@ import { SimpleLayoutComponent } from '../layout/simple-layout/simple-layout.com
 import { ForbiddenComponent } from '../forbidden/forbidden.component';
 import { NotFoundComponent } from '../not-found/not-found.component';
 
-export type { CoreAction, CoreRouteBase, CoreRouteEntry } from './routes-json';
-export { toRoutesJson, toRoutesYaml } from './routes-json';
-import type { CoreRouteBase } from './routes-json';
+export type { CoreAction, CoreRouteBase, CoreRouteEntry } from './routes-export';
+export { toRoutesList, toRoutesYaml } from './routes-export';
+import type { CoreRouteBase } from './routes-export';
 
 export interface CoreRoute extends CoreRouteBase {
   loadComponent?: () => Promise<Type<unknown> | { default: Type<unknown> }>;

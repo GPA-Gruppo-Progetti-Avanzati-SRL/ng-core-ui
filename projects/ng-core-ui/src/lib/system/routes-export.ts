@@ -33,14 +33,14 @@ function entryToYaml(e: CoreRouteEntry): string {
 }
 
 export function toRoutesYaml(routes: CoreRouteBase[], actions?: CoreAction[]): string {
-  const entries = toRoutesJson(routes, actions);
+  const entries = toRoutesList(routes, actions);
   return 'cap_defs:\n' + entries.map(entryToYaml).join('\n') + '\n';
 }
 
-export function toRoutesJson(routes: CoreRouteBase[], actions?: CoreAction[]): CoreRouteEntry[] {
+export function toRoutesList(routes: CoreRouteBase[], actions?: CoreAction[]): CoreRouteEntry[] {
   const ui: CoreRouteEntry[] = routes.map(({ id, name, description, icon, path, order, ismenu }) => ({
     category: 'ui',
-    id: id.toUpperCase(),
+    id: id,
     ...(name !== undefined && { name }),
     ...(description !== undefined && { description }),
     ...(icon !== undefined && { icon }),
@@ -51,7 +51,7 @@ export function toRoutesJson(routes: CoreRouteBase[], actions?: CoreAction[]): C
 
   const ui_action: CoreRouteEntry[] = (actions ?? []).map(a => ({
     category: 'ui_action' as const,
-    id: a.id.toUpperCase(),
+    id: a.id,
     ...(a.description !== undefined && { description: a.description }),
   }));
 
