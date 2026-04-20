@@ -112,6 +112,7 @@
   <mat-paginator
     class="border-t border-outline-variant/60 bg-white px-4 py-2"
     [length]="total()"
+    [pageIndex]="currentPage() - 1"
     [pageSize]="pageSize()"
     [pageSizeOptions]="pageSizeOptions()"
     (page)="onPageChange($event)"

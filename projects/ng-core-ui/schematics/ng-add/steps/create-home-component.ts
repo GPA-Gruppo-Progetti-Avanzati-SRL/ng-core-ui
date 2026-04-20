@@ -33,7 +33,7 @@ const HOME_COMPONENT_HTML = `<core-page-header [title]="homeTitle()" [subtitle]=
 <div class="ui:flex ui:flex-wrap ui:gap-6 ui:justify-start ui:pl-8 ui:pt-4">
   @for (path of menu(); track path.id) {
     <core-card
-      [title]="path.description || path.id"
+      [title]="path.name || path.id"
       [icon]="path.icon || 'language'"
       [subtitle]="path.description || path.id"
       buttonLabel="Procedi"
@@ -41,7 +41,7 @@ const HOME_COMPONENT_HTML = `<core-page-header [title]="homeTitle()" [subtitle]=
     />
   }
   @empty {
-    <p class="ui:text-on-surface-variant ui:text-center ui:p-8">Nessun sito disponibile.</p>
+    <p class="ui:text-on-surface-variant ui:text-center ui:p-8">Nessuna funzionela gener disponibile.</p>
   }
 </div>
 `;

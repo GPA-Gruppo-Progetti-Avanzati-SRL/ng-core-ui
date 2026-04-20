@@ -11,6 +11,7 @@ export interface CoreAction {
 /** Subset of CoreRoute used for JSON serialization (no loadComponent). */
 export interface CoreRouteBase {
   id: string;
+  name?: string;
   description?: string;
   icon?: string;
   path?: string;
@@ -22,10 +23,25 @@ export type CoreRouteEntry =
   | ({ type: 'ui' } & Omit<CoreRouteBase, never>)
   | { type: 'ui_action'; id: string; description?: string };
 
+function entryToYaml(e: CoreRouteEntry): string {
+  const lines: string[] = [`  - type: ${e.type}`, `    id: ${e.id}`];
+  const rest = e as Record<string, unknown>;
+  for (const key of ['name', 'description', 'icon', 'path', 'order', 'ismenu']) {
+    if (rest[key] !== undefined) lines.push(`    ${key}: ${rest[key]}`);
+  }
+  return lines.join('\n');
+}
+
+export function toRoutesYaml(routes: CoreRouteBase[], actions?: CoreAction[]): string {
+  const entries = toRoutesJson(routes, actions);
+  return 'cap_defs:\n' + entries.map(entryToYaml).join('\n') + '\n';
+}
+
 export function toRoutesJson(routes: CoreRouteBase[], actions?: CoreAction[]): CoreRouteEntry[] {
-  const ui: CoreRouteEntry[] = routes.map(({ id, description, icon, path, order, ismenu }) => ({
+  const ui: CoreRouteEntry[] = routes.map(({ id, name, description, icon, path, order, ismenu }) => ({
     type: 'ui',
     id: id.toUpperCase(),
+    ...(name !== undefined && { name }),
     ...(description !== undefined && { description }),
     ...(icon !== undefined && { icon }),
     path: path != null ? (path === '' ? '/' : path.startsWith('/') ? path : `/${path}`) : undefined,

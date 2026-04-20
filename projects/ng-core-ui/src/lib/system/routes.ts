@@ -9,7 +9,7 @@ import { ForbiddenComponent } from '../forbidden/forbidden.component';
 import { NotFoundComponent } from '../not-found/not-found.component';
 
 export type { CoreAction, CoreRouteBase, CoreRouteEntry } from './routes-json';
-export { toRoutesJson } from './routes-json';
+export { toRoutesJson, toRoutesYaml } from './routes-json';
 import type { CoreRouteBase } from './routes-json';
 
 export interface CoreRoute extends CoreRouteBase {

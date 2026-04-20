@@ -1,12 +1,12 @@
 /**
- * Generate routes.json for backend permission seeding.
+ * Generate routes.yaml for backend permission seeding.
  * Usage (from the consuming app root):
  *   node node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-routes.mjs
  *
  * Reads APP_ROUTES (and optionally APP_ACTIONS) from the consuming app's
- * src/app/app.routes.config.ts and writes dist/caps/ui/routes.json.
+ * src/app/app.routes.config.ts and writes dist/caps/ui/routes.yaml.
  */
-import { toRoutesJson } from '../src/lib/system/routes-json';
+import { toRoutesYaml } from '../src/lib/system/routes-json';
 import { mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { pathToFileURL } from 'url';
@@ -30,5 +30,5 @@ try {
 
 const outDir = join(appRoot, 'dist', 'caps', 'ui');
 mkdirSync(outDir, { recursive: true });
-writeFileSync(join(outDir, 'routes.json'), JSON.stringify(toRoutesJson(APP_ROUTES, APP_ACTIONS), null, 2));
-console.log('routes.json written to', join(outDir, 'routes.json'));
+writeFileSync(join(outDir, 'routes.yaml'), toRoutesYaml(APP_ROUTES, APP_ACTIONS));
+console.log('routes.yaml written to', join(outDir, 'routes.yaml'));
