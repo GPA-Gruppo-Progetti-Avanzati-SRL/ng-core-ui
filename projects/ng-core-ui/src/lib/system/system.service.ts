@@ -1,5 +1,6 @@
 import {Injectable, computed, inject, signal, effect} from '@angular/core';
 import { HttpClient , HttpHeaders} from '@angular/common/http';
+import { Title } from '@angular/platform-browser';
 import { App, Site, PathNode, TokenResponse } from './system.models';
 import { CoreAction } from './routes';
 import { Environment } from './environment';
@@ -15,15 +16,17 @@ export class SystemService {
   private readonly tokenUrl: string = inject(LIB_TOKEN_URL);
   private readonly environmentUrl: string = inject(LIB_ENVIRONMENT_URL);
   private readonly styleManager: StyleManagerService = inject(StyleManagerService);
+  private readonly titleService: Title = inject(Title);
 
   constructor() {
     console.log("SystemService Initialized");
 
-    // Automatically apply theme class to body when environment changes
+    // Automatically apply theme and page title when environment changes
     effect(() => {
-      const theme = this.environmentSig()?.theme;
-      console.log("Theme changed to: ", theme);
-      this.styleManager.setTheme(theme);
+      const env = this.environmentSig();
+      console.log("Theme changed to: ", env?.theme);
+      this.styleManager.setTheme(env?.theme);
+      if (env?.appTitle) this.titleService.setTitle(env.appTitle);
     });
   }
   // Signals per stato
