@@ -1,0 +1,26 @@
+<div
+  class="grid gap-4"
+  [style.grid-template-columns]="'repeat(' + columns() + ', minmax(0, 1fr))'"
+>
+  @for (f of fields(); track f.key) {
+    @if (!isHidden(f)) {
+      <div [style.grid-column]="'span ' + clampSpan(f)">
+        <ng-container
+          [ngComponentOutlet]="f.component"
+          [ngComponentOutletInputs]="fieldInputs(f)"
+        />
+      </div>
+    }
+  }
+</div>
+
+<div class="mt-6 flex justify-end gap-3">
+  @if (showCancel()) {
+    <button mat-button type="button" (click)="onCancel()" class="text-text-muted">
+      {{ cancelLabel() }}
+    </button>
+  }
+  <button mat-flat-button type="button" (click)="onSubmit()" class="bg-primary text-on-primary">
+    {{ submitLabel() }}
+  </button>
+</div>

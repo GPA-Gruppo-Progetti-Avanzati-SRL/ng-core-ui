@@ -1,0 +1,11 @@
+<mat-form-field class="w-full">
+  <mat-label>{{ label() }}</mat-label>
+  <mat-select [formField]="formField()">
+    @for (opt of options(); track opt.value) {
+      <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+    }
+  </mat-select>
+  @if (formField()().touched() && formField()().errors().length) {
+    <mat-error>{{ formField()().errors()[0]?.message ?? 'Campo non valido' }}</mat-error>
+  }
+</mat-form-field>

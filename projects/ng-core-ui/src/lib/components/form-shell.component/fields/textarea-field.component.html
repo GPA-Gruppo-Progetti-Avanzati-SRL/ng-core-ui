@@ -1,0 +1,11 @@
+<mat-form-field class="w-full">
+  <mat-label>{{ label() }}</mat-label>
+  <textarea
+    matInput
+    [rows]="rows()"
+    [formField]="formField()"
+  ></textarea>
+  @if (formField()().touched() && formField()().errors().length) {
+    <mat-error>{{ formField()().errors()[0]?.message ?? 'Campo non valido' }}</mat-error>
+  }
+</mat-form-field>

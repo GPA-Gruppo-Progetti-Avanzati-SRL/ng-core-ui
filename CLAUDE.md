@@ -60,6 +60,10 @@ components/     # Reusable presentational UI components
   toast.component/        # ToastService + ToastComponent (core-toast)
   loading-overlay.component/  # LoadingOverlayComponent (core-loading-overlay)
   datatable.component/    # DatatableComponent + createPagedLoader (core-datatable)
+  form-shell.component/   # FormShellComponent (core-form-shell) + FormModel + field components
+    form-field.models.ts  # FormModel<T>, FormFieldUIDef, CoreFieldComponent, LookupResult
+    form-shell.component.ts/html
+    fields/               # TextInputField, TextareaField, ComboboxField, DatepickerField, LookupField
 layout/         # Full-page layout wrappers (main-layout, simple-layout)
 not-found/      # 404 page
 forbidden/      # 403 page
@@ -176,6 +180,7 @@ The library publishes these assets alongside the compiled JS:
 | `ToastComponent` | `core-toast` | `components/toast.component` |
 | `LoadingOverlayComponent` | `core-loading-overlay` | `components/loading-overlay.component` |
 | `DatatableComponent` | `core-datatable` | `components/datatable.component` |
+| `FormShellComponent` | `core-form-shell` | `components/form-shell.component` |
 
 **Services:**
 - `ToastService` — `success/error/info/warning(message, duration?)`. Colori semantici fissi (verde/rosso/blu/giallo), indipendenti dal tema.
@@ -190,6 +195,18 @@ The library publishes these assets alongside the compiled JS:
 - `createPagedLoader<T>(http, url, extraParams?)` — factory che wrappa la convenzione GPA: response `{ body: T[] }` + header `total-elements`. `extraParams` è una funzione rieseguita ad ogni load (utile per filtri signal-based). Il sort viene passato come query param `sort=field:dir`.
 - `DatatableComponent.refresh()` — metodo pubblico per forzare il reload della pagina corrente.
 - **Colonne custom**: passare `component: MyCellComponent` su `DatatableColumn`. Il componente deve esporre `value = input<unknown>()` e `row = input<unknown>()`. Viene renderizzato via `NgComponentOutlet` con `inputs` — nessun template markup aggiuntivo nel consuming component.
+
+**FormShell API:**
+- `FormModel<T>(initialValue, validators, layout)` — classe che racchiude la signal form Angular (`@angular/forms/signals`) e il layout UI. `validators` è la funzione schema (`required`, `min`, `max`, `minLength`, `email`, `hidden`, `disabled`). `layout` è `FormFieldUIDef[]`.
+- `FormModel.model` — `WritableSignal<T>`, source of truth dei valori. Leggere con `formModel.model()` nel submit.
+- `FormModel.ft` — `FieldTree<T>`, accesso tipizzato per singoli field in `computed()`: `formModel.ft.nome().value()`.
+- `FormModel.invalid()` — `boolean`, delega a `ft().invalid()`.
+- `FormFieldUIDef { key, label, component, span?, inputs? }` — solo layout UI. Nessuna logica di validazione/hidden/disabled qui.
+- Validazione, hidden, disabled: **sempre nello schema** del `FormModel` usando `required(p.field)`, `hidden(p.field, logic)`, `disabled(p.field, logic)` da `@angular/forms/signals`.
+- Shell: `<core-form-shell [model]="formModel" (submitted)="onSubmit()" />`. `submitted` emette `void`.
+- **`formField()()` pattern nei field component**: `formField()` = chiama InputSignal → FieldTree; `formField()()` = chiama FieldTree → FieldState con `.value`, `.errors()`, `.touched()`, `.invalid()`.
+- `[formField]="formField()"` nei template dei field — passare il FieldTree al directive Angular, NON l'InputSignal (`[formField]="formField"` è sbagliato).
+- Field component built-in: `TextInputFieldComponent` (`type?`), `TextareaFieldComponent` (`rows?`), `ComboboxFieldComponent` (`options: ComboboxOption[]`), `DatepickerFieldComponent`, `LookupFieldComponent` (`dialogConfig: { component, data?, width?, maxWidth? }`).
 
 ### Key Conventions
 
