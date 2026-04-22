@@ -28,7 +28,6 @@ RUN bun install --ci
 
 COPY src ./src
 COPY public ./public
-COPY scripts ./scripts
 COPY tsconfig*.json ./
 COPY angular.json ./
 COPY .postcssrc.json ./
@@ -53,13 +52,13 @@ ENV ASSET_FOLDER=""
 WORKDIR /app/
 
 COPY --from=builder /app/dist/${projectName}/browser ./${projectName}
-COPY --from=builder /app/dist/caps/ui/routes.json ./caps/ui/routes.json
+COPY --from=builder /app/dist/caps/ui/routes.yaml ./caps/ui/routes.yaml
 
 RUN ls
 
 ENTRYPOINT echo copy resources into Folder \${ASSETS_FOLDER} - Version \${VERSION} && \\
   mkdir -p \${ASSETS_FOLDER}/${projectName}/\${VERSION} && cp -r /app/${projectName}/* \${ASSETS_FOLDER}/${projectName}/\${VERSION} && \\
-  mkdir -p \${ASSETS_FOLDER}/caps/ui && cp /app/caps/ui/routes.json \${ASSETS_FOLDER}/caps/ui/routes.json && \\
+  mkdir -p \${ASSETS_FOLDER}/caps/ui && cp /app/caps/ui/routes.yaml \${ASSETS_FOLDER}/caps/ui/routes.yaml && \\
   ls \${ASSETS_FOLDER}
 `;
 
