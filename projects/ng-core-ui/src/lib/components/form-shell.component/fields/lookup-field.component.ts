@@ -1,12 +1,14 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   Type,
   ViewEncapsulation,
   computed,
   inject,
   input,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -37,7 +39,8 @@ export class LookupFieldComponent {
   readonly dialogConfig = input.required<LookupDialogConfig>();
   readonly label        = input<string>('');
 
-  private readonly _dialog = inject(MatDialog);
+  private readonly _dialog     = inject(MatDialog);
+  private readonly _destroyRef = inject(DestroyRef);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private readonly fieldState = computed<any>(() => this.formField()());
@@ -55,6 +58,7 @@ export class LookupFieldComponent {
         data:     cfg.data,
       })
       .afterClosed()
+      .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe((result: LookupResult | null | undefined) => {
         if (result) this.fieldState()?.value?.set(result);
       });

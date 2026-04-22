@@ -1,14 +1,13 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'core-topbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './topbar.component.html',
   host: { class: 'ui' },
 })
 export class TopbarComponent {
-  @Input() title: string = '';
-  @Input() description: string = '';
+  readonly title       = input<string>('');
+  readonly description = input<string>('');
 }

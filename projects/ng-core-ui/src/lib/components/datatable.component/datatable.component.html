@@ -55,7 +55,7 @@
         </ng-container>
       }
 
-      @if (actions().length) {
+      @if (hasVisibleActions()) {
         <ng-container [matColumnDef]="ACTIONS_COL">
           <th
             mat-header-cell
@@ -72,8 +72,8 @@
           >
             @if (!row._empty) {
               <div class="flex items-center justify-end gap-1">
-                @for (action of actions(); track action.icon) {
-                  @if (!action.hidden?.(row)) {
+                @for (action of actions(); track $index) {
+                  @if (action.visible?.(row) ?? true) {
                     <button
                       mat-icon-button
                       [matTooltip]="action.tooltip ?? ''"

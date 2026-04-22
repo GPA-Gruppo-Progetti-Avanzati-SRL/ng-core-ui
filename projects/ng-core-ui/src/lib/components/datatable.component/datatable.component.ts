@@ -35,7 +35,7 @@ export interface DatatableAction<T = unknown> {
   icon: string;
   tooltip?: string;
   onClick: (row: T) => void;
-  hidden?: (row: T) => boolean;
+  visible?: (row: T) => boolean;
   disabled?: (row: T) => boolean;
   buttonClass?: string;
 }
@@ -85,9 +85,13 @@ export class DatatableComponent implements OnInit {
   protected readonly currentPage      = signal(1);
   protected readonly pageSize         = signal(10);
   protected readonly currentSort      = signal<DatatableSort>(null);
+  protected readonly hasVisibleActions = computed(() =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.actions().some(a => a.visible?.(null as any) ?? true)
+  );
   protected readonly displayedColumns = computed(() => {
     const cols = this.columns().map(c => c.key);
-    return this.actions().length ? [...cols, ACTIONS_COL] : cols;
+    return this.hasVisibleActions() ? [...cols, ACTIONS_COL] : cols;
   });
   protected readonly paddedData = computed(() => {
     const real   = this.data();

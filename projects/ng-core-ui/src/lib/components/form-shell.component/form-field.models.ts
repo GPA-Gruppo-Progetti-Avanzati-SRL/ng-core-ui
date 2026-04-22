@@ -67,8 +67,10 @@ export class FormModel<T = any> {
 
 /**
  * Bottone nel footer della shell.
- * - `variant` — 'icon' (solo icona, default se manca label) | 'text' | 'filled'
+a questo  * - `variant`  — 'icon' (solo icona, default se manca label) | 'text' | 'filled'
  * - `position` — 'inline' (stessa riga, default) | 'footer' (riga dedicata sotto)
+ * - `visible`  — funzione (anche signal-based) che controlla la visibilità; default `true`
+ * - `disabled` — funzione (anche signal-based) che controlla lo stato disabilitato; default `false`
  */
 export interface FormShellAction {
   icon?:      string;
@@ -77,6 +79,7 @@ export interface FormShellAction {
   variant?:   'icon' | 'text' | 'filled';
   position?:  'inline' | 'footer';
   onClick:    () => void;
+  visible?:   () => boolean;
   disabled?:  () => boolean;
 }
 

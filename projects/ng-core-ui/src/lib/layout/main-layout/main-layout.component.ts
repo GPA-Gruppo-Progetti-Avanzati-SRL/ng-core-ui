@@ -48,7 +48,6 @@ import {AlertComponent} from '../../components/alert.component/alert.component';
     RouterLink,
   ],
   templateUrl: './main-layout.component.html',
-  styleUrls: ['./main-layout.component.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ui' },

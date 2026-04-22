@@ -1,6 +1,7 @@
 @use '@angular/material' as mat;
 
-:host {
+/* ───────────────── Host ───────────────── */
+app-main-layout {
   display: block;
   height: 100vh;
   background-color: var(--mat-sys-surface);
@@ -336,7 +337,6 @@ aside.sidenav {
 
 mat-divider.apps-divider {
   border-top-color: rgba(255, 255, 255, 0.2) !important;
-  // margin: 4px 16px 12px;
 }
 
 .extra-content {

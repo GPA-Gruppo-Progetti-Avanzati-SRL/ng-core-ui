@@ -53,9 +53,9 @@ export class SystemService {
   }
 
   canDo(action: CoreAction | string): boolean {
-    const appId = this.environmentSig()?.appId ?? '';
     const id = typeof action === 'string' ? action : action.id;
-    return this.capabilitiesSet().has(`${appId}-${id}`.toUpperCase());
+    console.log("id:"+id)
+    return this.capabilitiesSet().has(id);
   }
 
   normalizePath(path: string): string {

@@ -1,6 +1,7 @@
 @forward 'cobalt-theme';
 @forward 'gpa-theme';
 @forward 'forest-theme';
+@use 'main-layout';
 @use '@angular/material' as mat;
 
 .error-snackbar {

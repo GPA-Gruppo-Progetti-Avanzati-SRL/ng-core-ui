@@ -21,7 +21,7 @@ export interface CoreRouteBase {
 
 export type CoreRouteEntry =
   | ({ category: 'ui' } & Omit<CoreRouteBase, never>)
-  | { category: 'ui_action'; id: string; description?: string };
+  | { category: 'action'; id: string; description?: string };
 
 function entryToYaml(e: CoreRouteEntry): string {
   const lines: string[] = [`  - category: ${e.category}`, `    id: ${e.id}`];
@@ -49,11 +49,11 @@ export function toRoutesList(routes: CoreRouteBase[], actions?: CoreAction[]): C
     ...(menu !== undefined && { menu }),
   }));
 
-  const ui_action: CoreRouteEntry[] = (actions ?? []).map(a => ({
-    category: 'ui_action' as const,
+  const action: CoreRouteEntry[] = (actions ?? []).map(a => ({
+    category: 'action' as const,
     id: a.id,
     ...(a.description !== undefined && { description: a.description }),
   }));
 
-  return [...ui, ...ui_action];
+  return [...ui, ...action];
 }

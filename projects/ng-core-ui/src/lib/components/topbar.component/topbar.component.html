@@ -2,11 +2,11 @@
   <!-- Left: Title + Description -->
   <div class="flex flex-col justify-center">
     <span class="text-[16px] font-semibold leading-tight text-on-surface-variant">
-      {{ title }}
+      {{ title() }}
     </span>
-    @if (description) {
+    @if (description()) {
       <span class="text-[13px] leading-tight mt-1 text-on-surface-variant/75">
-        {{ description }}
+        {{ description() }}
       </span>
     }
   </div>

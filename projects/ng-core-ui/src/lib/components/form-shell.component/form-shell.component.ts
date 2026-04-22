@@ -26,8 +26,16 @@ export class FormShellComponent {
   readonly actions = input<FormShellAction[]>([]);
 
   protected readonly fields        = computed(() => this.model().fields);
-  protected readonly inlineActions = computed(() => this.actions().filter(a => (a.position ?? 'inline') === 'inline'));
-  protected readonly footerActions = computed(() => this.actions().filter(a => a.position === 'footer'));
+  protected readonly inlineActions = computed(() =>
+    this.actions()
+      .filter(a => (a.position ?? 'inline') === 'inline')
+      .filter(a => a.visible?.() ?? true)
+  );
+  protected readonly footerActions = computed(() =>
+    this.actions()
+      .filter(a => a.position === 'footer')
+      .filter(a => a.visible?.() ?? true)
+  );
 
   protected variant(a: FormShellAction): 'icon' | 'text' | 'filled' {
     return a.variant ?? (a.label ? 'text' : 'icon');
