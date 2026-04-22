@@ -7,11 +7,10 @@ import {
   Component,
   signal,
   computed,
-  effect,
+  afterRenderEffect,
   ChangeDetectionStrategy,
   inject,
-  OnInit,
-  ViewChild,
+  viewChild,
   ElementRef,
   ViewEncapsulation
 } from '@angular/core';
@@ -26,7 +25,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
-import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import {ConfirmComponent} from '../../components/confirm.component/confirm.component';
 import {AlertComponent} from '../../components/alert.component/alert.component';
@@ -42,7 +40,6 @@ import {AlertComponent} from '../../components/alert.component/alert.component';
     MatSidenavModule,
     MatToolbarModule,
     MatListModule,
-    MatCardModule,
     MatDividerModule,
     RouterOutlet,
     RouterLink,
@@ -52,20 +49,20 @@ import {AlertComponent} from '../../components/alert.component/alert.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ui block h-screen bg-surface text-on-surface' },
 })
-export class MainLayoutComponent implements OnInit {
+export class MainLayoutComponent {
 
   private router: Router = inject(Router);
   private system: SystemService = inject(SystemService);
 
-  @ViewChild('sidenav') private sidenavRef!: ElementRef<HTMLElement>;
+  private readonly sidenavRef = viewChild<ElementRef<HTMLElement>>('sidenav');
 
   whoami = this.system.whoamiSig;
   environment = this.system.environmentSig;
   menuTree = this.system.menuTreeSig;
   apps = this.system.appsSig;
   currentAppId = computed(() => this.environment()?.appId || '');
-  appSha = computed(() => AppSha);
-  appVersion = computed(() => AppVersion);
+  readonly appSha = AppSha;
+  readonly appVersion = AppVersion;
   sidenavExpanded = signal(false);
   isExpanded = computed(() => this.sidenavExpanded());
   extraSidenavOpen = signal(false);
@@ -82,11 +79,13 @@ export class MainLayoutComponent implements OnInit {
   sortedMenuRoots = this.menuTree;
 
   constructor() {
+    this.system.bootstrap().catch(err => console.error('Bootstrap error in MainLayout', err));
+
     // Re-measure when menu items change (e.g. after bootstrap)
-    effect(() => {
+    afterRenderEffect(() => {
       const menu = this.menuTree();
       if (menu && menu.length > 0) {
-        setTimeout(() => this.measureSidenavWidth(), 0);
+        this.measureSidenavWidth();
       }
     });
   }
@@ -111,16 +110,12 @@ export class MainLayoutComponent implements OnInit {
     this.extraSidenavOpen.set(false);
   }
 
-  ngOnInit(): void {
-    this.system.bootstrap().catch(err => console.error('Bootstrap error in MainLayout', err));
-  }
-
   /**
    * Misura la larghezza naturale dell'aside (label visibili) senza causare flash visivi.
    * Tutte le mutazioni DOM avvengono in modo sincrono prima del prossimo paint.
    */
   private measureSidenavWidth(): void {
-    const aside = this.sidenavRef?.nativeElement;
+    const aside = this.sidenavRef()?.nativeElement;
     if (!aside) return;
 
     const wasCollapsed = aside.classList.contains('collapsed');
