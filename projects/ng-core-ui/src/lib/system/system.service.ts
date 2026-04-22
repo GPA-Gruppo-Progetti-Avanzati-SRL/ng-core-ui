@@ -1,57 +1,33 @@
-import {Injectable, computed, inject, signal, effect} from '@angular/core';
-import { HttpClient , HttpHeaders} from '@angular/common/http';
+import { Injectable, computed, inject, signal, effect, isDevMode } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Title } from '@angular/platform-browser';
 import { App, Site, PathNode, TokenResponse } from './system.models';
 import { CoreAction } from './routes';
 import { Environment } from './environment';
 import { firstValueFrom } from 'rxjs';
-import {LIB_TOKEN_URL, LIB_ENVIRONMENT_URL} from '../main';
+import { LIB_TOKEN_URL, LIB_ENVIRONMENT_URL } from '../main';
 import { decrypt } from '../utils';
 import { StyleManagerService } from './style-manager.service';
 
-
 @Injectable({ providedIn: 'root' })
 export class SystemService {
-  private readonly http: HttpClient = inject(HttpClient);
-  private readonly tokenUrl: string = inject(LIB_TOKEN_URL);
-  private readonly environmentUrl: string = inject(LIB_ENVIRONMENT_URL);
-  private readonly styleManager: StyleManagerService = inject(StyleManagerService);
-  private readonly titleService: Title = inject(Title);
+  private readonly http             = inject(HttpClient);
+  private readonly tokenUrl         = inject(LIB_TOKEN_URL);
+  private readonly environmentUrl   = inject(LIB_ENVIRONMENT_URL);
+  private readonly styleManager     = inject(StyleManagerService);
+  private readonly titleService     = inject(Title);
 
-  constructor() {
-    console.log("SystemService Initialized");
+  readonly whoamiSig        = signal<{ user: string; roles: string[] | null; capabilities: string[] | null } | null>(null);
+  readonly pathsSig         = signal<PathNode[] | null>(null);
+  readonly menuTreeSig      = signal<PathNode[] | null>(null);
+  readonly appsSig          = signal<App[] | null>(null);
+  readonly sitesSig         = signal<Site[] | null>(null);
+  readonly environmentSig   = signal<Environment | null>(null);
+  readonly environmentProperties = computed(() => this.environmentSig()?.properties ?? {});
 
-    // Automatically apply theme and page title when environment changes
-    effect(() => {
-      const env = this.environmentSig();
-      console.log("Theme changed to: ", env?.theme);
-      this.styleManager.setTheme(env?.theme);
-      if (env?.appTitle) this.titleService.setTitle(env.appTitle);
-    });
-  }
-  // Signals per stato
-  readonly whoamiSig = signal<{user: string, roles: string[] | null, capabilities: string[] | null} | null>(null);
-  readonly pathsSig = signal<PathNode[] | null>(null);
-  readonly menuTreeSig = signal<PathNode[] | null>(null);
-  readonly appsSig = signal<App[] | null>(null);
-  readonly sitesSig = signal<Site[] | null>(null);
-  readonly environmentSig = signal<Environment | null>(null);
-  readonly environmentProperties = computed(() => this.environmentSig()?.properties || {});
-
-  getEnvironmentProperty(key: string): unknown {
-    return this.environmentProperties()[key];
-  }
-
-  // Endpoints consentiti (tutti i path ricevuti)
   private readonly capabilitiesSet = computed(() =>
     new Set(this.whoamiSig()?.capabilities ?? [])
   );
-
-  canDo(action: CoreAction | string): boolean {
-    const appId = this.environmentSig()?.appId ?? '';
-    const id = typeof action === 'string' ? action : action.id;
-    return this.capabilitiesSet().has(`${appId}-${id}`.toUpperCase());
-  }
 
   readonly allowedEndpoints = computed(() => {
     const list = this.pathsSig();
@@ -63,14 +39,30 @@ export class SystemService {
     return acc;
   });
 
+  constructor() {
+    effect(() => {
+      const env = this.environmentSig();
+      this.styleManager.setTheme(env?.theme);
+      if (env?.appTitle) this.titleService.setTitle(env.appTitle);
+      if (isDevMode()) console.log('[SystemService] theme →', env?.theme);
+    });
+  }
+
+  getEnvironmentProperty(key: string): unknown {
+    return this.environmentProperties()[key];
+  }
+
+  canDo(action: CoreAction | string): boolean {
+    const appId = this.environmentSig()?.appId ?? '';
+    const id = typeof action === 'string' ? action : action.id;
+    return this.capabilitiesSet().has(`${appId}-${id}`.toUpperCase());
+  }
+
   normalizePath(path: string): string {
-    // Normalizza a '/segment' senza query/hash
     try {
-      // rimuove origin se presente
       const url = new URL(path, 'http://');
       return url.pathname.endsWith('/') && url.pathname !== '/' ? url.pathname.slice(0, -1) : url.pathname;
     } catch {
-      // non è URL pieno; assicurarsi prefisso '/'
       const p = path.startsWith('/') ? path : `/${path}`;
       return p.endsWith('/') && p !== '/' ? p.slice(0, -1) : p;
     }
@@ -78,44 +70,32 @@ export class SystemService {
 
   async loadEnvironment(): Promise<Environment> {
     const data = await firstValueFrom(this.http.get<Environment>(this.environmentUrl));
-    console.debug("environment", data);
+    if (isDevMode()) console.debug('[SystemService] environment', data);
     this.environmentSig.set(data);
     return data;
   }
 
   async loadToken(): Promise<TokenResponse> {
     const env = this.environmentSig();
-    if (!env?.appId) {
-      throw new Error('AppId not found in environment');
-    }
-    const appId = env.appId;
-    const headers = new HttpHeaders().set('AppId', appId);
+    if (!env?.appId) throw new Error('AppId not found in environment');
+
+    const headers = new HttpHeaders().set('AppId', env.appId);
     const rawToken = await firstValueFrom(this.http.get(this.tokenUrl, { headers, responseType: 'text' }));
-    const decryptedJson = env.encryptToken ? await decrypt(rawToken, appId) : rawToken;
+    const decryptedJson = env.encryptToken ? await decrypt(rawToken, env.appId) : rawToken;
+
     let data: TokenResponse;
     try {
       data = JSON.parse(decryptedJson) as TokenResponse;
     } catch {
       throw new Error('Token decryption returned invalid JSON');
     }
-    console.debug("token", data);
+    if (isDevMode()) console.debug('[SystemService] token', data);
 
-    this.whoamiSig.set({
-      user: data.user,
-      roles: data.roles ?? [],
-      capabilities: data.capabilities ?? []
-    });
+    this.whoamiSig.set({ user: data.user, roles: data.roles ?? [], capabilities: data.capabilities ?? [] });
     this.pathsSig.set(data.paths ?? []);
-
-    const menuNodes = (data.paths ?? []).filter(p => p.menu);
-    const sortedMenu = this.sortPathNodes(menuNodes);
-    this.menuTreeSig.set(sortedMenu);
-
-    const sortedApps = this.sortApps(data.apps ?? []);
-    this.appsSig.set(sortedApps);
-
-    const sortedSites = this.sortSites(data.sites ?? []);
-    this.sitesSig.set(sortedSites);
+    this.menuTreeSig.set(this._sortByOrder(data.paths?.filter(p => p.menu) ?? []));
+    this.appsSig.set(this._sortByOrder(data.apps ?? []));
+    this.sitesSig.set(this._sortByOrder(data.sites ?? []));
 
     return data;
   }
@@ -123,25 +103,18 @@ export class SystemService {
   private bootstrapPromise: Promise<void> | null = null;
 
   async bootstrap(): Promise<void> {
-    // Se i dati sono già presenti, evitiamo il ricaricamento
-    if (this.whoamiSig() && this.pathsSig() && this.appsSig()) {
-      return Promise.resolve();
-    }
+    if (this.whoamiSig() && this.pathsSig() && this.appsSig()) return;
+    if (this.bootstrapPromise) return this.bootstrapPromise;
 
-    // Se c'è già un bootstrap in corso, restituiamo la stessa promise
-    if (this.bootstrapPromise) {
-      return this.bootstrapPromise;
-    }
-
-    console.debug('Bootstrap starting...');
+    if (isDevMode()) console.debug('[SystemService] bootstrap starting');
     this.bootstrapPromise = (async () => {
       try {
         await this.loadEnvironment();
         await this.loadToken();
-        console.debug('Bootstrap finished');
+        if (isDevMode()) console.debug('[SystemService] bootstrap finished');
       } catch (err) {
-        console.error('Bootstrap failed', err);
-        this.bootstrapPromise = null; // Permetti riprovo esplicito
+        console.error('[SystemService] bootstrap failed', err);
+        this.bootstrapPromise = null;
         throw err;
       }
     })();
@@ -149,51 +122,10 @@ export class SystemService {
     return this.bootstrapPromise;
   }
 
-  // Ordina per 'order' crescente; elementi senza 'order' in fondo;
-  // a parità di 'order' ordina alfabeticamente per description/id
-  private sortPathNodes(nodes: PathNode[] | null): PathNode[] {
-    if (!nodes || !nodes.length) return [];
-    const toKey = (n: PathNode) => (n.id.toLowerCase());
-    const getOrder = (n: PathNode) => (n.order ?? 0);
-
-    return [...nodes].sort((a, b) => {
-      const ao = getOrder(a);
-      const bo = getOrder(b);
-      if (ao !== bo) return ao - bo;
-      const ak = toKey(a);
-      const bk = toKey(b);
-      return ak.localeCompare(bk);
+  private _sortByOrder<T extends { id: string; order?: number }>(items: T[]): T[] {
+    return [...items].sort((a, b) => {
+      const od = (a.order ?? 0) - (b.order ?? 0);
+      return od !== 0 ? od : a.id.toLowerCase().localeCompare(b.id.toLowerCase());
     });
   }
-
-  private sortApps(apps: App[] | null): App[] {
-    if (!apps || !apps.length) return [];
-    const toKey = (a: App) => (a.id.toLowerCase());
-    const getOrder = (a: App) => (a.order ?? 0);
-
-    return [...apps].sort((a, b) => {
-      const ao = getOrder(a);
-      const bo = getOrder(b);
-      if (ao !== bo) return ao - bo;
-      const ak = toKey(a);
-      const bk = toKey(b);
-      return ak.localeCompare(bk);
-    });
-  }
-
-  private sortSites(sites: Site[] | null): Site[] {
-    if (!sites || !sites.length) return [];
-    const toKey = (a: Site) => (a.id.toLowerCase());
-    const getOrder = (a: Site) => (a.order ?? 0);
-
-    return [...sites].sort((a, b) => {
-      const ao = getOrder(a);
-      const bo = getOrder(b);
-      if (ao !== bo) return ao - bo;
-      const ak = toKey(a);
-      const bk = toKey(b);
-      return ak.localeCompare(bk);
-    });
-  }
-
 }
