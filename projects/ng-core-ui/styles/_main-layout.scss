@@ -173,44 +173,28 @@ aside.sidenav {
   background-color: rgba(0, 0, 0, 0.08) !important;
 }
 
-.extra-sidenav-backdrop {
-  position: fixed;
-  inset: 0;
-  background: transparent;
-  z-index: 9999;
-  pointer-events: none;
-  transition: background 0.3s;
-
-  &.open {
-    background: rgba(0, 0, 0, 0.5);
-    pointer-events: auto;
-  }
-}
-
-.extra-sidenav {
-  position: fixed;
-  top: 0;
-  right: 0;
+/* ───────────────── App-switcher sidenav (destra) ───────────────── */
+mat-sidenav.extra-sidenav {
   width: 220px;
   max-width: 90vw;
-  height: 100vh;
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.12);
-  z-index: 10000;
-  transform: translateX(100%);
-  transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
+}
+
+mat-sidenav.extra-sidenav .mat-drawer-inner-container {
   display: flex;
   flex-direction: column;
+  height: 100%;
   padding: 12px 8px 6px 8px;
-  pointer-events: none;
-  opacity: 0;
   overflow: hidden;
   box-sizing: border-box;
+  background-color: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+}
 
-  &.open {
-    transform: translateX(0);
-    pointer-events: auto;
-    opacity: 1;
-  }
+mat-sidenav-container.extra-sidenav-container > mat-sidenav-content {
+  display: flex !important;
+  flex-direction: row !important;
+  overflow: hidden !important;
+  height: 100%;
 }
 
 .app-logo-img {
