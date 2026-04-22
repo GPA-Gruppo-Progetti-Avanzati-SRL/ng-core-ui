@@ -48,10 +48,36 @@ export class FormModel<T = any> {
     }
   }
 
+  /**
+   * Valida il form e, se valido, esegue `action`.
+   * Marca tutti i field come touched così gli errori sono visibili.
+   */
+  submit(action: () => void): void {
+    this.markAllAsTouched();
+    if (this.invalid()) return;
+    action();
+  }
+
   /** Resetta lo stato touched/dirty di tutti i field, opzionalmente anche il valore. */
   reset(value?: T): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.ft().reset(value as any);
   }
+}
+
+/**
+ * Bottone nel footer della shell.
+ * - `variant` — 'icon' (solo icona, default se manca label) | 'text' | 'filled'
+ * - `position` — 'inline' (stessa riga, default) | 'footer' (riga dedicata sotto)
+ */
+export interface FormShellAction {
+  icon?:      string;
+  label?:     string;
+  tooltip?:   string;
+  variant?:   'icon' | 'text' | 'filled';
+  position?:  'inline' | 'footer';
+  onClick:    () => void;
+  disabled?:  () => boolean;
 }
 
 /** Contratto minimo che ogni field component deve implementare */

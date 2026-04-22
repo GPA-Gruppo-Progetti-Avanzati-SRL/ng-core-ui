@@ -4,32 +4,34 @@ import {
   ViewEncapsulation,
   computed,
   input,
-  output,
 } from '@angular/core';
 import { NgComponentOutlet } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { FormFieldDef, FormModel } from './form-field.models';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { FormFieldDef, FormModel, FormShellAction } from './form-field.models';
 
 @Component({
   selector: 'core-form-shell',
   standalone: true,
-  imports: [NgComponentOutlet, MatButtonModule],
+  imports: [NgComponentOutlet, MatButtonModule, MatIconModule, MatTooltipModule],
   templateUrl: './form-shell.component.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ui' },
 })
 export class FormShellComponent {
-  readonly model       = input.required<FormModel>();
-  readonly columns     = input<number>(2);
-  readonly submitLabel = input<string>('Salva');
-  readonly cancelLabel = input<string>('Annulla');
-  readonly showCancel  = input<boolean>(true);
+  readonly model   = input.required<FormModel>();
+  readonly columns = input<number>(2);
+  readonly actions = input<FormShellAction[]>([]);
 
-  readonly submitted = output<void>();
-  readonly cancelled = output<void>();
+  protected readonly fields        = computed(() => this.model().fields);
+  protected readonly inlineActions = computed(() => this.actions().filter(a => (a.position ?? 'inline') === 'inline'));
+  protected readonly footerActions = computed(() => this.actions().filter(a => a.position === 'footer'));
 
-  protected readonly fields = computed(() => this.model().fields);
+  protected variant(a: FormShellAction): 'icon' | 'text' | 'filled' {
+    return a.variant ?? (a.label ? 'text' : 'icon');
+  }
 
   protected isHidden(f: FormFieldDef): boolean {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,15 +48,5 @@ export class FormShellComponent {
       label:     f.label,
       ...(f.inputs ?? {}),
     };
-  }
-
-  protected onSubmit(): void {
-    this.model().markAllAsTouched();
-    if (this.model().invalid()) return;
-    this.submitted.emit();
-  }
-
-  protected onCancel(): void {
-    this.cancelled.emit();
   }
 }

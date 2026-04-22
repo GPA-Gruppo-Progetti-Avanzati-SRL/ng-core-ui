@@ -50,14 +50,14 @@
             <mat-nav-list>
               @for (app of apps(); track app.id) {
                 @if (app.id === currentAppId()) {
-                  <a mat-list-item class="extra-menu-item disabled-app" [attr.aria-label]="app.description || app.id">
+                  <a mat-list-item class="extra-menu-item disabled-app" [attr.aria-label]="app.title || app.id">
                     <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
-                    <span class="app-label">{{ app.description || app.id }}</span>
+                    <span class="app-label">{{ app.title || app.id }}</span>
                   </a>
                 } @else {
-                  <a mat-list-item class="extra-menu-item" [attr.aria-label]="app.description || app.id" [href]="app.path || '#'" >
+                  <a mat-list-item class="extra-menu-item" [attr.aria-label]="app.title || app.id" [href]="app.path || '#'" >
                     <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
-                    <span class="app-label">{{ app.description || app.id }}</span>
+                    <span class="app-label">{{ app.title || app.id }}</span>
                   </a>
                 }
               }
