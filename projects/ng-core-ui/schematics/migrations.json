@@ -2,7 +2,7 @@
   "$schema": "../../../node_modules/@angular-devkit/schematics/collection-schema.json",
   "schematics": {
     "update-dependencies": {
-      "version": "0.0.1",
+      "version": "0.0.36",
       "description": "Allinea le dipendenze Angular e le peer dependencies alla versione richiesta dalla libreria",
       "factory": "./ng-update/index#ngUpdate"
     }

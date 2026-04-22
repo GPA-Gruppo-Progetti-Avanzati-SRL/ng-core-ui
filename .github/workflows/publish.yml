@@ -29,9 +29,6 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Build library + schematics
-        run: bun run build:lib
-
       - name: Verify tag matches library version
         run: |
           TAG="${GITHUB_REF_NAME}"
@@ -40,6 +37,22 @@ jobs:
             echo "Tag ($TAG) does not match library version ($PKG_VERSION)"
             exit 1
           fi
+
+      - name: Sync migration version
+        run: |
+          PKG_VERSION=$(node -p "require('./projects/ng-core-ui/package.json').version")
+          export PKG_VERSION
+          node -e "
+            const fs = require('fs');
+            const p = './projects/ng-core-ui/schematics/migrations.json';
+            const m = JSON.parse(fs.readFileSync(p, 'utf8'));
+            m.schematics['update-dependencies'].version = process.env.PKG_VERSION;
+            fs.writeFileSync(p, JSON.stringify(m, null, 2) + '\n');
+          "
+          echo "Migration version → $PKG_VERSION"
+
+      - name: Build library + schematics
+        run: bun run build:lib
 
       - name: Publish to npm
         run: npm publish ./dist/ng-core-ui --provenance --access public

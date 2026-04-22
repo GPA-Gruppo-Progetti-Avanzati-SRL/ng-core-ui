@@ -188,12 +188,13 @@ The library publishes these assets alongside the compiled JS:
 - `loadingInterceptor` — `HttpInterceptorFn` che chiama `show/hide` automaticamente su ogni XHR.
 
 **DataTable API:**
-- `DatatableColumn { key, label, width?, sortable?, format?, component? }` — `key` supporta notazione dot per oggetti annidati (es. `address.city`). `sortable?: boolean` abilita click sull'header per ordinamento server-side. `format?: (row) => string` per valori calcolati da più campi (priorità su `key`). `component` è un `Type<any>` Angular opzionale per celle con layout custom (priorità massima).
+- `DatatableColumn { key, label, width?, sortable?, format?, component? }` — `key` supporta notazione dot per oggetti annidati (es. `address.city`). `sortable?: boolean` abilita click sull'header per ordinamento. `format?: (row) => string` per valori calcolati da più campi (priorità su `key`). `component` è un `Type<any>` Angular opzionale per celle con layout custom (priorità massima).
 - `DatatableSort` — `{ field: string; dir: 'asc' | 'desc' } | null`. Rappresenta il sort corrente, passato come terzo argomento al loader.
 - `DatatableAction<T> { icon, tooltip?, onClick, hidden?, disabled? }` — bottone icona per riga. `onClick/hidden/disabled` ricevono la riga come argomento.
 - `DatatableLoader<T>` — `(page: number, pageSize: number, sort?: DatatableSort) => Observable<{ items: T[], total: number }>`.
-- `createPagedLoader<T>(http, url, extraParams?)` — factory che wrappa la convenzione GPA: response `{ body: T[] }` + header `total-elements`. `extraParams` è una funzione rieseguita ad ogni load (utile per filtri signal-based). Il sort viene passato come query param `sort=field:dir`.
-- `DatatableComponent.refresh()` — metodo pubblico per forzare il reload della pagina corrente.
+- `createPagedLoader<T>(http, url, extraParams?)` — modalità **server-side**: ogni cambio pagina/sort chiama l'API. Convenzione GPA: response `{ body: T[] }` + header `total-elements`. `extraParams` è una funzione rieseguita ad ogni load. Il sort viene passato come query param `sort=field:dir`.
+- `createInMemoryLoader<T>(http, url, options?)` — modalità **client-side**: una singola chiamata HTTP scarica tutto, poi paginazione/sort/filtro avvengono in memoria. Il dataset viene cachato nel closure. Opzioni: `extraParams?`, `filter?: () => string` (segnale testo ricerca), `filterFn?: (row, text) => boolean` (default: ricerca su tutti i campi stringa). Il loader restituisce anche `invalidate()` per svuotare la cache e forzare un re-fetch. Supporta risposta `T[]` diretta o `{ body: T[] }` GPA.
+- `DatatableComponent.refresh(resetPage?: boolean)` — ricarica i dati. `resetPage=true` torna a pagina 1.
 - **Colonne custom**: passare `component: MyCellComponent` su `DatatableColumn`. Il componente deve esporre `value = input<unknown>()` e `row = input<unknown>()`. Viene renderizzato via `NgComponentOutlet` con `inputs` — nessun template markup aggiuntivo nel consuming component.
 
 **FormShell API:**
