@@ -1,0 +1,33 @@
+@use '@angular/material' as mat;
+
+/* ───────────────── Toolbar (condiviso da main-layout e simple-layout) ───────────────── */
+mat-toolbar.toolbar {
+  @include mat.toolbar-overrides((
+    container-background-color: var(--mat-sys-primary),
+    container-text-color: var(--mat-sys-on-primary),
+  ));
+
+  display: flex !important;
+  align-items: center !important;
+  border-bottom: var(--layout-toolbar-border, none);
+
+  button[mat-icon-button],
+  a[mat-icon-button] {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    align-self: center !important;
+    vertical-align: middle !important;
+    height: 40px !important;
+    width: 40px !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+  }
+
+  mat-icon,
+  .mat-icon {
+    color: var(--mat-sys-on-primary) !important;
+    vertical-align: middle !important;
+    line-height: 1 !important;
+  }
+}

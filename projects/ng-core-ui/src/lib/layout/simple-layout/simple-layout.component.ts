@@ -28,10 +28,9 @@ import {MatToolbarModule} from '@angular/material/toolbar';
     RouterOutlet,
   ],
   templateUrl: './simple-layout.component.html',
-  styleUrls: ['./simple-layout.component.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'ui' },
+  host: { class: 'ui block h-screen bg-surface text-on-surface' },
 })
 export class SimpleLayoutComponent implements OnInit {
 

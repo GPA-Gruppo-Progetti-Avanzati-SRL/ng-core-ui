@@ -1,76 +1,7 @@
-@use '@angular/material' as mat;
-
-/* ───────────────── Host ───────────────── */
-app-main-layout {
-  display: block;
-  height: 100vh;
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-}
-
-.layout-grid {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  height: 100vh;
-  margin: 0;
-}
-
-/* ───────────────── Toolbar ───────────────── */
-mat-toolbar.toolbar {
-  @include mat.toolbar-overrides((
-    container-background-color: var(--mat-sys-primary),
-    container-text-color: var(--mat-sys-on-primary),
-  ));
-
-  display: flex !important;
-  align-items: center !important;
-  border-bottom: var(--layout-toolbar-border, none);
-
-  button[mat-icon-button],
-  a[mat-icon-button] {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    align-self: center !important;
-    vertical-align: middle !important;
-    height: 40px !important;
-    width: 40px !important;
-    line-height: 1 !important;
-    padding: 0 !important;
-  }
-
-  mat-icon,
-  .mat-icon {
-    color: var(--mat-sys-on-primary) !important;
-    vertical-align: middle !important;
-    line-height: 1 !important;
-  }
-}
-
-.title {
-  margin-left: 12px;
-  font-weight: 600;
-  font-size: 18px;
-  color: var(--mat-sys-on-primary);
-}
-
-.spacer {
-  flex: 1 1 auto;
-}
-
-.user-name {
-  margin-right: 8px;
-  font-weight: 600;
-  font-size: 18px;
-  color: var(--mat-sys-on-primary);
-}
-
 /* ───────────────── Left sidenav ───────────────── */
 aside.sidenav {
   width: 72px;
   overflow: hidden;
-  background-color: var(--mat-sys-tertiary);
-  color: var(--mat-sys-on-tertiary);
   box-sizing: border-box;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
   border-right: var(--layout-sidenav-border, none);
@@ -263,8 +194,6 @@ aside.sidenav {
   width: 220px;
   max-width: 90vw;
   height: 100vh;
-  background: var(--mat-sys-primary);
-  color: var(--mat-sys-on-primary);
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.12);
   z-index: 10000;
   transform: translateX(100%);
@@ -284,19 +213,11 @@ aside.sidenav {
   }
 }
 
-.app-logo-link {
-  display: flex;
-  justify-content: center;
-  margin: 8px 0 20px;
-  text-decoration: none;
-}
-
 .app-logo-img {
   width: 96px;
   height: 96px;
   border-radius: 50%;
   border: 3px solid rgba(255, 255, 255, 0.85);
-  background-color: var(--mat-sys-surface);
   object-fit: cover;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
@@ -306,15 +227,6 @@ aside.sidenav {
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
     transform: scale(1.05);
   }
-}
-
-.extra-footer {
-  flex-shrink: 0;
-  padding: 4px 0 0 !important;
-  display: flex;
-  justify-content: center;
-  margin-top: 0;
-  margin-bottom: 0;
 }
 
 .extra-footer .extra-menu-item {
@@ -339,15 +251,6 @@ mat-divider.apps-divider {
   border-top-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-.extra-content {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
 .extra-content mat-nav-list {
   display: flex;
   flex-direction: column;
@@ -370,7 +273,6 @@ mat-divider.apps-divider {
   --mdc-list-list-item-container-shape: 4px;
   box-sizing: border-box;
   overflow: hidden;
-  color: var(--mat-sys-inverse-on-surface);
   background: transparent;
   transition: background-color 0.15s ease;
 
@@ -474,28 +376,4 @@ mat-divider.apps-divider {
   text-align: center;
   color: #e8f1fb;
   opacity: 1 !important;
-}
-
-/* ───────────────── Main content ───────────────── */
-.main-content {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-}
-
-.content {
-  position: relative;
-  flex: 1;
-  overflow: auto;
-}
-
-.app-info {
-  flex-shrink: 0;
-  margin-top: 4px;
-  padding: 0 16px 0;
-  font-size: 10px;
-  color: var(--mat-sys-on-primary);
-  opacity: 0.8;
-  text-align: center;
 }

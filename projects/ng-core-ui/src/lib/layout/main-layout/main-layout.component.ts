@@ -50,7 +50,7 @@ import {AlertComponent} from '../../components/alert.component/alert.component';
   templateUrl: './main-layout.component.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'ui' },
+  host: { class: 'ui block h-screen bg-surface text-on-surface' },
 })
 export class MainLayoutComponent implements OnInit {
 
