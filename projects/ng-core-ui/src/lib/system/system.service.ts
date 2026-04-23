@@ -105,7 +105,6 @@ export class SystemService {
   async bootstrap(): Promise<void> {
     if (this.whoamiSig() && this.pathsSig() && this.appsSig()) return;
     if (this.bootstrapPromise) return this.bootstrapPromise;
-
     if (isDevMode()) console.debug('[SystemService] bootstrap starting');
     this.bootstrapPromise = (async () => {
       try {
@@ -114,7 +113,6 @@ export class SystemService {
         if (isDevMode()) console.debug('[SystemService] bootstrap finished');
       } catch (err) {
         console.error('[SystemService] bootstrap failed', err);
-        this.bootstrapPromise = null;
         throw err;
       }
     })();

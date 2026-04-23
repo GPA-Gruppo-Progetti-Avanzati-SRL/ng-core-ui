@@ -1,4 +1,5 @@
 import {ToastComponent} from '../../components/toast.component/toast.component';
+import {LoadingOverlayComponent} from '../../components/loading-overlay.component/loading-overlay.component';
 
 declare const AppSha: string;
 declare const AppVersion: string;
@@ -28,6 +29,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import {ConfirmComponent} from '../../components/confirm.component/confirm.component';
 import {AlertComponent} from '../../components/alert.component/alert.component';
+import {ErrorPage} from '../../pages/error.page';
 
 @Component({
   selector: 'app-main-layout',
@@ -36,6 +38,7 @@ import {AlertComponent} from '../../components/alert.component/alert.component';
     ToastComponent,
     ConfirmComponent,
     AlertComponent,
+    LoadingOverlayComponent,
     MatIconModule,
     MatSidenavModule,
     MatToolbarModule,
@@ -43,6 +46,7 @@ import {AlertComponent} from '../../components/alert.component/alert.component';
     MatDividerModule,
     RouterOutlet,
     RouterLink,
+    ErrorPage
   ],
   templateUrl: './main-layout.component.html',
   encapsulation: ViewEncapsulation.None,
@@ -66,6 +70,12 @@ export class MainLayoutComponent {
   sidenavExpanded = signal(false);
   isExpanded = computed(() => this.sidenavExpanded());
   extraSidenavOpen = signal(false);
+  private readonly bootstrapFailed = signal(false);
+  readonly layoutState = computed<'loading' | 'ready' | 'error'>(() => {
+    if (this.bootstrapFailed()) return 'error';
+    if (this.whoami())          return 'ready';
+    return 'loading';
+  });
 
   private currentUrl = toSignal(
     this.router.events.pipe(
@@ -79,7 +89,7 @@ export class MainLayoutComponent {
   sortedMenuRoots = this.menuTree;
 
   constructor() {
-    this.system.bootstrap().catch(err => console.error('Bootstrap error in MainLayout', err));
+    this.system.bootstrap().catch(() => this.bootstrapFailed.set(true));
 
     // Re-measure when menu items change (e.g. after bootstrap)
     afterRenderEffect(() => {
