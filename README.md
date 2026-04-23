@@ -3,7 +3,7 @@
 Libreria UI condivisa per le applicazioni GPA. Fornisce layout, componenti, gestione token/ambiente, routing pre-configurati, temi Angular Material 3 e utility Tailwind CSS v4.
 
 - **Pacchetto:** `@gpa-gruppo-progetti-avanzati-srl/ng-core-ui`
-- **Versione:** 0.0.35
+- **Versione:** 0.0.39
 - **Angular:** 21.x · **Material:** 21.x · **Tailwind:** 4.x
 - **Documentazione completa:** [github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki)
 
@@ -33,7 +33,7 @@ export const APP_ROUTES: CoreRoute[] = [
     path: '',
     description: 'Home',
     icon: 'home',
-    ismenu: true,
+    menu: true,
     order: 0,
     loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent),
   },
@@ -68,8 +68,8 @@ export const APP_ROUTES: CoreRoute[] = [
 ```bash
 # 1. Aggiorna la versione in projects/ng-core-ui/package.json
 # 2. Committa e tagga
-git tag 0.0.29
-git push origin 0.0.29
+git tag 0.0.39
+git push origin 0.0.39
 ```
 
 La pubblicazione su npm avviene automaticamente via GitHub Actions al push del tag.
