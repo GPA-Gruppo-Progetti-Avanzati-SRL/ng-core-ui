@@ -2,8 +2,8 @@ import { InputSignal, Signal, Type, computed, signal, WritableSignal } from '@an
 import { FieldTree, form } from '@angular/forms/signals';
 
 /** Definizione UI di un campo — dichiarata dal developer nel layout di FormModel */
-export interface FormFieldUIDef {
-  field:     FieldTree<unknown>;
+export interface FormFieldDef<T> {
+  field:     FieldTree<object | string | number | boolean | null>; // forza branch FieldState (mai AbstractControl)
   label:     string;
   component: Type<CoreFieldComponent>;
   span?:     number;
@@ -11,24 +11,23 @@ export interface FormFieldUIDef {
   inputs?:   Record<string, any>;
 }
 
-/** @deprecated Usa FormFieldUIDef */
-export type FormFieldDef = FormFieldUIDef;
+
 
 /** Valore di un campo */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type FieldValue = any;
+//export type FieldValue = any;
 
 export class FormModel<T = any> {
   readonly model:   WritableSignal<T>;
   readonly ft:      FieldTree<T>;
-  readonly fields:  FormFieldUIDef[];
+  readonly fields:  FormFieldDef<T>[];
   readonly invalid: Signal<boolean>;
 
   constructor(
     initialValue: T,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     schema: any,
-    layout: (ft: FieldTree<T>) => FormFieldUIDef[],
+    layout: (ft: FieldTree<T>) => FormFieldDef<T>[],
   ) {
     this.model   = signal(initialValue);
     this.ft      = form(this.model, schema);
@@ -62,8 +61,8 @@ export class FormModel<T = any> {
 }
 
 /**
- * Bottone nel footer della shell.
-a questo  * - `variant`  — 'icon' (solo icona, default se manca label) | 'text' | 'filled'
+ * Bottoni della shell.
+ * - `variant`  — 'icon' (solo icona, default se manca label) | 'text' | 'filled'
  * - `position` — 'inline' (stessa riga, default) | 'footer' (riga dedicata sotto)
  * - `visible`  — funzione (anche signal-based) che controlla la visibilità; default `true`
  * - `disabled` — funzione (anche signal-based) che controlla lo stato disabilitato; default `false`
