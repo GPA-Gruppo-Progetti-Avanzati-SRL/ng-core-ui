@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
 export class HomeComponent {
   private readonly system = inject(SystemService);
   private readonly router = inject(Router)
-  readonly menu = computed(() => (this.system.menuTreeSig() ?? []).filter(p => p.endpoint !== '/'));
+  readonly menu = computed(() => (this.system.menuTree() ?? []).filter(p => p.endpoint !== '/'));
   readonly homeTitle = computed(() => this.system.getEnvironmentProperty('homeTitle') as string);
   readonly homeSubTitle = computed(
     () => this.system.getEnvironmentProperty('homeSubTitle') as string,

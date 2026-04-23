@@ -58,7 +58,7 @@ RUN ls
 
 ENTRYPOINT echo copy resources into Folder \${ASSETS_FOLDER} - Version \${VERSION} && \\
   mkdir -p \${ASSETS_FOLDER}/${projectName}/\${VERSION} && cp -r /app/${projectName}/* \${ASSETS_FOLDER}/${projectName}/\${VERSION} && \\
-  mkdir -p \${ASSETS_FOLDER}/caps/ui && cp /app/caps/ui/routes.yaml \${ASSETS_FOLDER}/caps/ui/routes.yaml && \\
+  mkdir -p \${ASSETS_FOLDER}/caps/ui && cp /app/caps/ui/routes.yaml \${ASSETS_FOLDER}/caps/ui/${projectName}-\${VERSION}-routes.yaml && \\
   ls \${ASSETS_FOLDER}
 `;
 

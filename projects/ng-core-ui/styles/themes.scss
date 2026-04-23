@@ -1,6 +1,7 @@
 @forward 'cobalt-theme';
 @forward 'gpa-theme';
 @forward 'forest-theme';
+@use 'layout-shared';
 @use 'main-layout';
 @use '@angular/material' as mat;
 

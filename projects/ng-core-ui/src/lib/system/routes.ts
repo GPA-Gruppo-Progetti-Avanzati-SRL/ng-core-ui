@@ -5,12 +5,13 @@ import { Type } from '@angular/core';
 import { MenuGuard } from './menu.guard';
 import { MainLayoutComponent } from '../layout/main-layout/main-layout.component';
 import { SimpleLayoutComponent } from '../layout/simple-layout/simple-layout.component';
-import { ForbiddenComponent } from '../forbidden/forbidden.component';
-import { NotFoundComponent } from '../not-found/not-found.component';
+import { ForbiddenPage } from '../pages/forbidden.page';
+import { NotFoundPage } from '../pages/not-found.page';
 
 export type { CoreAction, CoreRouteBase, CoreRouteEntry } from './routes-export';
 export { toRoutesList, toRoutesYaml } from './routes-export';
 import type { CoreRouteBase } from './routes-export';
+import {ErrorPage} from '../pages/error.page';
 
 export interface CoreRoute extends CoreRouteBase {
   loadComponent?: () => Promise<Type<unknown> | { default: Type<unknown> }>;
@@ -35,8 +36,9 @@ export function toRoutes(routes: CoreRoute[], options?: CoreRoutesOptions): Rout
           path: r.endpoint ?? '',
           loadComponent: r.loadComponent!,
         })),
-        { path: 'forbidden', component: ForbiddenComponent },
-        { path: '**', component: NotFoundComponent },
+        { path: 'error', component: ErrorPage },
+        { path: 'forbidden', component: ForbiddenPage },
+        { path: '**', component: NotFoundPage },
       ],
     },
   ];

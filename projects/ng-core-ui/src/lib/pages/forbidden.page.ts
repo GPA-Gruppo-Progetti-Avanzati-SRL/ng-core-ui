@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-forbidden',
+  selector: 'page-forbidden',
   standalone: true,
   imports: [CommonModule],
   template: `
@@ -13,4 +13,4 @@ import { CommonModule } from '@angular/common';
   `,
   host: { class: 'ui' },
 })
-export class ForbiddenComponent {}
+export class ForbiddenPage {}

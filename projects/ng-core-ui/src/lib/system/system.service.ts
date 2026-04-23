@@ -17,20 +17,30 @@ export class SystemService {
   private readonly styleManager     = inject(StyleManagerService);
   private readonly titleService     = inject(Title);
 
-  readonly whoamiSig        = signal<{ user: string; roles: string[] | null; capabilities: string[] | null } | null>(null);
-  readonly pathsSig         = signal<PathNode[] | null>(null);
-  readonly menuTreeSig      = signal<PathNode[] | null>(null);
-  readonly appsSig          = signal<App[] | null>(null);
-  readonly sitesSig         = signal<Site[] | null>(null);
-  readonly environmentSig   = signal<Environment | null>(null);
-  readonly environmentProperties = computed(() => this.environmentSig()?.properties ?? {});
+  readonly whoami        = signal<{ user: string; roles: string[] | null; capabilities: string[] | null } | null>(null);
+  readonly paths         = signal<PathNode[] | null>(null);
+  readonly menuTree      = computed(() => {
+    const p = this.paths();
+    return p === null ? null : this._sortByOrder(p.filter(n => n.menu));
+  });
+  readonly apps          = signal<App[] | null>(null);
+  readonly sites         = signal<Site[] | null>(null);
+  readonly environment   = signal<Environment | null>(null);
+  readonly environmentProperties = computed(() => this.environment()?.properties ?? {});
+
+  private readonly _bootstrapFailed = signal(false);
+  readonly layoutState = computed<'loading' | 'ready' | 'error'>(() => {
+    if (this._bootstrapFailed()) return 'error';
+    if (this.whoami())           return 'ready';
+    return 'loading';
+  });
 
   private readonly capabilitiesSet = computed(() =>
-    new Set(this.whoamiSig()?.capabilities ?? [])
+    new Set(this.whoami()?.capabilities ?? [])
   );
 
   readonly allowedEndpoints = computed(() => {
-    const list = this.pathsSig();
+    const list = this.paths();
     if (!list) return new Set<string>();
     const acc = new Set<string>();
     for (const n of list) {
@@ -41,11 +51,15 @@ export class SystemService {
 
   constructor() {
     effect(() => {
-      const env = this.environmentSig();
+      const env = this.environment();
+      if (!env) return;
       this.styleManager.setTheme(env?.theme);
       if (env?.appTitle) this.titleService.setTitle(env.appTitle);
       if (isDevMode()) console.log('[SystemService] theme →', env?.theme);
     });
+
+    // Differito a dopo la risoluzione del grafo DI (evita ciclo SystemService → HttpClient → contextInterceptor → SystemService)
+    queueMicrotask(() => this.bootstrap().catch(() => this._bootstrapFailed.set(true)));
   }
 
   getEnvironmentProperty(key: string): unknown {
@@ -71,12 +85,12 @@ export class SystemService {
   async loadEnvironment(): Promise<Environment> {
     const data = await firstValueFrom(this.http.get<Environment>(this.environmentUrl));
     if (isDevMode()) console.debug('[SystemService] environment', data);
-    this.environmentSig.set(data);
+    this.environment.set(data);
     return data;
   }
 
   async loadToken(): Promise<TokenResponse> {
-    const env = this.environmentSig();
+    const env = this.environment();
     if (!env?.appId) throw new Error('AppId not found in environment');
 
     const headers = new HttpHeaders().set('AppId', env.appId);
@@ -91,11 +105,11 @@ export class SystemService {
     }
     if (isDevMode()) console.debug('[SystemService] token', data);
 
-    this.whoamiSig.set({ user: data.user, roles: data.roles ?? [], capabilities: data.capabilities ?? [] });
-    this.pathsSig.set(data.paths ?? []);
-    this.menuTreeSig.set(this._sortByOrder(data.paths?.filter(p => p.menu) ?? []));
-    this.appsSig.set(this._sortByOrder(data.apps ?? []));
-    this.sitesSig.set(this._sortByOrder(data.sites ?? []));
+    this.whoami.set({ user: data.user, roles: data.roles ?? [], capabilities: data.capabilities ?? [] });
+    this.paths.set(data.paths ?? []);
+
+    this.apps.set(this._sortByOrder(data.apps ?? []));
+    this.sites.set(this._sortByOrder(data.sites ?? []));
 
     return data;
   }
@@ -103,9 +117,8 @@ export class SystemService {
   private bootstrapPromise: Promise<void> | null = null;
 
   async bootstrap(): Promise<void> {
-    if (this.whoamiSig() && this.pathsSig() && this.appsSig()) return;
+    if (this.whoami() && this.paths() && this.apps()) return;
     if (this.bootstrapPromise) return this.bootstrapPromise;
-
     if (isDevMode()) console.debug('[SystemService] bootstrap starting');
     this.bootstrapPromise = (async () => {
       try {
@@ -114,7 +127,6 @@ export class SystemService {
         if (isDevMode()) console.debug('[SystemService] bootstrap finished');
       } catch (err) {
         console.error('[SystemService] bootstrap failed', err);
-        this.bootstrapPromise = null;
         throw err;
       }
     })();

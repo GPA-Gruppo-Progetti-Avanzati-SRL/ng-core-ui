@@ -9,8 +9,8 @@ export * from './lib/system/routes';
 export { contextInterceptor } from './lib/system/context-interceptor';
 
 //DEFAULT PAGES
-export * from './lib/not-found/not-found.component';
-export * from './lib/forbidden/forbidden.component';
+export * from './lib/pages/not-found.page';
+export * from './lib/pages/forbidden.page';
 //LAYOUT
 export * from './lib/layout/main-layout/main-layout.component';
 export * from './lib/layout/simple-layout/simple-layout.component';

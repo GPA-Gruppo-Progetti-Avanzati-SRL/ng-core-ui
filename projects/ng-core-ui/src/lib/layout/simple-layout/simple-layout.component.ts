@@ -1,3 +1,5 @@
+import {ErrorPage} from '../../pages/error.page';
+
 declare const AppSha: string;
 declare const AppVersion: string;
 
@@ -6,16 +8,15 @@ import {
   computed,
   ChangeDetectionStrategy,
   inject,
-  OnInit,
   ViewEncapsulation
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {SystemService} from '../../system/system.service';
+import {LoadingOverlayComponent} from '../../components/loading-overlay.component/loading-overlay.component';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
-import {MatListModule} from '@angular/material/list';
-import {MatCardModule} from '@angular/material/card';
 import {MatToolbarModule} from '@angular/material/toolbar';
+
 
 @Component({
   selector: 'app-simple-layout',
@@ -23,29 +24,24 @@ import {MatToolbarModule} from '@angular/material/toolbar';
     MatButtonModule,
     MatIconModule,
     MatToolbarModule,
-    MatListModule,
-    MatCardModule,
+    LoadingOverlayComponent,
     RouterOutlet,
+    ErrorPage
   ],
   templateUrl: './simple-layout.component.html',
-  styleUrls: ['./simple-layout.component.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'ui' },
+  host: { class: 'ui block h-screen bg-surface text-on-surface' },
 })
-export class SimpleLayoutComponent implements OnInit {
+export class SimpleLayoutComponent {
 
-  private system: SystemService = inject(SystemService);
+  private system = inject(SystemService);
 
-  whoami = this.system.whoamiSig;
-  environment = this.system.environmentSig;
-  sites = this.system.sitesSig;
-  appSha = computed(() => AppSha);
-  appVersion = computed(() => AppVersion);
+  whoami = this.system.whoami;
+  environment = this.system.environment;
+  layoutState = this.system.layoutState;
+  readonly appSha = AppSha;
+  readonly appVersion = AppVersion;
 
   currentPageTitle = computed(() => this.environment()?.appDescription || 'Enterprise App');
-
-  ngOnInit() {
-    this.system.bootstrap().catch(err => console.error('Bootstrap error in SimpleLayout', err));
-  }
 }

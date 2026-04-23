@@ -1,27 +1,31 @@
-@if (whoami()) {
-  <div class="layout-grid">
-    <main class="main-content">
-      <mat-toolbar color="primary" class="toolbar">
-        <span class="title">{{ currentPageTitle() }}</span>
-        <span class="spacer"></span>
+@switch (layoutState()) {
+  @case ('ready') {
+    <div class="block h-screen">
+      <main class="flex flex-col h-full overflow-hidden">
+        <mat-toolbar color="primary" class="toolbar">
+          <span class="ml-3 font-semibold text-lg text-on-primary">{{ currentPageTitle() }}</span>
+          <span class="flex-1"></span>
 
-        <span class="user-name">{{ whoami()?.user }}</span>
+          <span class="mr-2 font-semibold text-lg text-on-primary">{{ whoami()?.user }}</span>
 
-        <a mat-icon-button [href]="environment()?.logoutPath || '#'" aria-label="Logout">
-          <mat-icon>logout</mat-icon>
-        </a>
-      </mat-toolbar>
+          <a mat-icon-button [href]="environment()?.logoutPath || '#'" aria-label="Logout">
+            <mat-icon>logout</mat-icon>
+          </a>
+        </mat-toolbar>
 
-      <div class="content">
-        <router-outlet />
-        <div class="app-info">
-          Version : {{ appVersion() }} - Sha: {{ appSha() }}
+        <div class="relative flex-1 overflow-auto">
+          <router-outlet/>
+          <div class="fixed bottom-2 right-4 text-[10px] text-error opacity-80 pointer-events-none z-[1000]">
+            Version : {{ appVersion }} - Sha: {{ appSha }}
+          </div>
         </div>
-      </div>
-    </main>
-  </div>
-} @else {
-  <div class="content">
-    <router-outlet />
-  </div>
+      </main>
+    </div>
+  }
+  @case ('error') {
+    <page-error/>
+  }
+  @default {
+    <core-loading-overlay/>
+  }
 }

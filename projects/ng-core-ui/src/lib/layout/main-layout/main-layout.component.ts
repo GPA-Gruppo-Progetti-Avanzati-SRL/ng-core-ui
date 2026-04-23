@@ -1,4 +1,5 @@
 import {ToastComponent} from '../../components/toast.component/toast.component';
+import {LoadingOverlayComponent} from '../../components/loading-overlay.component/loading-overlay.component';
 
 declare const AppSha: string;
 declare const AppVersion: string;
@@ -7,11 +8,10 @@ import {
   Component,
   signal,
   computed,
-  effect,
+  afterRenderEffect,
   ChangeDetectionStrategy,
   inject,
-  OnInit,
-  ViewChild,
+  viewChild,
   ElementRef,
   ViewEncapsulation
 } from '@angular/core';
@@ -26,10 +26,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
-import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import {ConfirmComponent} from '../../components/confirm.component/confirm.component';
 import {AlertComponent} from '../../components/alert.component/alert.component';
+import {ErrorPage} from '../../pages/error.page';
 
 @Component({
   selector: 'app-main-layout',
@@ -38,34 +38,36 @@ import {AlertComponent} from '../../components/alert.component/alert.component';
     ToastComponent,
     ConfirmComponent,
     AlertComponent,
+    LoadingOverlayComponent,
     MatIconModule,
     MatSidenavModule,
     MatToolbarModule,
     MatListModule,
-    MatCardModule,
     MatDividerModule,
     RouterOutlet,
     RouterLink,
+    ErrorPage
   ],
   templateUrl: './main-layout.component.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'ui' },
+  host: { class: 'ui block h-screen bg-surface text-on-surface' },
 })
-export class MainLayoutComponent implements OnInit {
+export class MainLayoutComponent {
 
   private router: Router = inject(Router);
   private system: SystemService = inject(SystemService);
 
-  @ViewChild('sidenav') private sidenavRef!: ElementRef<HTMLElement>;
+  private readonly sidenavRef = viewChild<ElementRef<HTMLElement>>('sidenav');
 
-  whoami = this.system.whoamiSig;
-  environment = this.system.environmentSig;
-  menuTree = this.system.menuTreeSig;
-  apps = this.system.appsSig;
+  whoami = this.system.whoami;
+  environment = this.system.environment;
+  menuTree = this.system.menuTree;
+  apps = this.system.apps;
   currentAppId = computed(() => this.environment()?.appId || '');
-  appSha = computed(() => AppSha);
-  appVersion = computed(() => AppVersion);
+  readonly appSha = AppSha;
+  readonly appVersion = AppVersion;
+  layoutState = this.system.layoutState;
   sidenavExpanded = signal(false);
   isExpanded = computed(() => this.sidenavExpanded());
   extraSidenavOpen = signal(false);
@@ -83,10 +85,10 @@ export class MainLayoutComponent implements OnInit {
 
   constructor() {
     // Re-measure when menu items change (e.g. after bootstrap)
-    effect(() => {
+    afterRenderEffect(() => {
       const menu = this.menuTree();
       if (menu && menu.length > 0) {
-        setTimeout(() => this.measureSidenavWidth(), 0);
+        this.measureSidenavWidth();
       }
     });
   }
@@ -111,16 +113,12 @@ export class MainLayoutComponent implements OnInit {
     this.extraSidenavOpen.set(false);
   }
 
-  ngOnInit(): void {
-    this.system.bootstrap().catch(err => console.error('Bootstrap error in MainLayout', err));
-  }
-
   /**
    * Misura la larghezza naturale dell'aside (label visibili) senza causare flash visivi.
    * Tutte le mutazioni DOM avvengono in modo sincrono prima del prossimo paint.
    */
   private measureSidenavWidth(): void {
-    const aside = this.sidenavRef?.nativeElement;
+    const aside = this.sidenavRef()?.nativeElement;
     if (!aside) return;
 
     const wasCollapsed = aside.classList.contains('collapsed');

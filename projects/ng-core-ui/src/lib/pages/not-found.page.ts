@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-not-found',
+  selector: 'page-not-found',
   standalone: true,
   imports: [CommonModule],
   template: `
@@ -13,4 +13,4 @@ import { CommonModule } from '@angular/common';
   `,
   host: { class: 'ui' },
 })
-export class NotFoundComponent {}
+export class NotFoundPage {}

@@ -1,95 +1,97 @@
-﻿@if (whoami()) {
-  <div class="layout-grid" [class.expanded]="isExpanded()">
+@switch (layoutState()) {
+  @case ('ready') {
+    <mat-sidenav-container class="extra-sidenav-container h-screen">
 
-    <aside #sidenav class="sidenav" [class.collapsed]="!isExpanded()" role="navigation" aria-label="Primary">
-      <mat-nav-list class="nav-list">
-        @for (link of sortedMenuRoots(); track link) {
-          <a
-            mat-list-item
-            class="nav-item"
-            [routerLink]="[endpointFor(link)]"
-            [activated]="isActive(link)"
-            [attr.aria-label]="link.name || link.id"
-          >
-            <mat-icon>{{ link.icon || 'chevron_right' }}</mat-icon>
-            <span class="label" [class.hidden]="!isExpanded()">{{ link.name || link.id }}</span>
+      <mat-sidenav position="end" mode="over" class="extra-sidenav bg-primary text-on-primary"
+                   [opened]="extraSidenavOpen()"
+                   (closed)="extraSidenavOpen.set(false)">
+        @if (environment()?.logoUrl) {
+          <a href="/" (click)="closeExtraSidenav()" class="flex justify-center my-2 no-underline outline-none" aria-label="Vai alla home">
+            <img class="app-logo-img bg-surface" [src]="environment()!.logoUrl" alt="Logo" />
           </a>
         }
-      </mat-nav-list>
-    </aside>
-
-    <main class="main-content">
-      <mat-toolbar color="primary" class="toolbar">
-        <button mat-icon-button (click)="toggleSidenav()" aria-label="Apri/Chiudi menu" [attr.aria-pressed]="isExpanded()">
-          <mat-icon>menu</mat-icon>
-        </button>
-
-        <span class="title">{{ currentPageTitle() }}</span>
-        <span class="spacer"></span>
-
-        <span class="user-name">{{ whoami()?.user }}</span>
-
-        <a mat-icon-button [href]="environment()?.logoutPath || '#'" aria-label="Logout">
-          <mat-icon>logout</mat-icon>
-        </a>
-        <button mat-icon-button (click)="openExtraSidenav()" aria-label="Apri menu laterale destro">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-
-
-
-        <!-- Sidenav destra -->
-        <div class="extra-sidenav" [class.open]="extraSidenavOpen()" tabindex="-1" role="complementary" aria-label="Menu laterale destro">
-          @if (environment()?.logoUrl) {
-            <a href="/" (click)="closeExtraSidenav()" class="app-logo-link" aria-label="Vai alla home">
-              <img class="app-logo-img" [src]="environment()!.logoUrl" alt="Logo" />
-            </a>
-          }
-          <mat-divider class="apps-divider"></mat-divider>
-          <div class="extra-content">
-            <mat-nav-list>
-              @for (app of apps(); track app.id) {
-                @if (app.id === currentAppId()) {
-                  <a mat-list-item class="extra-menu-item disabled-app" [attr.aria-label]="app.title || app.id">
-                    <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
-                    <span class="app-label">{{ app.title || app.id }}</span>
-                  </a>
-                } @else {
-                  <a mat-list-item class="extra-menu-item" [attr.aria-label]="app.title || app.id" [href]="app.path || '#'" >
-                    <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
-                    <span class="app-label">{{ app.title || app.id }}</span>
-                  </a>
-                }
+        <mat-divider class="apps-divider"></mat-divider>
+        <div class="extra-content flex-1 min-h-0 overflow-y-auto overflow-x-hidden flex flex-col">
+          <mat-nav-list>
+            @for (app of apps(); track app.id) {
+              @if (app.id === currentAppId()) {
+                <a mat-list-item class="extra-menu-item text-on-inverse-surface disabled-app" [attr.aria-label]="app.title || app.id">
+                  <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
+                  <span class="app-label">{{ app.title || app.id }}</span>
+                </a>
+              } @else {
+                <a mat-list-item class="extra-menu-item text-on-inverse-surface" [attr.aria-label]="app.title || app.id" [href]="app.path || '#'">
+                  <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
+                  <span class="app-label">{{ app.title || app.id }}</span>
+                </a>
               }
-            </mat-nav-list>
-          </div>
-          <mat-divider class="apps-divider"></mat-divider>
-          <mat-nav-list class="extra-footer">
-            <a mat-list-item class="extra-menu-item" [href]="environment()?.logoutPath || '#'" aria-label="Logout">
-              <mat-icon>logout</mat-icon>
-              <span class="app-label">Logout</span>
-            </a>
+            }
           </mat-nav-list>
-          <div class="app-info">
-            Version: {{ appVersion() }} - Sha: {{ appSha() }}
-          </div>
         </div>
+        <mat-divider class="apps-divider"></mat-divider>
+        <mat-nav-list class="extra-footer shrink-0 pt-1 flex justify-center">
+          <a mat-list-item class="extra-menu-item text-on-inverse-surface" [href]="environment()?.logoutPath || '#'" aria-label="Logout">
+            <mat-icon>logout</mat-icon>
+            <span class="app-label">Logout</span>
+          </a>
+        </mat-nav-list>
+        <div class="shrink-0 mt-1 px-4 text-[10px] text-on-primary opacity-80 text-center">
+          Version: {{ appVersion }} - Sha: {{ appSha }}
+        </div>
+      </mat-sidenav>
 
-        <div class="extra-sidenav-backdrop" [class.open]="extraSidenavOpen()" (click)="closeExtraSidenav()" tabindex="-1" aria-label="Chiudi menu laterale destro"></div>
-      </mat-toolbar>
+      <mat-sidenav-content>
+        <aside #sidenav class="sidenav bg-tertiary text-on-tertiary" [class.collapsed]="!isExpanded()" role="navigation" aria-label="Primary">
+          <mat-nav-list class="nav-list">
+            @for (link of sortedMenuRoots(); track link) {
+              <a
+                mat-list-item
+                class="nav-item"
+                [routerLink]="[endpointFor(link)]"
+                [activated]="isActive(link)"
+                [attr.aria-label]="link.name || link.id"
+              >
+                <mat-icon>{{ link.icon || 'chevron_right' }}</mat-icon>
+                <span class="label" [class.hidden]="!isExpanded()">{{ link.name || link.id }}</span>
+              </a>
+            }
+          </mat-nav-list>
+        </aside>
 
-      <div class="content">
-        <router-outlet />
-        <core-confirm />
-        <core-alert />
-        <core-toast />
-      </div>
-    </main>
+        <main class="flex flex-col flex-1 overflow-hidden">
+          <mat-toolbar color="primary" class="toolbar">
+            <button mat-icon-button (click)="toggleSidenav()" aria-label="Apri/Chiudi menu" [attr.aria-pressed]="isExpanded()">
+              <mat-icon>menu</mat-icon>
+            </button>
 
-  </div>
-}
-@else {
-  <div class="content">
-    <router-outlet />
-  </div>
+            <span class="ml-3 font-semibold text-lg text-on-primary">{{ currentPageTitle() }}</span>
+            <span class="flex-1"></span>
+
+            <span class="mr-2 font-semibold text-lg text-on-primary">{{ whoami()?.user }}</span>
+
+            <a mat-icon-button [href]="environment()?.logoutPath || '#'" aria-label="Logout">
+              <mat-icon>logout</mat-icon>
+            </a>
+            <button mat-icon-button (click)="openExtraSidenav()" aria-label="Apri menu laterale destro">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </mat-toolbar>
+
+          <div class="relative flex-1 overflow-auto">
+            <router-outlet />
+            <core-confirm />
+            <core-alert />
+            <core-toast />
+          </div>
+        </main>
+      </mat-sidenav-content>
+
+    </mat-sidenav-container>
+  }
+  @case ('error') {
+   <page-error/>
+  }
+  @default {
+    <core-loading-overlay />
+  }
 }
