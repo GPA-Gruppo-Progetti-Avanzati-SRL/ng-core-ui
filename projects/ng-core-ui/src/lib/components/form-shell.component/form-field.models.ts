@@ -3,7 +3,7 @@ import { FieldTree, form } from '@angular/forms/signals';
 
 /** Definizione UI di un campo — dichiarata dal developer nel layout di FormModel */
 export interface FormFieldUIDef {
-  key:       string;
+  field:     FieldTree<unknown>;
   label:     string;
   component: Type<CoreFieldComponent>;
   span?:     number;
@@ -11,11 +11,8 @@ export interface FormFieldUIDef {
   inputs?:   Record<string, any>;
 }
 
-/** FormField completo — prodotto da FormModel. Non va costruito manualmente. */
-export interface FormFieldDef extends FormFieldUIDef {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  formField: any;
-}
+/** @deprecated Usa FormFieldUIDef */
+export type FormFieldDef = FormFieldUIDef;
 
 /** Valore di un campo */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,19 +21,18 @@ export type FieldValue = any;
 export class FormModel<T = any> {
   readonly model:   WritableSignal<T>;
   readonly ft:      FieldTree<T>;
-  readonly fields:  FormFieldDef[];
+  readonly fields:  FormFieldUIDef[];
   readonly invalid: Signal<boolean>;
 
   constructor(
     initialValue: T,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     schema: any,
-    layout: FormFieldUIDef[],
+    layout: (ft: FieldTree<T>) => FormFieldUIDef[],
   ) {
     this.model   = signal(initialValue);
     this.ft      = form(this.model, schema);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.fields  = layout.map(f => ({ ...f, formField: (this.ft as any)[f.key] }));
+    this.fields  = layout(this.ft);
     this.invalid = computed(() => this.ft().invalid());
   }
 
@@ -44,7 +40,7 @@ export class FormModel<T = any> {
   markAllAsTouched(): void {
     for (const f of this.fields) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (f.formField as any)()?.markAsTouched?.();
+      (f.field as any)()?.markAsTouched?.();
     }
   }
 

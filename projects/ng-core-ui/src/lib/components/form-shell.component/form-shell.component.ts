@@ -9,7 +9,7 @@ import { NgComponentOutlet } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FormFieldDef, FormModel, FormShellAction } from './form-field.models';
+import { FormFieldUIDef, FormModel, FormShellAction } from './form-field.models';
 
 @Component({
   selector: 'core-form-shell',
@@ -41,18 +41,18 @@ export class FormShellComponent {
     return a.variant ?? (a.label ? 'text' : 'icon');
   }
 
-  protected isHidden(f: FormFieldDef): boolean {
+  protected isHidden(f: FormFieldUIDef): boolean {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (f.formField as any)()?.hidden?.() ?? false;
+    return (f.field as any)()?.hidden?.() ?? false;
   }
 
-  protected clampSpan(f: FormFieldDef): number {
+  protected clampSpan(f: FormFieldUIDef): number {
     return Math.min(f.span ?? 1, this.columns());
   }
 
-  protected fieldInputs(f: FormFieldDef): Record<string, unknown> {
+  protected fieldInputs(f: FormFieldUIDef): Record<string, unknown> {
     return {
-      formField: f.formField,
+      formField: f.field,
       label:     f.label,
       ...(f.inputs ?? {}),
     };
