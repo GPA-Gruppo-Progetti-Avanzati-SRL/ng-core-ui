@@ -2,7 +2,7 @@
   class="grid gap-4 items-center"
   [style.grid-template-columns]="'repeat(' + columns() + ', minmax(0, 1fr))'"
 >
-  @for (f of fields(); track f.key) {
+  @for (f of fields(); track $index) {
     @if (!isHidden(f)) {
       <div [style.grid-column]="'span ' + clampSpan(f)">
         <ng-container

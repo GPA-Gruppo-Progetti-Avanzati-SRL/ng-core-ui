@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation, input } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import {  FormField} from '@angular/forms/signals';
+import {FormField} from '@angular/forms/signals';
 
 
 @Component({

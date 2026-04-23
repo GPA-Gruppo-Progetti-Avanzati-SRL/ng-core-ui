@@ -220,14 +220,14 @@ The library publishes these assets alongside the compiled JS:
 - **Colonne custom**: passare `component: MyCellComponent` su `DatatableColumn`. Il componente deve esporre `value = input<unknown>()` e `row = input<unknown>()`. Viene renderizzato via `NgComponentOutlet` con `inputs` — nessun template markup aggiuntivo nel consuming component.
 
 **FormShell API:**
-- `FormModel<T>(initialValue, validators, layout)` — classe che racchiude la signal form Angular (`@angular/forms/signals`) e il layout UI. `validators` è la funzione schema (`required`, `min`, `max`, `minLength`, `email`, `hidden`, `disabled`). `layout` è `FormFieldUIDef[]`.
+- `FormModel<T>(initialValue, schema, layout)` — classe che racchiude la signal form Angular (`@angular/forms/signals`) e il layout UI. `schema` è la funzione schema (`required`, `min`, `max`, `minLength`, `email`, `hidden`, `disabled`). `layout` è una **factory function** `(ft: FieldTree<T>) => FormFieldUIDef[]`.
 - `FormModel.model` — `WritableSignal<T>`, source of truth dei valori. Leggere con `formModel.model()` nel submit.
 - `FormModel.ft` — `FieldTree<T>`, accesso tipizzato per singoli field in `computed()`: `formModel.ft.nome().value()`.
 - `FormModel.invalid` — `Signal<boolean>`, delega a `ft().invalid()`.
 - `FormModel.submit(action: () => void)` — chiama `markAllAsTouched()`, poi esegue `action()` solo se `invalid()` è `false`. Pattern canonico per i bottoni submit.
 - `FormModel.markAllAsTouched()` — forza la visualizzazione di tutti gli errori.
 - `FormModel.reset(value?: T)` — resetta stato touched/dirty, opzionalmente aggiorna il valore.
-- `FormFieldUIDef { key, label, component, span?, inputs? }` — solo layout UI. Nessuna logica di validazione/hidden/disabled qui.
+- `FormFieldUIDef { field, label, component, span?, inputs? }` — solo layout UI. `field` è il riferimento diretto al `FieldTree` (es. `ft.nome`), NON una stringa. TypeScript cattura i typo a compile time.
 - Validazione, hidden, disabled: **sempre nello schema** del `FormModel` usando `required(p.field)`, `hidden(p.field, logic)`, `disabled(p.field, logic)` da `@angular/forms/signals`.
 - Shell inputs: `[model]="formModel"`, `[columns]="2"`, `[actions]="actions"`. **Nessun output** — tutto gestito via `actions`.
 - `FormShellAction { icon?, label?, tooltip?, variant?: 'icon'|'text'|'filled', position?: 'inline'|'footer', onClick, disabled? }` — `variant` default: `'icon'` se no label, `'text'` se label; `position` default: `'inline'`.

@@ -53,9 +53,20 @@ export class SystemService {
     effect(() => {
       const env = this.environment();
       if (!env) return;
-      this.styleManager.setTheme(env?.theme);
-      if (env?.appTitle) this.titleService.setTitle(env.appTitle);
-      if (isDevMode()) console.log('[SystemService] theme →', env?.theme);
+      this.styleManager.setTheme(env.theme);
+      if (isDevMode()) console.log('[SystemService] theme →', env.theme);
+    });
+
+    effect(() => {
+      switch (this.layoutState()) {
+        case 'loading': this.titleService.setTitle('Caricamento...'); break;
+        case 'error':   this.titleService.setTitle('Errore');         break;
+        case 'ready': {
+          const title = this.environment()?.appTitle;
+          if (title) this.titleService.setTitle(title);
+          break;
+        }
+      }
     });
 
     // Differito a dopo la risoluzione del grafo DI (evita ciclo SystemService → HttpClient → contextInterceptor → SystemService)
