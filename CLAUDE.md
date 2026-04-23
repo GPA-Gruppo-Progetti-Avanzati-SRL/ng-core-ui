@@ -80,26 +80,31 @@ Consuming apps call `provideGPAUICore(options?)` in their root config, where `op
 
 These set `LIB_TOKEN_URL` and `LIB_ENVIRONMENT_URL` injection tokens used by `SystemService`.
 
-Bootstrap is **sequential** via `SystemService.bootstrap()`:
-1. `loadEnvironment()` — fetches `environmentUrl` (default `/environment/environment.json`) and parses it into an `Environment` object (`appId`, `theme`, `logoutPath`, `encryptToken?`, `properties?`). Sets `environmentSig`.
-2. `loadToken()` — reads `appId` from `environmentSig()`, sends it as an `AppId` HTTP header to `tokenUrl`. If `env.encryptToken` is true, decrypts the response with AES-GCM using the `appId` as key; otherwise parses it directly. Sets `whoamiSig`, `pathsSig`, `menuTreeSig`, `appsSig`, `contextsSig`.
-3. Deduplication is via a `bootstrapPromise` field — concurrent calls reuse the same `Promise<void>`. On failure the rejected promise is **kept cached** (not reset), so subsequent callers receive the same rejection without triggering a new attempt. This prevents the layout + `MenuGuard` from each spawning independent retries.
+Bootstrap is **owned by `SystemService`** and starts automatically in its constructor via `queueMicrotask` (deferred past DI graph resolution to avoid the `SystemService → HttpClient → contextInterceptor → SystemService` circular dependency). Layout components and guards do **not** call `bootstrap()` to start it — only the guard `await`s it to block navigation until completion.
 
-An `effect()` in the `SystemService` constructor automatically calls `StyleManagerService.setTheme()` whenever `environmentSig().theme` changes.
+The sequence inside `bootstrap()`:
+1. `loadEnvironment()` — fetches `environmentUrl`, populates `environment`.
+2. `loadToken()` — reads `appId` from `environment()`, fetches token with `AppId` header. If `env.encryptToken` is true, decrypts via AES-GCM. Populates `whoami`, `paths`, `apps`, `sites`.
+3. `menuTree` is a `computed` derived from `paths` — no explicit `.set()` needed.
+4. Deduplication via `bootstrapPromise` field — concurrent `await`s reuse the same promise. On failure the rejected promise is **kept cached** (no auto-retry).
+
+An `effect()` in the constructor calls `StyleManagerService.setTheme()` and `Title.setTitle()` whenever `environment()` changes (guarded by `if (!env) return` to skip the initial null).
 
 ### State Signals
 
-All exposed as Angular signals on `SystemService`:
+All exposed as Angular signals on `SystemService` (no `Sig` suffix):
 
-| Signal | Type | Description |
-|--------|------|-------------|
-| `whoamiSig` | `{ user, roles, capabilities } \| null` | Authenticated user info |
-| `pathsSig` | `PathNode[] \| null` | All allowed route nodes |
-| `menuTreeSig` | `PathNode[] \| null` | Filtered+sorted menu nodes (`menu: true`) |
-| `appsSig` | `App[] \| null` | App switcher entries (sorted) |
-| `sitesSig` | `Site[] \| null` | Available sites |
-| `environmentSig` | `Environment \| null` | Runtime environment config |
-| `environmentProperties` | `Record<string, unknown>` | Computed from `environmentSig().properties` |
+| Signal | Kind | Type | Description |
+|--------|------|------|-------------|
+| `whoami` | `signal` | `{ user, roles, capabilities } \| null` | Authenticated user info |
+| `paths` | `signal` | `PathNode[] \| null` | All allowed route nodes |
+| `menuTree` | `computed` | `PathNode[] \| null` | Filtered+sorted menu nodes (`menu: true`), derived from `paths` |
+| `apps` | `signal` | `App[] \| null` | App switcher entries (sorted) |
+| `sites` | `signal` | `Site[] \| null` | Available sites |
+| `environment` | `signal` | `Environment \| null` | Runtime environment config |
+| `environmentProperties` | `computed` | `Record<string, unknown>` | Derived from `environment().properties` |
+| `layoutState` | `computed` | `'loading' \| 'ready' \| 'error'` | Bootstrap lifecycle state |
+| `allowedEndpoints` | `computed` | `Set<string>` | Normalized endpoints from `paths` |
 
 Helper methods: `getEnvironmentProperty(key)`, `canDo(action)` (checks `capabilities`), `normalizePath(path)`.
 
@@ -121,7 +126,10 @@ Note: `AppSha` and `AppVersion` are expected to be available globally (e.g., def
 
 ### Route Guards
 
-`MenuGuard` implements `CanActivateChild`. It checks the current route against `pathsSig` (allowed endpoints from the token) and redirects to `/forbidden` for unauthorized routes.
+`MenuGuard` implements `CanActivateChild`. It `await`s `system.bootstrap()` (the cached promise) to block navigation until bootstrap completes, then checks `layoutState()`:
+- `'error'` → redirect `/error`
+- `'ready'` → checks `allowedEndpoints`; unauthorized → redirect `/forbidden`
+- `/error`, `/forbidden`, `/not-found` are always allowed (loop prevention)
 
 ### Route Pattern in Consuming Apps
 
@@ -154,13 +162,13 @@ provideGPAUICore(),
 
 ### Layout Bootstrap State Machine
 
-Both `MainLayoutComponent` and `SimpleLayoutComponent` expose a `readonly layoutState = computed<'loading' | 'ready' | 'error'>()` signal derived from two internal signals (`whoamiSig` + `bootstrapFailed`). Templates use `@switch (layoutState())`:
+Both layout components read `layoutState` directly from `SystemService` (no local copy, no `bootstrap()` call, no `bootstrapFailed` signal). Templates use `@switch (layoutState())`:
 
 - `'loading'` → `<core-loading-overlay />` (shown while bootstrap is in progress)
 - `'ready'` → full layout rendered (sidenav/toolbar/content)
 - `'error'` → `<page-error />` (inline centered error page with `cloud_off` icon)
 
-`bootstrapFailed` is a private `signal(false)` set in the constructor's `.catch()`. No router navigation is performed on failure — the error is shown in-place.
+`layoutState` and `_bootstrapFailed` live entirely in `SystemService`. No router navigation on failure — the error page is shown in-place.
 
 The **app-switcher** in `MainLayoutComponent` uses `mat-sidenav mode="over" position="end"` — Angular Material's native overlay sidenav — replacing the old custom fixed/animated panel.
 

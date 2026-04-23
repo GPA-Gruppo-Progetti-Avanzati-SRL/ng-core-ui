@@ -60,22 +60,17 @@ export class MainLayoutComponent {
 
   private readonly sidenavRef = viewChild<ElementRef<HTMLElement>>('sidenav');
 
-  whoami = this.system.whoamiSig;
-  environment = this.system.environmentSig;
-  menuTree = this.system.menuTreeSig;
-  apps = this.system.appsSig;
+  whoami = this.system.whoami;
+  environment = this.system.environment;
+  menuTree = this.system.menuTree;
+  apps = this.system.apps;
   currentAppId = computed(() => this.environment()?.appId || '');
   readonly appSha = AppSha;
   readonly appVersion = AppVersion;
+  layoutState = this.system.layoutState;
   sidenavExpanded = signal(false);
   isExpanded = computed(() => this.sidenavExpanded());
   extraSidenavOpen = signal(false);
-  private readonly bootstrapFailed = signal(false);
-  readonly layoutState = computed<'loading' | 'ready' | 'error'>(() => {
-    if (this.bootstrapFailed()) return 'error';
-    if (this.whoami())          return 'ready';
-    return 'loading';
-  });
 
   private currentUrl = toSignal(
     this.router.events.pipe(
@@ -89,8 +84,6 @@ export class MainLayoutComponent {
   sortedMenuRoots = this.menuTree;
 
   constructor() {
-    this.system.bootstrap().catch(() => this.bootstrapFailed.set(true));
-
     // Re-measure when menu items change (e.g. after bootstrap)
     afterRenderEffect(() => {
       const menu = this.menuTree();

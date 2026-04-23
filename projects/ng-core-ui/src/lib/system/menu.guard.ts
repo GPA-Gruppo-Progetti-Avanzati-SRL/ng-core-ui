@@ -14,16 +14,18 @@ export class MenuGuard implements CanActivateChild {
 
   async canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean | UrlTree> {
 
-
-    // Assicura che i dati base siano caricati almeno una volta
-    if (!this.system.whoamiSig() || this.system.menuTreeSig() === null) {
-      await this.system.bootstrap().catch(() => void 0);
-    }
-
     const path = this.system.normalizePath(state.url);
 
     // Consenti sempre le pagine di servizio per evitare loop
-    if (path === '/forbidden' || path === '/not-found') return true;
+    if (path === '/forbidden' || path === '/not-found' || path === '/error') return true;
+
+    // Attende il completamento del bootstrap (la promise è già avviata da SystemService)
+    await this.system.bootstrap().catch(() => void 0);
+
+    // Bootstrap fallito → /error
+    if (this.system.layoutState() === 'error') {
+      return this.router.parseUrl('/error');
+    }
 
     const allowed = this.system.allowedEndpoints();
 

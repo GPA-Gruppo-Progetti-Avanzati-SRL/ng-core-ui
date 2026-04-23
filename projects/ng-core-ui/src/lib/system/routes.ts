@@ -11,6 +11,7 @@ import { NotFoundPage } from '../pages/not-found.page';
 export type { CoreAction, CoreRouteBase, CoreRouteEntry } from './routes-export';
 export { toRoutesList, toRoutesYaml } from './routes-export';
 import type { CoreRouteBase } from './routes-export';
+import {ErrorPage} from '../pages/error.page';
 
 export interface CoreRoute extends CoreRouteBase {
   loadComponent?: () => Promise<Type<unknown> | { default: Type<unknown> }>;
@@ -35,6 +36,7 @@ export function toRoutes(routes: CoreRoute[], options?: CoreRoutesOptions): Rout
           path: r.endpoint ?? '',
           loadComponent: r.loadComponent!,
         })),
+        { path: 'error', component: ErrorPage },
         { path: 'forbidden', component: ForbiddenPage },
         { path: '**', component: NotFoundPage },
       ],

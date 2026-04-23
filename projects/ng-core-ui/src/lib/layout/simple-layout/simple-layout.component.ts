@@ -5,7 +5,6 @@ declare const AppVersion: string;
 
 import {
   Component,
-  signal,
   computed,
   ChangeDetectionStrategy,
   inject,
@@ -36,23 +35,13 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 })
 export class SimpleLayoutComponent {
 
-  private system: SystemService = inject(SystemService);
+  private system = inject(SystemService);
 
-  whoami = this.system.whoamiSig;
-  environment = this.system.environmentSig;
+  whoami = this.system.whoami;
+  environment = this.system.environment;
+  layoutState = this.system.layoutState;
   readonly appSha = AppSha;
   readonly appVersion = AppVersion;
 
-  private readonly bootstrapFailed = signal(false);
-  readonly layoutState = computed<'loading' | 'ready' | 'error'>(() => {
-    if (this.bootstrapFailed()) return 'error';
-    if (this.whoami())          return 'ready';
-    return 'loading';
-  });
-
   currentPageTitle = computed(() => this.environment()?.appDescription || 'Enterprise App');
-
-  constructor() {
-    this.system.bootstrap().catch(() => this.bootstrapFailed.set(true));
-  }
 }
