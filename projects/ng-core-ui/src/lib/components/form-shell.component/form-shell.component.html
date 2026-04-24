@@ -1,10 +1,10 @@
 <div
   class="grid gap-4 items-center"
-  [style.grid-template-columns]="'repeat(' + currentColumns() + ', minmax(0, 1fr))'"
+  [style.grid-template-columns]="'repeat(' + currentColumns() + ', minmax(0, 1fr))' + (inlineActions().length ? ' auto' : '')"
 >
   @for (f of fields(); track $index) {
     @if (!isHidden(f)) {
-      <div [style.grid-column]="'span ' + clampSpan(f)">
+      <div [style.grid-column]="'span ' + (gridLayout().fieldInfo.get(f)?.span ?? 1)">
         <ng-container
           [ngComponentOutlet]="f.component"
           [ngComponentOutletInputs]="fieldInputs(f)"
@@ -12,8 +12,13 @@
       </div>
     }
   }
+
   @if (inlineActions().length) {
-    <div class="flex gap-2">
+    <div
+      class="flex items-center gap-2"
+      [style.grid-column]="currentColumns() + 1"
+      [style.grid-row]="gridLayout().actionsRow"
+    >
       @for (a of inlineActions(); track $index) {
         @if (variant(a) === 'icon') {
           <button mat-icon-button type="button" [matTooltip]="a.tooltip ?? ''" [disabled]="a.disabled?.() ?? false" (click)="a.onClick()">

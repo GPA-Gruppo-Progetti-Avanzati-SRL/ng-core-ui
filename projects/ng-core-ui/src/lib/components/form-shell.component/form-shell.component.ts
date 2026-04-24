@@ -47,6 +47,55 @@ export class FormShellComponent {
       .filter(a => (a.position ?? 'inline') === 'inline')
       .filter(a => a.visible?.() ?? true)
   );
+
+  protected readonly lastVisibleField = computed(() => {
+    const fields = this.fields();
+    for (let i = fields.length - 1; i >= 0; i--) {
+      if (!this.isHidden(fields[i])) return fields[i];
+    }
+    return null;
+  });
+
+  /** Calcola span e riga per ogni field, e la riga finale per le azioni inline */
+  protected readonly gridLayout = computed(() => {
+    const fields = this.fields();
+    const cols   = this.currentColumns();
+    const hasActions = this.inlineActions().length > 0;
+    const lastField  = this.lastVisibleField();
+
+    const fieldInfo = new Map<FormFieldDef<any>, { span: number }>();
+    let currentOffset = 0;
+    let actionsRow    = 1;
+
+    for (const f of fields) {
+      if (this.isHidden(f)) continue;
+
+      let span = Math.min(f.span ?? 1, cols);
+      const remainder = currentOffset % cols;
+
+      // Se il campo non ci sta nella riga corrente (skip grid auto-placement)
+      if (remainder > 0 && remainder + span > cols) {
+        currentOffset += (cols - remainder);
+      }
+
+      const row = Math.floor(currentOffset / cols) + 1;
+
+      if (f === lastField && hasActions) {
+        // Estende il field per occupare tutto lo spazio rimanente delle colonne standard
+        span = cols - (currentOffset % cols);
+        actionsRow = row;
+      }
+
+      fieldInfo.set(f, { span });
+      currentOffset += span;
+    }
+
+    // Se non ci sono field ma ci sono azioni, le mettiamo in riga 1
+    if (!lastField && hasActions) actionsRow = 1;
+
+    return { fieldInfo, actionsRow };
+  });
+
   protected readonly footerActions = computed(() =>
     this.actions()
       .filter(a => a.position === 'footer')
@@ -60,10 +109,6 @@ export class FormShellComponent {
   protected isHidden<T>(f: FormFieldDef<T>): boolean {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (f.field as any)()?.hidden?.() ?? false;
-  }
-
-  protected clampSpan<T>(f: FormFieldDef<T>): number {
-    return Math.min(f.span ?? 1, this.currentColumns());
   }
 
   protected fieldInputs<T>(f: FormFieldDef<T>): Record<string, unknown> {
