@@ -9,28 +9,26 @@
     class="cursor-default"
   />
 
-  <!-- Bottone apri dialog -->
-  <button
-    matSuffix
-    mat-icon-button
-    [disabled]="disabled()"
-    [matTooltip]="'Seleziona ' + label()"
-    (click)="open()"
-  >
-    <mat-icon class="!text-[20px] !w-[20px] !h-[20px] !leading-none">search</mat-icon>
-  </button>
-
-  <!-- Bottone cancella selezione -->
-  @if (selected() && !disabled()) {
+  <!-- Suffix: clear + search in un unico contenitore per evitare sovrapposizioni -->
+  <div matSuffix class="flex items-center">
+    @if (hasSelection() && !disabled()) {
+      <button
+        mat-icon-button
+        matTooltip="Rimuovi selezione"
+        (click)="clear()"
+      >
+        <mat-icon class="!text-[18px] !w-[18px] !h-[18px] !leading-none">close</mat-icon>
+      </button>
+    }
     <button
-      matSuffix
       mat-icon-button
-      matTooltip="Rimuovi selezione"
-      (click)="clear()"
+      [disabled]="disabled()"
+      [matTooltip]="'Seleziona ' + label()"
+      (click)="open()"
     >
-      <mat-icon class="!text-[18px] !w-[18px] !h-[18px] !leading-none">close</mat-icon>
+      <mat-icon class="!text-[20px] !w-[20px] !h-[20px] !leading-none">search</mat-icon>
     </button>
-  }
+  </div>
 
   @if (formField()().errors()?.length) {
     <mat-error>{{ formField()().errors()[0].message ?? 'Campo non valido' }}</mat-error>

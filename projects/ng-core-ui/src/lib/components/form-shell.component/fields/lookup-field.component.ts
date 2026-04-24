@@ -44,8 +44,13 @@ export class LookupFieldComponent {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private readonly fieldState = computed<any>(() => this.formField()());
 
-  protected readonly disabled = computed(() => this.fieldState()?.disabled?.() ?? false);
-  protected readonly selected = computed<LookupResult | null>(() => this.fieldState()?.value?.() ?? null);
+  protected readonly disabled     = computed(() => this.fieldState()?.disabled?.() ?? false);
+  protected readonly selected     = computed<LookupResult | null>(() => this.fieldState()?.value?.() ?? null);
+  /** true solo se c'è una selezione significativa (id non null/undefined) */
+  protected readonly hasSelection = computed<boolean>(() => {
+    const s = this.selected();
+    return s != null && s.id != null;
+  });
 
   protected open(): void {
     if (this.disabled()) return;
