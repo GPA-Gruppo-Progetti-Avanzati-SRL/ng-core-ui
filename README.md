@@ -63,6 +63,27 @@ export const APP_ROUTES: CoreRoute[] = [
 
 ---
 
+## Claude Code Skills
+
+Per lavorare su questa libreria con Claude Code è disponibile una skill dedicata che fornisce contesto su FormShell, DataTable, bootstrap, theming e schematics.
+
+**Prerequisiti** (se non già installati):
+
+```bash
+npx skills add angular/skills
+npx skills add smithery.ai
+```
+
+**Skill ng-core-ui:**
+
+```bash
+npx skills add GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-skills
+```
+
+La skill viene caricata automaticamente in ogni sessione Claude Code all'interno di questo workspace.
+
+---
+
 ## Pubblicazione (maintainer)
 
 ```bash
