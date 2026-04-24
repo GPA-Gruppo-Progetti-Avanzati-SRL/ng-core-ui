@@ -22,7 +22,7 @@ import { FormFieldDef, FormModel, FormShellAction } from './form-field.models';
   templateUrl: './form-shell.component.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'ui' },
+  host: { class: 'ui', style: 'display: block; width: 100%' },
 })
 export class FormShellComponent {
   readonly model   = input.required<FormModel>();
@@ -31,14 +31,41 @@ export class FormShellComponent {
 
   private readonly breakpointObserver = inject(BreakpointObserver);
 
-  private readonly isSmall  = toSignal(this.breakpointObserver.observe(Breakpoints.Small).pipe(map(r => r.matches)), { initialValue: false });
-  private readonly isXSmall = toSignal(this.breakpointObserver.observe(Breakpoints.XSmall).pipe(map(r => r.matches)), { initialValue: false });
+  private readonly isXSmall = toSignal(
+    this.breakpointObserver.observe(Breakpoints.XSmall).pipe(map(r => r.matches)),
+    { initialValue: false }
+  );
+  private readonly isSmall = toSignal(
+    this.breakpointObserver.observe(Breakpoints.Small).pipe(map(r => r.matches)),
+    { initialValue: false }
+  );
+  private readonly isMedium = toSignal(
+    this.breakpointObserver.observe(Breakpoints.Medium).pipe(map(r => r.matches)),
+    { initialValue: false }
+  );
 
+  /**
+   * Riduzione proporzionale delle colonne per breakpoint:
+   * XSmall → 1  |  Small → min(2, cols)  |  Medium → min(3, cols)  |  Large+ → cols
+   */
   protected readonly currentColumns = computed(() => {
     const cols = this.columns();
     if (this.isXSmall()) return 1;
     if (this.isSmall())  return Math.min(cols, 2);
+    if (this.isMedium()) return Math.min(cols, 3);
     return cols;
+  });
+
+  protected readonly gap = computed(() => {
+    if (this.isXSmall()) return '0.5rem';
+    if (this.isSmall())  return '0.75rem';
+    return '1rem';
+  });
+
+  protected readonly padding = computed(() => {
+    if (this.isXSmall()) return '0.5rem';
+    if (this.isSmall())  return '1rem';
+    return '0';
   });
 
   protected readonly fields        = computed(() => this.model().fields);
@@ -52,6 +79,7 @@ export class FormShellComponent {
       .filter(a => a.position === 'footer')
       .filter(a => a.visible?.() ?? true)
   );
+
 
   protected variant(a: FormShellAction): 'icon' | 'text' | 'filled' {
     return a.variant ?? (a.label ? 'text' : 'icon');

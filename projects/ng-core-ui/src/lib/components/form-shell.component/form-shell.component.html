@@ -1,19 +1,26 @@
-<div
-  class="grid gap-4 items-center"
-  [style.grid-template-columns]="'repeat(' + currentColumns() + ', minmax(0, 1fr))'"
->
-  @for (f of fields(); track $index) {
-    @if (!isHidden(f)) {
-      <div [style.grid-column]="'span ' + clampSpan(f)">
-        <ng-container
-          [ngComponentOutlet]="f.component"
-          [ngComponentOutletInputs]="fieldInputs(f)"
-        />
-      </div>
+<div class="ui flex flex-wrap gap-4 items-start w-full" [style.padding]="padding()">
+  <!-- Grid dei campi (occupa lo spazio disponibile) -->
+  <div
+    class="grid flex-1"
+    [style.grid-template-columns]="'repeat(' + currentColumns() + ', minmax(0, 1fr))'"
+    [style.gap]="gap()"
+    [style.direction]="inlineActions().length ? 'rtl' : 'ltr'"
+  >
+    @for (f of fields(); track $index) {
+      @if (!isHidden(f)) {
+        <div [style.grid-column]="'span ' + clampSpan(f)" style="direction: ltr">
+          <ng-container
+            [ngComponentOutlet]="f.component"
+            [ngComponentOutletInputs]="fieldInputs(f)"
+          />
+        </div>
+      }
     }
-  }
+  </div>
+
+  <!-- Bottoni inline (a destra, stessa riga dei campi) -->
   @if (inlineActions().length) {
-    <div class="flex gap-2">
+    <div class="flex gap-2 flex-wrap items-center self-end mb-[1.34375em]">
       @for (a of inlineActions(); track $index) {
         @if (variant(a) === 'icon') {
           <button mat-icon-button type="button" [matTooltip]="a.tooltip ?? ''" [disabled]="a.disabled?.() ?? false" (click)="a.onClick()">
@@ -34,7 +41,7 @@
 </div>
 
 @if (footerActions().length) {
-  <div class="mt-2 flex items-center justify-end gap-2">
+  <div class="mt-6 flex items-center justify-end gap-2 flex-wrap">
     @for (a of footerActions(); track $index) {
       @if (variant(a) === 'icon') {
         <button mat-icon-button type="button" [matTooltip]="a.tooltip ?? ''" [disabled]="a.disabled?.() ?? false" (click)="a.onClick()">
