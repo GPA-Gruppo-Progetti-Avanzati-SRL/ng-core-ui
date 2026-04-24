@@ -233,7 +233,7 @@ The library publishes these assets alongside the compiled JS:
 - `FormShellAction { icon?, label?, tooltip?, variant?: 'icon'|'text'|'filled', position?: 'inline'|'footer', onClick, disabled? }` — `variant` default: `'icon'` se no label, `'text'` se label; `position` default: `'inline'`.
 - **`formField()()` pattern nei field component**: `formField()` = chiama InputSignal → FieldTree; `formField()()` = chiama FieldTree → FieldState con `.value`, `.errors()`, `.touched()`, `.invalid()`.
 - `[formField]="formField()"` nei template dei field — passare il FieldTree al directive Angular, NON l'InputSignal (`[formField]="formField"` è sbagliato).
-- Field component built-in: `TextInputFieldComponent` (`type?`), `TextareaFieldComponent` (`rows?`), `ComboboxFieldComponent` (`options: ComboboxOption[]`), `DatepickerFieldComponent`, `LookupFieldComponent` (`dialogConfig: { component, data?, width?, maxWidth? }`).
+- Field component built-in: `TextInputFieldComponent` (`type?`), `TextareaFieldComponent` (`rows?`), `ComboboxFieldComponent` (`options: ComboboxOption[]`), `DatepickerFieldComponent`, `LookupFieldComponent` (`dialogConfig: { component, data?, width?, maxWidth? }`), `RadioButtonListFieldComponent` (`options: RadioOption[], inline?: boolean`), `CheckboxListFieldComponent` (`options: CheckboxOption[], inline?: boolean` — valore è un array).
 
 ### Key Conventions
 

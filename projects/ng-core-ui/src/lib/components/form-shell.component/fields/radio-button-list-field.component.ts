@@ -18,4 +18,5 @@ export class RadioButtonListFieldComponent {
   readonly formField   = input.required<any>();
   readonly options     = input<RadioOption[]>([]);
   readonly label       = input<string>('');
+  readonly inline      = input<boolean>(false);
 }

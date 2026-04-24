@@ -2,7 +2,7 @@
   @if (label()) {
     <label class="text-sm font-medium text-gray-700">{{ label() }}</label>
   }
-  <div class="flex flex-col gap-2">
+  <div [class]="inline() ? 'flex flex-row flex-wrap gap-x-6 gap-y-1' : 'flex flex-col gap-2'">
     @for (opt of options(); track opt.value) {
       <mat-checkbox
         [checked]="isSelected(opt.value)"

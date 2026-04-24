@@ -2,7 +2,7 @@
   @if (label()) {
     <label class="text-sm font-medium text-gray-700">{{ label() }}</label>
   }
-  <mat-radio-group [formField]="formField()" class="flex flex-col gap-2">
+  <mat-radio-group [formField]="formField()" [class]="inline() ? 'flex flex-row flex-wrap gap-x-6 gap-y-1' : 'flex flex-col gap-2'">
     @for (opt of options(); track opt.value) {
       <mat-radio-button [value]="opt.value">{{ opt.label }}</mat-radio-button>
     }

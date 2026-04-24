@@ -4,6 +4,7 @@
 *.ps1
 *.sh
 .claude
+.junie
 # Compiled output
 /dist
 /projects/ng-core-ui/styles/components.css

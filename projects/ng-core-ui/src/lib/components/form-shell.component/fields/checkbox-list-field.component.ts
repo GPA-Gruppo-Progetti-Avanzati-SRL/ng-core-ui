@@ -18,6 +18,7 @@ export class CheckboxListFieldComponent {
   readonly formField   = input.required<any>();
   readonly options     = input<CheckboxOption[]>([]);
   readonly label       = input<string>('');
+  readonly inline      = input<boolean>(false);
 
   toggle(optionValue: any) {
     const state = this.formField()();
