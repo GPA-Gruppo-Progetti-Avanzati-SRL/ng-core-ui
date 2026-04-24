@@ -2,7 +2,6 @@ import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'core-topbar',
-  standalone: true,
   imports: [],
   templateUrl: './topbar.component.html',
   host: { class: 'ui' },

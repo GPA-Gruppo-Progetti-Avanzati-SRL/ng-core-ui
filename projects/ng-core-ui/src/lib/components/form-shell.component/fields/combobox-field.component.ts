@@ -11,7 +11,6 @@ export interface ComboboxOption {
 
 @Component({
   selector: 'core-combobox-field',
-  standalone: true,
   imports: [MatFormFieldModule, MatSelectModule, FormField],
   templateUrl: './combobox-field.component.html',
   encapsulation: ViewEncapsulation.None,

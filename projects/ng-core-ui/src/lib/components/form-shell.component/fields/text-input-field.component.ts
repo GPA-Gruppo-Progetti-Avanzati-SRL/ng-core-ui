@@ -6,7 +6,6 @@ import {FormField} from '@angular/forms/signals';
 
 @Component({
   selector: 'core-text-input-field',
-  standalone: true,
   imports: [MatFormFieldModule, MatInputModule,FormField],
   templateUrl: './text-input-field.component.html',
   encapsulation: ViewEncapsulation.None,

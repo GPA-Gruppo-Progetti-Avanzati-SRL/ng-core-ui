@@ -12,7 +12,6 @@ const ALERT_CONFIG: Record<AlertType, { icon: string; bg: string; fg: string }> 
 
 @Component({
   selector: 'core-alert',
-  standalone: true,
   imports: [MatButtonModule, MatIconModule],
   templateUrl: './alert.component.html',
   encapsulation: ViewEncapsulation.None,

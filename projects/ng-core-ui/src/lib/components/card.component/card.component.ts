@@ -4,7 +4,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
-  standalone: true,
   selector: 'core-card',
   imports: [MatIconModule, MatButtonModule, MatTooltipModule],
   templateUrl: './card.component.html',

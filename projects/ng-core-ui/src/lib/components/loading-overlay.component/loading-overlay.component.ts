@@ -4,7 +4,6 @@ import { LoadingService } from '../../system/loading.service';
 
 @Component({
   selector: 'core-loading-overlay',
-  standalone: true,
   imports: [MatProgressSpinnerModule],
   template: `
     @if (loading.isLoading()) {

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'page-forbidden',
-  standalone: true,
   imports: [CommonModule],
   template: `
     <div class="p-8">

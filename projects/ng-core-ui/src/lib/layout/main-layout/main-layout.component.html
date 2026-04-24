@@ -7,7 +7,7 @@
                    (closed)="extraSidenavOpen.set(false)">
         @if (environment()?.logoUrl) {
           <a href="/" (click)="closeExtraSidenav()" class="flex justify-center my-2 no-underline outline-none" aria-label="Vai alla home">
-            <img class="app-logo-img bg-surface" [src]="environment()!.logoUrl" alt="Logo" />
+            <img class="app-logo-img bg-surface" [ngSrc]="environment()!.logoUrl!" width="96" height="96" alt="Logo" />
           </a>
         }
         <mat-divider class="apps-divider"></mat-divider>

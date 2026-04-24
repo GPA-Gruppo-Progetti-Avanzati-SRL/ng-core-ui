@@ -6,7 +6,6 @@ import { FormFieldDef } from '../form-field.models';
 
 @Component({
   selector: 'core-textarea-field',
-  standalone: true,
   imports: [MatFormFieldModule, MatInputModule, FormField],
   templateUrl: './textarea-field.component.html',
   encapsulation: ViewEncapsulation.None,

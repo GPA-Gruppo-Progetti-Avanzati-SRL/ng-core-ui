@@ -77,6 +77,7 @@
                     <button
                       mat-icon-button
                       [matTooltip]="action.tooltip ?? ''"
+                      [attr.aria-label]="action.tooltip || action.icon"
                       [disabled]="action.disabled?.(row) ?? false"
                       (click)="onActionClick(action, row)"
                       class="!h-8 !w-8 rounded-full text-text-muted hover:bg-black/5 hover:text-text"

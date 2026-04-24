@@ -28,7 +28,6 @@ export interface LookupDialogConfig {
 
 @Component({
   selector: 'core-lookup-field',
-  standalone: true,
   imports: [MatFormFieldModule, MatInputModule, MatIconModule, MatIconButton, MatTooltipModule],
   templateUrl: './lookup-field.component.html',
   encapsulation: ViewEncapsulation.None,

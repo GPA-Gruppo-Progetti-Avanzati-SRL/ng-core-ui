@@ -4,7 +4,6 @@ import { ConfirmService } from './confirm.service';
 
 @Component({
   selector: 'core-confirm',
-  standalone: true,
   imports: [MatButtonModule],
   templateUrl: './confirm.component.html',
   encapsulation: ViewEncapsulation.None,

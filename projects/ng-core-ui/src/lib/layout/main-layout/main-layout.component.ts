@@ -16,6 +16,7 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
+import { NgOptimizedImage } from '@angular/common';
 import { filter, map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { PathNode } from '../../system/system.models';
@@ -46,7 +47,8 @@ import {ErrorPage} from '../../pages/error.page';
     MatDividerModule,
     RouterOutlet,
     RouterLink,
-    ErrorPage
+    ErrorPage,
+    NgOptimizedImage
   ],
   templateUrl: './main-layout.component.html',
   encapsulation: ViewEncapsulation.None,

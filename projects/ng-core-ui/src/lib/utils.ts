@@ -11,10 +11,11 @@ export async function decrypt(ciphertextHex: string, appID: string): Promise<str
   if (!ciphertextHex || ciphertextHex.length % 2 !== 0 || !/^[0-9a-fA-F]+$/.test(ciphertextHex)) {
     throw new Error('Invalid hex ciphertext');
   }
-  const encryptedData = new Uint8Array(
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    ciphertextHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16))
-  );
+  const len = ciphertextHex.length;
+  const encryptedData = new Uint8Array(len / 2);
+  for (let i = 0; i < len; i += 2) {
+    encryptedData[i >> 1] = parseInt(ciphertextHex.substring(i, i + 2), 16);
+  }
 
   // 2. Derive the 32-byte key from AppID using SHA-256
   const appIDBuffer = new TextEncoder().encode(appID);

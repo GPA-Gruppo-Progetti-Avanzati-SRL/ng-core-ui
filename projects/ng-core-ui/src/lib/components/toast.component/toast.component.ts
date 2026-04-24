@@ -11,7 +11,6 @@ const TOAST_CONFIG: Record<ToastType, { icon: string; bg: string; fg: string }> 
 
 @Component({
   selector: 'core-toast',
-  standalone: true,
   imports: [MatIconModule],
   templateUrl: './toast.component.html',
   encapsulation: ViewEncapsulation.None,

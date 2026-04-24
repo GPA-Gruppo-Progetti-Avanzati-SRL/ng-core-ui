@@ -8,7 +8,6 @@ import { FormField, FieldTree } from '@angular/forms/signals';
 
 @Component({
   selector: 'core-datepicker-field',
-  standalone: true,
   imports: [MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule, FormField],
   templateUrl: './datepicker-field.component.html',
   encapsulation: ViewEncapsulation.None,

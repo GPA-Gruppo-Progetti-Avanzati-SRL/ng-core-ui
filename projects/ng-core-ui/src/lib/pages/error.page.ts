@@ -5,7 +5,6 @@ declare const AppSha: string;
 declare const AppVersion: string;
 @Component({
   selector: 'page-error',
-  standalone: true,
   imports: [CommonModule, MatIcon],
   template: `
     <div class="flex flex-col items-center justify-center h-screen gap-6 text-center bg-surface text-on-surface">

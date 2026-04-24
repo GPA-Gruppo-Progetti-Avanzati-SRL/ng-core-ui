@@ -57,7 +57,6 @@ const ACTIONS_COL = '_actions';
 
 @Component({
   selector: 'core-datatable',
-  standalone: true,
   imports: [NgComponentOutlet, MatTableModule, MatPaginatorModule, MatProgressSpinnerModule, MatIconModule, MatIconButton, MatTooltipModule],
   templateUrl: './datatable.component.html',
   encapsulation: ViewEncapsulation.None,
@@ -95,8 +94,20 @@ export class DatatableComponent implements OnInit {
   });
   protected readonly paddedData = computed(() => {
     const real   = this.data();
-    const filler = Math.max(0, this.pageSize() - real.length);
+    const size   = this.pageSize();
+    if (real.length >= size) return real;
+    const filler = size - real.length;
     return [...real, ...Array.from({ length: filler }, () => ({ _empty: true }))];
+  });
+
+  /** Accessor pre-calcolati per le colonne per evitare split('.') ripetuti */
+  private readonly _accessors = computed(() => {
+    const accs = new Map<string, (row: any) => any>();
+    for (const col of this.columns()) {
+      const parts = col.key.split('.');
+      accs.set(col.key, (row: any) => parts.reduce((obj, k) => (obj != null && typeof obj === 'object' ? obj[k] : undefined), row));
+    }
+    return accs;
   });
 
   ngOnInit(): void {
@@ -143,13 +154,7 @@ export class DatatableComponent implements OnInit {
   }
 
   protected getValue(row: unknown, key: string): unknown {
-    return key.split('.').reduce(
-      (obj: unknown, k) =>
-        obj != null && typeof obj === 'object'
-          ? (obj as Record<string, unknown>)[k]
-          : undefined,
-      row,
-    );
+    return this._accessors().get(key)?.(row);
   }
 
   protected cellInputs(row: unknown, key: string): Record<string, unknown> {
