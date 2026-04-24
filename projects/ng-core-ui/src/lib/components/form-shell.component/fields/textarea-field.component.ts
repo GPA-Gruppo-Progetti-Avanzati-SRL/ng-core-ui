@@ -13,6 +13,6 @@ import { FormFieldDef } from '../form-field.models';
 })
 export class TextareaFieldComponent {
   readonly formField   = input.required<any>();
-  readonly rows        = input<number>(3);
+  readonly rows        = input<number>(2);
   readonly label       = input<string>('');
 }

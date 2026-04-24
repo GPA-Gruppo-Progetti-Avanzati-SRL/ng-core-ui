@@ -35,6 +35,8 @@ export * from './lib/components/form-shell.component/fields/textarea-field.compo
 export * from './lib/components/form-shell.component/fields/combobox-field.component';
 export * from './lib/components/form-shell.component/fields/datepicker-field.component';
 export * from './lib/components/form-shell.component/fields/lookup-field.component';
+export * from './lib/components/form-shell.component/fields/radio-button-list-field.component';
+export * from './lib/components/form-shell.component/fields/checkbox-list-field.component';
 
 // LOADING
 export * from './lib/system/loading.service';
