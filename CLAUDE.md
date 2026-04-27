@@ -61,7 +61,7 @@ components/     # Reusable presentational UI components
   loading-overlay.component/  # LoadingOverlayComponent (core-loading-overlay)
   datatable.component/    # DatatableComponent + createPagedLoader (core-datatable)
   form-shell.component/   # FormShellComponent (core-form-shell) + FormModel + field components
-    form-field.models.ts  # FormModel<T>, FormFieldUIDef, CoreFieldComponent, LookupResult
+    form-field.models.ts  # FormModel<T>, FormFieldDef, CoreFieldComponent, LookupResult
     form-shell.component.ts/html
     fields/               # TextInputField, TextareaField, ComboboxField, DatepickerField, LookupField
 layout/         # Full-page layout wrappers (main-layout, simple-layout)
@@ -88,7 +88,9 @@ The sequence inside `bootstrap()`:
 3. `menuTree` is a `computed` derived from `paths` — no explicit `.set()` needed.
 4. Deduplication via `bootstrapPromise` field — concurrent `await`s reuse the same promise. On failure the rejected promise is **kept cached** (no auto-retry).
 
-An `effect()` in the constructor calls `StyleManagerService.setTheme()` and `Title.setTitle()` whenever `environment()` changes (guarded by `if (!env) return` to skip the initial null).
+Two `effect()`s run in the constructor:
+- **Theme effect** — calls `StyleManagerService.setTheme(env.theme)` whenever `environment()` changes (guarded by `if (!env) return`).
+- **Title effect** — reacts to `layoutState()`: sets `'Caricamento...'` while loading, `'Errore'` on error, and `environment()?.appTitle` when ready.
 
 ### State Signals
 
@@ -113,6 +115,7 @@ Helper methods: `getEnvironmentProperty(key)`, `canDo(action)` (checks `capabili
 ```ts
 interface Environment {
   appId: string;
+  appTitle: string;             // shown in the browser tab via Title service
   appDescription: string;
   theme: string;
   logoutPath: string;
@@ -147,7 +150,11 @@ provideRouter(toRoutes(APP_ROUTES)),
 provideGPAUICore(),
 ```
 
-`toRoutesJson(APP_ROUTES)` is called by the library's pre-built script to emit `dist/caps/ui/routes.json` for backend permission seeding. Consuming apps run it via `npm run generate-routes` (which calls `node node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-routes.mjs`), added to their `package.json` by the `ng-add` schematic.
+`toRoutes(routes, options?)` accetta un secondo parametro `CoreRoutesOptions`:
+- `layout?: 'main' | 'simple'` — default `'main'`
+- `guard?: boolean` — default `true` (abilita `MenuGuard` come `canActivateChild`)
+
+`toRoutesYaml(APP_ROUTES)` is called by the library's pre-built script to emit `dist/caps/ui/routes.yaml` for backend permission seeding. Consuming apps run it via `npm run generate-routes` (which calls `node node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-routes.mjs`), added to their `package.json` by the `ng-add` schematic.
 
 ### Styling
 
@@ -187,7 +194,7 @@ The library publishes these assets alongside the compiled JS:
 - `styles/components.css` — pre-built Tailwind output
 - `styles/mat-theme-bridge.css` — `@theme {}` block for Tailwind utility generation
 - `tailwind.config.js` — shared Tailwind config for consuming apps
-- `bin/generate-routes.mjs` — pre-built script for emitting `dist/caps/ui/routes.json`
+- `bin/generate-routes.mjs` — pre-built script for emitting `dist/caps/ui/routes.yaml`
 - `assets/**/*.woff2` — Roboto fonts (300/regular/500/600) and Material Icons
 
 ### UI Components Reference
@@ -203,34 +210,39 @@ The library publishes these assets alongside the compiled JS:
 | `LoadingOverlayComponent` | `core-loading-overlay` | `components/loading-overlay.component` |
 | `DatatableComponent` | `core-datatable` | `components/datatable.component` |
 | `FormShellComponent` | `core-form-shell` | `components/form-shell.component` |
+| `AlertComponent` | `core-alert` | `components/alert.component` |
+| `ConfirmComponent` | `core-confirm` | `components/confirm.component` |
 
 **Services:**
 - `ToastService` — `success/error/info/warning(message, duration?)`. Colori semantici fissi (verde/rosso/blu/giallo), indipendenti dal tema.
 - `LoadingService` — `show()/hide()` con contatore. `isLoading: Signal<boolean>`.
 - `loadingInterceptor` — `HttpInterceptorFn` che chiama `show/hide` automaticamente su ogni XHR.
+- `AlertService` — `alert(options: AlertOptions): Promise<void>`. Mostra un dialog modale di avviso con `title?`, `message`, `closeLabel?`, `type?: 'info'|'success'|'warning'|'danger'`. Awaitable.
+- `ConfirmService` — `confirm(options: ConfirmOptions): Promise<boolean>`. Mostra un dialog modale di conferma con `title?`, `message`, `confirmLabel?`, `cancelLabel?`, `type?: 'default'|'danger'` (danger colora il bottone in rosso). Ritorna `true` se confermato.
 
 **DataTable API:**
 - `DatatableColumn { key, label, width?, sortable?, format?, component? }` — `key` supporta notazione dot per oggetti annidati (es. `address.city`). `sortable?: boolean` abilita click sull'header per ordinamento. `format?: (row) => string` per valori calcolati da più campi (priorità su `key`). `component` è un `Type<any>` Angular opzionale per celle con layout custom (priorità massima).
 - `DatatableSort` — `{ field: string; dir: 'asc' | 'desc' } | null`. Rappresenta il sort corrente, passato come terzo argomento al loader.
-- `DatatableAction<T> { icon, tooltip?, onClick, visible?, disabled? }` — bottone icona per riga. `onClick/visible/disabled` ricevono la riga come argomento. `visible` default `true`.
+- `DatatableAction<T> { icon, tooltip?, onClick, visible?, disabled?, buttonClass? }` — bottone icona per riga. `onClick/visible/disabled` ricevono la riga come argomento. `visible` default `true`. `buttonClass?` classe CSS aggiuntiva sul bottone.
 - `DatatableLoader<T>` — `(page: number, pageSize: number, sort?: DatatableSort) => Observable<{ items: T[], total: number }>`.
-- `createPagedLoader<T>(http, url, extraParams?)` — modalità **server-side**: ogni cambio pagina/sort chiama l'API. Convenzione GPA: response `{ body: T[] }` + header `total-elements`. `extraParams` è una funzione rieseguita ad ogni load. Il sort viene passato come query param `sort=field:dir`.
+- `createPagedLoader<T>(http, url, params?, headers?)` — modalità **server-side**: ogni cambio pagina/sort chiama l'API. Convenzione GPA: response `T[]` + header `totalCount`. `params?: () => Record<string,string|number>` è una funzione rieseguita ad ogni load. `headers?: () => Record<string,string>` inietta header custom. Il sort viene passato come query param `sort=field:dir`.
 - `createInMemoryLoader<T>(http, url, options?)` — modalità **client-side**: una singola chiamata HTTP scarica tutto, poi paginazione/sort/filtro avvengono in memoria. Il dataset viene cachato nel closure. Opzioni: `extraParams?`, `filter?: () => string` (segnale testo ricerca), `filterFn?: (row, text) => boolean` (default: ricerca su tutti i campi stringa). Il loader restituisce anche `invalidate()` per svuotare la cache e forzare un re-fetch. Supporta risposta `T[]` diretta o `{ body: T[] }` GPA.
 - `DatatableComponent.refresh(resetPage?: boolean)` — ricarica i dati. `resetPage=true` torna a pagina 1.
+- `DatatableComponent` inputs aggiuntivi: `pageSizeOptions: number[]` (default `[10,25,50]`), `initialPageSize: number` (default `10`), `rowBackground?: (row) => string | null` per colorare le righe.
 - **Colonne custom**: passare `component: MyCellComponent` su `DatatableColumn`. Il componente deve esporre `value = input<unknown>()` e `row = input<unknown>()`. Viene renderizzato via `NgComponentOutlet` con `inputs` — nessun template markup aggiuntivo nel consuming component.
 
 **FormShell API:**
-- `FormModel<T>(initialValue, schema, layout)` — classe che racchiude la signal form Angular (`@angular/forms/signals`) e il layout UI. `schema` è la funzione schema (`required`, `min`, `max`, `minLength`, `email`, `hidden`, `disabled`). `layout` è una **factory function** `(ft: FieldTree<T>) => FormFieldUIDef[]`.
+- `FormModel<T>(initialValue, schema, layout)` — classe che racchiude la signal form Angular (`@angular/forms/signals`) e il layout UI. `schema` è la funzione schema (`required`, `min`, `max`, `minLength`, `email`, `hidden`, `disabled`). `layout` è una **factory function** `(ft: FieldTree<T>) => FormFieldDef<T>[]`.
 - `FormModel.model` — `WritableSignal<T>`, source of truth dei valori. Leggere con `formModel.model()` nel submit.
 - `FormModel.ft` — `FieldTree<T>`, accesso tipizzato per singoli field in `computed()`: `formModel.ft.nome().value()`.
 - `FormModel.invalid` — `Signal<boolean>`, delega a `ft().invalid()`.
 - `FormModel.submit(action: () => void)` — chiama `markAllAsTouched()`, poi esegue `action()` solo se `invalid()` è `false`. Pattern canonico per i bottoni submit.
 - `FormModel.markAllAsTouched()` — forza la visualizzazione di tutti gli errori.
 - `FormModel.reset(value?: T)` — resetta stato touched/dirty, opzionalmente aggiorna il valore.
-- `FormFieldUIDef { field, label, component, span?, inputs? }` — solo layout UI. `field` è il riferimento diretto al `FieldTree` (es. `ft.nome`), NON una stringa. TypeScript cattura i typo a compile time.
+- `FormFieldDef<T> { field, label, component, span?, inputs? }` — solo layout UI. `field` è il riferimento diretto al `FieldTree` (es. `ft.nome`), NON una stringa. TypeScript cattura i typo a compile time.
 - Validazione, hidden, disabled: **sempre nello schema** del `FormModel` usando `required(p.field)`, `hidden(p.field, logic)`, `disabled(p.field, logic)` da `@angular/forms/signals`.
 - Shell inputs: `[model]="formModel"`, `[columns]="2"`, `[actions]="actions"`. **Nessun output** — tutto gestito via `actions`.
-- `FormShellAction { icon?, label?, tooltip?, variant?: 'icon'|'text'|'filled', position?: 'inline'|'footer', onClick, disabled? }` — `variant` default: `'icon'` se no label, `'text'` se label; `position` default: `'inline'`.
+- `FormShellAction { icon?, label?, tooltip?, variant?: 'icon'|'text'|'filled', position?: 'inline'|'footer', onClick, visible?: () => boolean, disabled?: () => boolean }` — `variant` default: `'icon'` se no label, `'text'` se label; `position` default: `'inline'`. `visible` e `disabled` sono funzioni (anche signal-based).
 - **`formField()()` pattern nei field component**: `formField()` = chiama InputSignal → FieldTree; `formField()()` = chiama FieldTree → FieldState con `.value`, `.errors()`, `.touched()`, `.invalid()`.
 - `[formField]="formField()"` nei template dei field — passare il FieldTree al directive Angular, NON l'InputSignal (`[formField]="formField"` è sbagliato).
 - Field component built-in: `TextInputFieldComponent` (`type?`), `TextareaFieldComponent` (`rows?`), `ComboboxFieldComponent` (`options: KVOption[]`), `DatepickerFieldComponent`, `LookupFieldComponent` (`dialogConfig: { component, data?, width?, maxWidth? }`), `RadioButtonListFieldComponent` (`options: KVOption[], inline?: boolean`), `CheckboxListFieldComponent` (`options: KVOption[], inline?: boolean` — valore è un array).
