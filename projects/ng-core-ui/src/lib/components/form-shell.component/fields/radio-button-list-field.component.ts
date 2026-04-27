@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Signal, ViewEncapsulation, computed, input, isSignal } from '@angular/core';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormField } from '@angular/forms/signals';
 
@@ -16,7 +16,12 @@ export interface RadioOption {
 })
 export class RadioButtonListFieldComponent {
   readonly formField   = input.required<any>();
-  readonly options     = input<RadioOption[]>([]);
+  readonly options     = input<RadioOption[] | Signal<RadioOption[]>>([]);
   readonly label       = input<string>('');
   readonly inline      = input<boolean>(false);
+
+  readonly resolvedOptions = computed<RadioOption[]>(() => {
+    const opts = this.options();
+    return isSignal(opts) ? (opts as Signal<RadioOption[]>)() : opts as RadioOption[];
+  });
 }

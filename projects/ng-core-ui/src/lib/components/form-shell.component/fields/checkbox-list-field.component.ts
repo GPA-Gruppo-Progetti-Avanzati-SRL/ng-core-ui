@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Signal, ViewEncapsulation, computed, input, isSignal } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormField } from '@angular/forms/signals';
 
@@ -16,9 +16,14 @@ export interface CheckboxOption {
 })
 export class CheckboxListFieldComponent {
   readonly formField   = input.required<any>();
-  readonly options     = input<CheckboxOption[]>([]);
+  readonly options     = input<CheckboxOption[] | Signal<CheckboxOption[]>>([]);
   readonly label       = input<string>('');
   readonly inline      = input<boolean>(false);
+
+  readonly resolvedOptions = computed<CheckboxOption[]>(() => {
+    const opts = this.options();
+    return isSignal(opts) ? (opts as Signal<CheckboxOption[]>)() : opts as CheckboxOption[];
+  });
 
   toggle(optionValue: any) {
     const state = this.formField()();
