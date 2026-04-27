@@ -44,4 +44,5 @@ export { loadingInterceptor } from './lib/system/loading.interceptor';
 
 
 export * from './lib/utils';
+export * from './lib/kv-options';
 export * from './lib/main'

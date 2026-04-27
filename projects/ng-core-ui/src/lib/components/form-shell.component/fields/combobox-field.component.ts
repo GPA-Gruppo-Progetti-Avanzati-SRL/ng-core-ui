@@ -1,13 +1,9 @@
 import { ChangeDetectionStrategy, Component, Signal, ViewEncapsulation, computed, input, isSignal } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { FormField, FieldTree } from '@angular/forms/signals';
-import { FormFieldDef } from '../form-field.models';
+import { FormField } from '@angular/forms/signals';
+import { KVOption } from '../form-field.models';
 
-export interface ComboboxOption {
-  value: any;
-  label: string;
-}
 
 @Component({
   selector: 'core-combobox-field',
@@ -18,11 +14,11 @@ export interface ComboboxOption {
 })
 export class ComboboxFieldComponent {
   readonly formField   = input.required<any>();
-  readonly options     = input<ComboboxOption[] | Signal<ComboboxOption[]>>([]);
+  readonly options     = input<KVOption[] | Signal<KVOption[]>>([]);
   readonly label       = input<string>('');
 
-  readonly resolvedOptions = computed<ComboboxOption[]>(() => {
+  readonly resolvedOptions = computed<KVOption[]>(() => {
     const opts = this.options();
-    return isSignal(opts) ? (opts as Signal<ComboboxOption[]>)() : opts as ComboboxOption[];
+    return isSignal(opts) ? (opts as Signal<KVOption[]>)() : opts as KVOption[];
   });
 }

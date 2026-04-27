@@ -1,6 +1,12 @@
 import { InputSignal, Signal, Type, computed, signal, WritableSignal } from '@angular/core';
 import { FieldTree, form } from '@angular/forms/signals';
 
+/** Opzione generica per combobox, radio e checkbox */
+export interface KVOption {
+  value: any;
+  label: string;
+}
+
 /** Definizione UI di un campo — dichiarata dal developer nel layout di FormModel */
 export interface FormFieldDef<T> {
   field:     FieldTree<object | string | number | boolean | null>; // forza branch FieldState (mai AbstractControl)
