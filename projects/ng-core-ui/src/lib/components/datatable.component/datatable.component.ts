@@ -79,6 +79,7 @@ export class DatatableComponent implements OnInit {
   protected readonly ACTIONS_COL = ACTIONS_COL;
 
   protected readonly isLoading        = signal(false);
+  protected readonly hasError         = signal(false);
   protected readonly data             = signal<unknown[]>([]);
   protected readonly total            = signal(0);
   protected readonly currentPage      = signal(1);
@@ -92,14 +93,6 @@ export class DatatableComponent implements OnInit {
     const cols = this.columns().map(c => c.key);
     return this.hasVisibleActions() ? [...cols, ACTIONS_COL] : cols;
   });
-  protected readonly paddedData = computed(() => {
-    const real   = this.data();
-    const size   = this.pageSize();
-    if (real.length >= size) return real;
-    const filler = size - real.length;
-    return [...real, ...Array.from({ length: filler }, () => ({ _empty: true }))];
-  });
-
   /** Accessor pre-calcolati per le colonne per evitare split('.') ripetuti */
   private readonly _accessors = computed(() => {
     const accs = new Map<string, (row: any) => any>();
@@ -116,8 +109,12 @@ export class DatatableComponent implements OnInit {
     this._trigger$.pipe(
       switchMap(() => {
         this.isLoading.set(true);
+        this.hasError.set(false);
         return this.load()(this.currentPage(), this.pageSize(), this.currentSort()).pipe(
-          catchError(() => of({ items: [], total: 0 })),
+          catchError(() => {
+            this.hasError.set(true);
+            return of({ items: [], total: 0 });
+          }),
           finalize(() => this.isLoading.set(false)),
         );
       }),

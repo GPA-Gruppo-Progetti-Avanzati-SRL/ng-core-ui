@@ -7,7 +7,14 @@
       </div>
     }
 
-    <table mat-table [dataSource]="paddedData()" class="w-full">
+    @if (hasError()) {
+      <div class="flex flex-col items-center justify-center gap-2 py-12 text-error">
+        <mat-icon class="text-[36px]! w-9! h-9! leading-none!">error_outline</mat-icon>
+        <span class="text-sm font-medium">Errore durante il caricamento dei dati</span>
+      </div>
+    }
+
+    <table mat-table [dataSource]="data()" class="w-full" [class.hidden]="hasError()">
 
       @for (col of columns(); track col.key) {
         <ng-container [matColumnDef]="col.key">
@@ -39,17 +46,15 @@
             *matCellDef="let row"
             class="h-14 px-4 text-sm font-normal text-text bg-white border-b border-outline-variant/30 whitespace-nowrap"
           >
-            @if (!row._empty) {
-              @if (col.component) {
-                <ng-container
-                  [ngComponentOutlet]="col.component"
-                  [ngComponentOutletInputs]="cellInputs(row, col.key)"
-                />
-              } @else if (col.format) {
-                {{ col.format(row) }}
-              } @else {
-                {{ getValue(row, col.key) }}
-              }
+            @if (col.component) {
+              <ng-container
+                [ngComponentOutlet]="col.component"
+                [ngComponentOutletInputs]="cellInputs(row, col.key)"
+              />
+            } @else if (col.format) {
+              {{ col.format(row) }}
+            } @else {
+              {{ getValue(row, col.key) }}
             }
           </td>
         </ng-container>
@@ -70,27 +75,25 @@
             *matCellDef="let row"
             class="h-14 px-4 bg-white border-b border-outline-variant/30"
           >
-            @if (!row._empty) {
-              <div class="flex items-center justify-end gap-1">
-                @for (action of actions(); track $index) {
-                  @if (action.visible?.(row) ?? true) {
-                    <button
-                      mat-icon-button
-                      [matTooltip]="action.tooltip ?? ''"
-                      [attr.aria-label]="action.tooltip || action.icon"
-                      [disabled]="action.disabled?.(row) ?? false"
-                      (click)="onActionClick(action, row)"
-                      class="!h-8 !w-8 rounded-full text-text-muted hover:bg-black/5 hover:text-text"
-                      [class]="action.buttonClass ?? ''"
-                    >
-                      <mat-icon class="!text-[18px] !w-[18px] !h-[18px] !leading-none">
-                        {{ action.icon }}
-                      </mat-icon>
-                    </button>
-                  }
+            <div class="flex items-center justify-end gap-1">
+              @for (action of actions(); track $index) {
+                @if (action.visible?.(row) ?? true) {
+                  <button
+                    mat-icon-button
+                    [matTooltip]="action.tooltip ?? ''"
+                    [attr.aria-label]="action.tooltip || action.icon"
+                    [disabled]="action.disabled?.(row) ?? false"
+                    (click)="onActionClick(action, row)"
+                    class="!h-8 !w-8 rounded-full text-text-muted hover:bg-black/5 hover:text-text"
+                    [class]="action.buttonClass ?? ''"
+                  >
+                    <mat-icon class="!text-[18px] !w-[18px] !h-[18px] !leading-none">
+                      {{ action.icon }}
+                    </mat-icon>
+                  </button>
                 }
-              </div>
-            }
+              }
+            </div>
           </td>
         </ng-container>
       }
@@ -105,19 +108,20 @@
         mat-row
         *matRowDef="let row; columns: displayedColumns()"
         class="transition-colors hover:bg-black/[0.02]"
-        [class.pointer-events-none]="row._empty"
-        [style.background-color]="!row._empty ? (rowBackground()?.(row) ?? null) : null"
+        [style.background-color]="rowBackground()?.(row) ?? null"
       ></tr>
     </table>
   </div>
 
-  <mat-paginator
-    class="border-t border-outline-variant/60 bg-white px-4 py-2"
-    [length]="total()"
-    [pageIndex]="currentPage() - 1"
-    [pageSize]="pageSize()"
-    [pageSizeOptions]="pageSizeOptions()"
-    (page)="onPageChange($event)"
-    showFirstLastButtons
-  />
+  @if (!hasError()) {
+    <mat-paginator
+      class="border-t border-outline-variant/60 bg-white px-4 py-2"
+      [length]="total()"
+      [pageIndex]="currentPage() - 1"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="pageSizeOptions()"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+    />
+  }
 </div>
