@@ -57,6 +57,12 @@ export interface InMemoryLoaderOptions<T> {
   extraParams?: () => Record<string, string | number>;
 
   /**
+   * Header HTTP custom da iniettare nella richiesta.
+   * Valutati solo al momento del fetch iniziale.
+   */
+  headers?: () => Record<string, string>;
+
+  /**
    * Segnale (o funzione) che restituisce il testo di ricerca corrente.
    * Viene rievalutato ad ogni chiamata del loader (es. dopo datatable.refresh()).
    */
@@ -106,6 +112,7 @@ export function createInMemoryLoader<T>(
   const fetchAll = (): Observable<T[]> => {
     if (cache !== null) return of(cache);
     return http.get<T[] | { body: T[] }>(url, {
+      headers: options?.headers?.() ?? {},
       params: { ...(options?.extraParams?.() ?? {}) },
     }).pipe(
       map(resp => {
