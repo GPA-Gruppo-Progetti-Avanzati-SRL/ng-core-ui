@@ -1,38 +1,92 @@
-<div class="ui flex flex-wrap gap-4 items-start w-full" [style.padding]="padding()">
-  <!-- Grid dei campi (occupa lo spazio disponibile) -->
-  <div
-    class="grid flex-1"
-    [style.grid-template-columns]="'repeat(' + currentColumns() + ', minmax(0, 1fr))'"
-    [style.gap]="gap()"
-    [style.direction]="inlineActions().length ? 'rtl' : 'ltr'"
-  >
-    @for (f of fields(); track $index) {
-      @if (!isHidden(f)) {
-        <div [style.grid-column]="'span ' + clampSpan(f)" style="direction: ltr">
+<div class="ui flex w-full flex-col gap-3" [style.padding]="padding()">
+  <!-- Top 3-column filter area -->
+  <div class="flex w-full items-start gap-3">
+    <!-- LEFT COLUMN -->
+    <div class="flex min-w-0 flex-1 flex-col gap-2">
+      @for (f of visibleFieldsLeft(); track $index) {
+        <div class="min-w-0">
           <ng-container
             [ngComponentOutlet]="f.component"
             [ngComponentOutletInputs]="fieldInputs(f)"
           />
         </div>
       }
-    }
+    </div>
+
+    <!-- CENTER COLUMN -->
+    <div class="flex min-w-0 flex-1 flex-col gap-2">
+      @for (f of visibleFieldsCenter(); track $index) {
+        <div class="min-w-0">
+          <ng-container
+            [ngComponentOutlet]="f.component"
+            [ngComponentOutletInputs]="fieldInputs(f)"
+          />
+        </div>
+      }
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="flex min-w-0 flex-1 flex-col gap-2">
+      @for (f of visibleFieldsRight(); track $index) {
+        <div class="min-w-0">
+          <ng-container
+            [ngComponentOutlet]="f.component"
+            [ngComponentOutletInputs]="fieldInputs(f)"
+          />
+        </div>
+      }
+    </div>
   </div>
 
-  <!-- Bottoni inline (a destra, stessa riga dei campi) -->
+  <!-- row: checkbox + radio -->
+  @if (choiceFields().length) {
+    <div class="flex flex-wrap items-start gap-3">
+      @for (f of choiceFields(); track $index) {
+        <div class="w-fit max-w-full">
+          <ng-container
+            [ngComponentOutlet]="f.component"
+            [ngComponentOutletInputs]="fieldInputs(f)"
+          />
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Bottoni inline -->
   @if (inlineActions().length) {
-    <div class="flex gap-2 flex-wrap items-center self-end mb-[1.34375em]">
+    <div class="flex w-full flex-wrap items-center justify-end gap-2">
       @for (a of inlineActions(); track $index) {
         @if (variant(a) === 'icon') {
-          <button mat-icon-button type="button" [matTooltip]="a.tooltip ?? ''" [disabled]="a.disabled?.() ?? false" (click)="a.onClick()">
+          <button
+            mat-icon-button
+            type="button"
+            [matTooltip]="a.tooltip ?? ''"
+            [disabled]="a.disabled?.() ?? false"
+            (click)="a.onClick()"
+          >
             <mat-icon>{{ a.icon }}</mat-icon>
           </button>
         } @else if (variant(a) === 'filled') {
-          <button mat-flat-button type="button" [matTooltip]="a.tooltip ?? ''" [disabled]="a.disabled?.() ?? false" (click)="a.onClick()">
-            @if (a.icon) { <mat-icon>{{ a.icon }}</mat-icon> } {{ a.label }}
+          <button
+            mat-flat-button
+            type="button"
+            [matTooltip]="a.tooltip ?? ''"
+            [disabled]="a.disabled?.() ?? false"
+            (click)="a.onClick()"
+          >
+            @if (a.icon) { <mat-icon>{{ a.icon }}</mat-icon> }
+            {{ a.label }}
           </button>
         } @else {
-          <button mat-button type="button" [matTooltip]="a.tooltip ?? ''" [disabled]="a.disabled?.() ?? false" (click)="a.onClick()">
-            @if (a.icon) { <mat-icon>{{ a.icon }}</mat-icon> } {{ a.label }}
+          <button
+            mat-button
+            type="button"
+            [matTooltip]="a.tooltip ?? ''"
+            [disabled]="a.disabled?.() ?? false"
+            (click)="a.onClick()"
+          >
+            @if (a.icon) { <mat-icon>{{ a.icon }}</mat-icon> }
+            {{ a.label }}
           </button>
         }
       }
@@ -41,19 +95,39 @@
 </div>
 
 @if (footerActions().length) {
-  <div class="mt-6 flex items-center justify-end gap-2 flex-wrap">
+  <div class="mt-4 flex flex-wrap items-center justify-end gap-2">
     @for (a of footerActions(); track $index) {
       @if (variant(a) === 'icon') {
-        <button mat-icon-button type="button" [matTooltip]="a.tooltip ?? ''" [disabled]="a.disabled?.() ?? false" (click)="a.onClick()">
+        <button
+          mat-icon-button
+          type="button"
+          [matTooltip]="a.tooltip ?? ''"
+          [disabled]="a.disabled?.() ?? false"
+          (click)="a.onClick()"
+        >
           <mat-icon>{{ a.icon }}</mat-icon>
         </button>
       } @else if (variant(a) === 'filled') {
-        <button mat-flat-button type="button" [matTooltip]="a.tooltip ?? ''" [disabled]="a.disabled?.() ?? false" (click)="a.onClick()">
-          @if (a.icon) { <mat-icon>{{ a.icon }}</mat-icon> } {{ a.label }}
+        <button
+          mat-flat-button
+          type="button"
+          [matTooltip]="a.tooltip ?? ''"
+          [disabled]="a.disabled?.() ?? false"
+          (click)="a.onClick()"
+        >
+          @if (a.icon) { <mat-icon>{{ a.icon }}</mat-icon> }
+          {{ a.label }}
         </button>
       } @else {
-        <button mat-button type="button" [matTooltip]="a.tooltip ?? ''" [disabled]="a.disabled?.() ?? false" (click)="a.onClick()">
-          @if (a.icon) { <mat-icon>{{ a.icon }}</mat-icon> } {{ a.label }}
+        <button
+          mat-button
+          type="button"
+          [matTooltip]="a.tooltip ?? ''"
+          [disabled]="a.disabled?.() ?? false"
+          (click)="a.onClick()"
+        >
+          @if (a.icon) { <mat-icon>{{ a.icon }}</mat-icon> }
+          {{ a.label }}
         </button>
       }
     }

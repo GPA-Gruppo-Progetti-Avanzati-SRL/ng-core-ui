@@ -1,13 +1,28 @@
-<div class="flex flex-col gap-2 py-2">
-  @if (label()) {
-    <label class="text-sm font-medium text-gray-700">{{ label() }}</label>
-  }
-  <mat-radio-group [formField]="formField()" [class]="inline() ? 'flex flex-row flex-wrap gap-x-6 gap-y-1' : 'flex flex-col gap-2'">
-    @for (opt of resolvedOptions(); track opt.value) {
-      <mat-radio-button [value]="opt.value">{{ opt.label }}</mat-radio-button>
+<div class="w-fit max-w-full">
+  <fieldset class="min-w-0 rounded-md border border-slate-500 bg-transparent px-5 py-1 dark:border-slate-600/60">
+    @if (label()) {
+      @if (label()) {
+  <legend class="px-1 text-xs font-normal leading-none text-slate-600 dark:text-slate-300">
+    {{ label() }}
+  </legend>
+}
     }
-  </mat-radio-group>
+
+    <mat-radio-group
+      [formField]="formField()"
+      [class]="inline() ? 'flex flex-row items-center gap-x-6' : 'flex flex-col gap-2'"
+    >
+      @for (opt of resolvedOptions(); track opt.value) {
+        <mat-radio-button [value]="opt.value">
+          {{ opt.label }}
+        </mat-radio-button>
+      }
+    </mat-radio-group>
+  </fieldset>
+
   @if (formField()().touched() && formField()().errors().length) {
-    <div class="text-xs text-red-600 px-1">{{ formField()().errors()[0]?.message ?? 'Campo non valido' }}</div>
+    <div class="px-1 pt-1 text-xs text-red-600">
+      {{ formField()().errors()[0]?.message ?? 'Campo non valido' }}
+    </div>
   }
 </div>
