@@ -12,14 +12,16 @@ import { createHomeComponent }        from './steps/create-home-component';
 import { cleanAppHtml }               from './steps/clean-app-html';
 import { createFontsScss }            from './steps/create-fonts-scss';
 import { createTailwindAppCss }       from './steps/create-tailwind-app-css';
-import { createGenerateRoutesScript } from './steps/create-generate-routes-script';
-import { createDockerfile }           from './steps/create-dockerfile';
+import { createGenerateRoutesScript }  from './steps/create-generate-routes-script';
+import { createDockerfile }            from './steps/create-dockerfile';
+import { updatePackageDescription }    from './steps/update-package-description';
 
 export function ngAdd(options: Schema): Rule {
   return (tree: Tree, context: SchematicContext) => {
     context.logger.info('');
     context.logger.info('Configurazione ng-core-ui...');
     return chain([
+      updatePackageDescription(options),
       alignDependencies(),
       setupTailwind(),
       updateAngularJson(options),

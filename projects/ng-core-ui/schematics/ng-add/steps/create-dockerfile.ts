@@ -41,7 +41,7 @@ RUN echo "Git Sha : " $(cat SHA)
 
 RUN bun ng build --configuration production --define "AppVersion='$version'"  --define "AppSha='$(cat SHA)'"
 
-RUN bun node_modules/${LIB}/bin/generate-routes.mjs
+RUN bun node_modules/${LIB}/bin/generate-acl.mjs
 
 RUN ls dist/
 
