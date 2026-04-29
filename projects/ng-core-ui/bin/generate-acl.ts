@@ -1,18 +1,24 @@
 /**
- * Generate routes.yaml for backend permission seeding.
+ * Genera routes.yaml (cap_defs + cap_groups) per il seeding dei permessi nel backend.
  * Usage (from the consuming app root):
- *   node node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-routes.mjs
+ *   node node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-acl.mjs
  *
  * Reads APP_ROUTES (and optionally APP_ACTIONS) from the consuming app's
  * src/app/app.routes.config.ts and writes dist/caps/ui/routes.yaml.
  */
 import { toRoutesYaml } from '../src/lib/system/routes-export';
-import { mkdirSync, writeFileSync } from 'fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { pathToFileURL } from 'url';
 
 
 const appRoot = process.cwd();
+
+const angularJson = JSON.parse(readFileSync(join(appRoot, 'angular.json'), 'utf-8'));
+const appId: string = angularJson.defaultProject ?? Object.keys(angularJson.projects)[0];
+
+const packageJson = JSON.parse(readFileSync(join(appRoot, 'package.json'), 'utf-8'));
+const appDescription: string = packageJson.description ?? '';
 
 // pathToFileURL is required on Windows: import() does not accept backslash paths
 // (e.g. C:\Users\...) — they must be converted to file:// URLs first.
@@ -31,5 +37,5 @@ try {
 
 const outDir = join(appRoot, 'dist', 'caps', 'ui');
 mkdirSync(outDir, { recursive: true });
-writeFileSync(join(outDir, 'routes.yaml'), toRoutesYaml(APP_ROUTES, APP_ACTIONS));
+writeFileSync(join(outDir, 'routes.yaml'), toRoutesYaml(APP_ROUTES, APP_ACTIONS, appId, appDescription));
 console.log('routes.yaml written to', join(outDir, 'routes.yaml'));

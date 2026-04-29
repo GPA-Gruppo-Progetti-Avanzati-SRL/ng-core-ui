@@ -154,7 +154,7 @@ provideGPAUICore(),
 - `layout?: 'main' | 'simple'` — default `'main'`
 - `guard?: boolean` — default `true` (abilita `MenuGuard` come `canActivateChild`)
 
-`toRoutesYaml(APP_ROUTES)` is called by the library's pre-built script to emit `dist/caps/ui/routes.yaml` for backend permission seeding. Consuming apps run it via `npm run generate-routes` (which calls `node node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-routes.mjs`), added to their `package.json` by the `ng-add` schematic.
+`toRoutesYaml(APP_ROUTES)` is called by the library's pre-built script to emit `dist/caps/ui/routes.yaml` for backend permission seeding. Consuming apps run it via `npm run generate-acl` (which calls `node node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-acl.mjs`), added to their `package.json` by the `ng-add` schematic.
 
 ### Styling
 
@@ -194,7 +194,7 @@ The library publishes these assets alongside the compiled JS:
 - `styles/components.css` — pre-built Tailwind output
 - `styles/mat-theme-bridge.css` — `@theme {}` block for Tailwind utility generation
 - `tailwind.config.js` — shared Tailwind config for consuming apps
-- `bin/generate-routes.mjs` — pre-built script for emitting `dist/caps/ui/routes.yaml`
+- `bin/generate-acl.mjs` — pre-built script for emitting `dist/caps/ui/routes.yaml` (cap_defs + cap_groups)
 - `assets/**/*.woff2` — Roboto fonts (300/regular/500/600) and Material Icons
 
 ### UI Components Reference
@@ -274,7 +274,7 @@ All exports go through `projects/ng-core-ui/src/public-api.ts`. When adding a ne
 5. **createDeclarations** — creates `src/declarations.d.ts` with `AppSha`/`AppVersion` globals.
 6. **updateAppConfig** — rewrites `src/app/app.config.ts` with `provideGPAUICore()`, `provideRouter(toRoutes(APP_ROUTES))`, `provideHttpClient()`.
 7. **createRoutesConfig** — creates `src/app/app.routes.config.ts` with a starter home route using the `cap:<projectName>:ui:home` ID convention. Reads the project name from `angular.json`.
-8. **createGenerateRoutesScript** — adds `"generate-routes"` and `"generate-page"` scripts to the app's `package.json`.
+8. **createGenerateRoutesScript** — adds `"generate-acl"` and `"generate-page"` scripts to the app's `package.json`.
 9. **createHomeComponent** — creates `src/app/pages/home/home.component.ts` and `.html`. The component injects `SystemService` and exposes: `menu` (filtered `menuTreeSig()` excluding root), `homeTitle`/`homeSubTitle` (read from `environment.properties`), and `navigate(path)`. The template renders a `core-page-header` + a `core-card` grid for each menu item.
 10. **cleanAppHtml** — replaces `app.html` / `app.component.html` with just `<router-outlet />`.
 11. **createFontsScss** — creates `src/fonts.scss` with Roboto and Material Icons `@font-face` declarations.

@@ -2,8 +2,8 @@ import { Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
 import { LIB } from '../constants';
 
 const SCRIPTS: Record<string, string> = {
-  'generate-routes': `node node_modules/${LIB}/bin/generate-routes.mjs`,
-  'generate-page':   `ng generate ${LIB}:page`,
+  'generate-acl':    `node node_modules/${LIB}/bin/generate-acl.mjs`,
+  'generate-page': `ng generate ${LIB}:page`,
 };
 
 export function createGenerateRoutesScript(): Rule {

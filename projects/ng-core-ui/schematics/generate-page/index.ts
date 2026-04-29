@@ -42,7 +42,7 @@ function buildRouteEntry(appId: string, kebabName: string, options: Schema): str
   const menu = options.menu !== false;
   return `  {
     id: 'cap:${appId}:ui:${kebabName}',
-    endpoint: '/${kebabName}',
+    endpoint: '${kebabName}',
     name: '${options.name}',
     description: '${options.description}',
     icon: '${options.icon ?? 'chevron_right'}',

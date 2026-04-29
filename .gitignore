@@ -8,7 +8,7 @@
 # Compiled output
 /dist
 /projects/ng-core-ui/styles/components.css
-/projects/ng-core-ui/bin/generate-routes.mjs
+/projects/ng-core-ui/bin/generate-acl.mjs
 /tmp
 /out-tsc
 /bazel-out
