@@ -29,3 +29,17 @@ await build({
 });
 
 console.log('✔ Built projects/ng-core-ui/bin/generate-acl.mjs');
+
+await build({
+  entryPoints: [resolve(libDir, 'bin/generate-mongo.ts')],
+  outfile: resolve(libDir, 'bin/generate-mongo.mjs'),
+  bundle: true,
+  platform: 'node',
+  format: 'esm',
+  external: ['fs', 'path'],
+  banner: {
+    js: '// @gpa-gruppo-progetti-avanzati-srl/ng-core-ui — generate-mongo\n// Run from the consuming app root: node node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-mongo.mjs\n// Output: dist/caps/ui/acl.mongo.js',
+  },
+});
+
+console.log('✔ Built projects/ng-core-ui/bin/generate-mongo.mjs');
