@@ -25,7 +25,7 @@ import { FormFieldDef, FormModel, FormShellAction } from './form-field.models';
   host: { class: 'ui', style: 'display: block; width: 100%' },
 })
 export class FormShellComponent {
-  readonly model = input.required<FormModel>();
+  readonly model   = input.required<FormModel>();
   readonly columns = input<number>(2);
   readonly actions = input<FormShellAction[]>([]);
 
@@ -35,66 +35,69 @@ export class FormShellComponent {
     this.breakpointObserver.observe(Breakpoints.XSmall).pipe(map(r => r.matches)),
     { initialValue: false }
   );
+  private readonly isSmall = toSignal(
+    this.breakpointObserver.observe(Breakpoints.Small).pipe(map(r => r.matches)),
+    { initialValue: false }
+  );
+  private readonly isMedium = toSignal(
+    this.breakpointObserver.observe(Breakpoints.Medium).pipe(map(r => r.matches)),
+    { initialValue: false }
+  );
 
-  protected readonly isCompact = computed(() => this.isXSmall());
+  /**
+   * Riduzione proporzionale delle colonne per breakpoint:
+   * XSmall → 1  |  Small → min(2, cols)  |  Medium → min(3, cols)  |  Large+ → cols
+   */
+  protected readonly currentColumns = computed(() => {
+    const cols = this.columns();
+    if (this.isXSmall()) return 1;
+    if (this.isSmall())  return Math.min(cols, 2);
+    if (this.isMedium()) return Math.min(cols, 3);
+    return cols;
+  });
+
+  protected readonly gap = computed(() => {
+    if (this.isXSmall()) return '0.5rem';
+    if (this.isSmall())  return '0.75rem';
+    return '1rem';
+  });
 
   protected readonly padding = computed(() => {
     if (this.isXSmall()) return '0.5rem';
+    if (this.isSmall())  return '1rem';
     return '0';
   });
 
-  protected readonly fields = computed(() => this.model().fields);
-
+  protected readonly fields        = computed(() => this.model().fields);
   protected readonly inlineActions = computed(() =>
     this.actions()
       .filter(a => (a.position ?? 'inline') === 'inline')
       .filter(a => a.visible?.() ?? true)
   );
-
   protected readonly footerActions = computed(() =>
     this.actions()
       .filter(a => a.position === 'footer')
       .filter(a => a.visible?.() ?? true)
   );
 
+
   protected variant(a: FormShellAction): 'icon' | 'text' | 'filled' {
     return a.variant ?? (a.label ? 'text' : 'icon');
   }
 
   protected isHidden<T>(f: FormFieldDef<T>): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (f.field as any)()?.hidden?.() ?? false;
   }
 
-  protected choiceFields<T>(): FormFieldDef<T>[] {
-    return this.fields().filter(f => {
-      const name = f.component?.name ?? '';
-      return name.toLowerCase().includes('radio') || name.toLowerCase().includes('checkbox');
-    }) as FormFieldDef<T>[];
-  }
-
-  protected visibleFieldsLeft<T>(): FormFieldDef<T>[] {
-    return this.nonChoiceFields().filter((_, i) => i % 3 === 0) as FormFieldDef<T>[];
-  }
-
-  protected visibleFieldsCenter<T>(): FormFieldDef<T>[] {
-    return this.nonChoiceFields().filter((_, i) => i % 3 === 1) as FormFieldDef<T>[];
-  }
-
-  protected visibleFieldsRight<T>(): FormFieldDef<T>[] {
-    return this.nonChoiceFields().filter((_, i) => i % 3 === 2) as FormFieldDef<T>[];
-  }
-
-  private nonChoiceFields(): FormFieldDef<any>[] {
-    return this.fields().filter(f => !this.isHidden(f)).filter(f => {
-      const name = f.component?.name ?? '';
-      return !name.toLowerCase().includes('radio') && !name.toLowerCase().includes('checkbox');
-    });
+  protected clampSpan<T>(f: FormFieldDef<T>): number {
+    return Math.min(f.span ?? 1, this.currentColumns());
   }
 
   protected fieldInputs<T>(f: FormFieldDef<T>): Record<string, unknown> {
     return {
       formField: f.field,
-      label: f.label,
+      label:     f.label,
       ...(f.inputs ?? {}),
     };
   }
