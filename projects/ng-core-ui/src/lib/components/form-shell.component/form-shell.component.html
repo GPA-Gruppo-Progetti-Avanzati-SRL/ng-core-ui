@@ -1,9 +1,9 @@
 <div class="ui flex flex-wrap gap-4 items-start w-full" [style.padding]="padding()">
-  <!-- Grid dei campi (occupa lo spazio disponibile) -->
   <div
     class="grid flex-1"
     [style.grid-template-columns]="'repeat(' + currentColumns() + ', minmax(0, 1fr))'"
-    [style.gap]="gap()"
+    [style.row-gap]="rowGap()"
+    [style.column-gap]="columnGap()"
     [style.direction]="inlineActions().length ? 'rtl' : 'ltr'"
   >
     @for (f of fields(); track $index) {
@@ -18,9 +18,8 @@
     }
   </div>
 
-  <!-- Bottoni inline -->
   @if (inlineActions().length) {
-    <div class="flex gap-2 flex-wrap items-center self-end mb-[1.34375em]">
+    <div class="mb-[1.34375em] flex gap-2 flex-wrap items-center self-end">
       @for (a of inlineActions(); track $index) {
         @if (variant(a) === 'icon') {
           <button mat-icon-button type="button" [matTooltip]="a.tooltip ?? ''" [disabled]="a.disabled?.() ?? false" (click)="a.onClick()">
@@ -41,19 +40,39 @@
 </div>
 
 @if (footerActions().length) {
-  <div class="mt-6 flex items-center justify-end gap-2 flex-wrap">
+  <div class="mt-6 flex flex-wrap items-center justify-end gap-2">
     @for (a of footerActions(); track $index) {
       @if (variant(a) === 'icon') {
-        <button mat-icon-button type="button" [matTooltip]="a.tooltip ?? ''" [disabled]="a.disabled?.() ?? false" (click)="a.onClick()">
+        <button
+          mat-icon-button
+          type="button"
+          [matTooltip]="a.tooltip ?? ''"
+          [disabled]="a.disabled?.() ?? false"
+          (click)="a.onClick()"
+        >
           <mat-icon>{{ a.icon }}</mat-icon>
         </button>
       } @else if (variant(a) === 'filled') {
-        <button mat-flat-button type="button" [matTooltip]="a.tooltip ?? ''" [disabled]="a.disabled?.() ?? false" (click)="a.onClick()">
-          @if (a.icon) { <mat-icon>{{ a.icon }}</mat-icon> } {{ a.label }}
+        <button
+          mat-flat-button
+          type="button"
+          [matTooltip]="a.tooltip ?? ''"
+          [disabled]="a.disabled?.() ?? false"
+          (click)="a.onClick()"
+        >
+          @if (a.icon) { <mat-icon>{{ a.icon }}</mat-icon> }
+          {{ a.label }}
         </button>
       } @else {
-        <button mat-button type="button" [matTooltip]="a.tooltip ?? ''" [disabled]="a.disabled?.() ?? false" (click)="a.onClick()">
-          @if (a.icon) { <mat-icon>{{ a.icon }}</mat-icon> } {{ a.label }}
+        <button
+          mat-button
+          type="button"
+          [matTooltip]="a.tooltip ?? ''"
+          [disabled]="a.disabled?.() ?? false"
+          (click)="a.onClick()"
+        >
+          @if (a.icon) { <mat-icon>{{ a.icon }}</mat-icon> }
+          {{ a.label }}
         </button>
       }
     }

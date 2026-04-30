@@ -57,10 +57,22 @@ export class FormShellComponent {
   });
 
   protected readonly gap = computed(() => {
-    if (this.isXSmall()) return '0.5rem';
-    if (this.isSmall())  return '0.75rem';
-    return '1rem';
-  });
+  if (this.isXSmall()) return '0.5rem';
+  if (this.isSmall())  return '0.625rem';
+  return '0.875rem';
+});
+
+protected readonly rowGap = computed(() => {
+  if (this.isXSmall()) return '0.375rem';
+  if (this.isSmall())  return '0.5rem';
+  return '0.75rem';
+});
+
+protected readonly columnGap = computed(() => {
+  if (this.isXSmall()) return '0.5rem';
+  if (this.isSmall())  return '0.75rem';
+  return '1rem';
+});
 
   protected readonly padding = computed(() => {
     if (this.isXSmall()) return '0.5rem';
