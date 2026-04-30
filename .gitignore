@@ -9,6 +9,8 @@
 /dist
 /projects/ng-core-ui/styles/components.css
 /projects/ng-core-ui/bin/generate-acl.mjs
+/projects/ng-core-ui/bin/generate-mongo.mjs
+/projects/ng-core-ui/bin/generate-routes.mjs
 /tmp
 /out-tsc
 /bazel-out
@@ -49,3 +51,4 @@ testem.log
 Thumbs.db
 projects/ng-core-ui/README.md
 /projects/ng-core-ui/styles/_logos.scss
+/projects/ng-core-ui/bin/generate-mongo.mjs
