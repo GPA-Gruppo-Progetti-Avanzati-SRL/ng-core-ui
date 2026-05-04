@@ -1,5 +1,5 @@
 import { InputSignal, Signal, Type, computed, signal, WritableSignal } from '@angular/core';
-import { FieldTree, form } from '@angular/forms/signals';
+import {FieldTree, form, SchemaOrSchemaFn, SchemaPath} from '@angular/forms/signals';
 
 /** Opzione generica per combobox, radio e checkbox */
 export interface KVOption {
@@ -31,8 +31,7 @@ export class FormModel<T = any> {
 
   constructor(
     initialValue: T,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    schema: any,
+    schema: SchemaOrSchemaFn<T>,
     layout: (ft: FieldTree<T>) => FormFieldDef<T>[],
   ) {
     this.model   = signal(initialValue);
@@ -71,7 +70,7 @@ export class FormModel<T = any> {
  * - `variant`  — 'icon' (solo icona, default se manca label) | 'text' | 'filled'
  * - `position` — 'inline' (stessa riga, default) | 'footer' (riga dedicata sotto)
  * - `visible`  — funzione (anche signal-based) che controlla la visibilità; default `true`
- * - `disabled` — funzione (anche signal-based) che controlla lo stato disabilitato; default `false`
+ * - `disabled` — funzione (anche signal-based) che controlla lo stato disabilitato; defnoault `false`
  */
 export interface FormShellAction {
   icon?:      string;

@@ -2,10 +2,16 @@ import { Rule, SchematicContext, Tree, SchematicsException } from '@angular-devk
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const LIB_TARGET_VERSIONS: Record<string, string> =
-  (require('../../package.json') as { 'ng-add'?: { targetVersions?: Record<string, string> } })['ng-add']?.targetVersions ?? {};
+const libPkg = require('../../package.json') as { version: string; 'ng-add'?: { targetVersions?: Record<string, string> } };
+const LIB = '@gpa-gruppo-progetti-avanzati-srl/ng-core-ui';
+const LIB_VERSION: string = libPkg.version;
+const LIB_TARGET_VERSIONS: Record<string, string> = libPkg['ng-add']?.targetVersions ?? {};
 
 const BUILD_TOOLS = new Set(['@angular/build', '@angular/cli', '@angular/compiler-cli']);
+
+function exact(v: string): string {
+  return v.replace(/^[^0-9]*/, '');
+}
 
 export function ngUpdate(): Rule {
   return (tree: Tree, context: SchematicContext) => {
@@ -20,17 +26,26 @@ export function ngUpdate(): Rule {
     const deps: Record<string, string> = pkgJson.dependencies ?? {};
     const devDeps: Record<string, string> = pkgJson.devDependencies ?? {};
 
-    const angularVersion = LIB_TARGET_VERSIONS['@angular/core'] ?? '^21.0.0';
+    const angularVersion = exact(LIB_TARGET_VERSIONS['@angular/core'] ?? '21.0.0');
     const majorMatch = angularVersion.match(/\d+/);
     const angularMajorVersion = majorMatch ? `^${majorMatch[0]}.0.0` : angularVersion;
 
     let changed = false;
 
+    // Pinna la libreria stessa alla versione esatta
+    if (deps[LIB] && deps[LIB] !== LIB_VERSION) {
+      context.logger.info(`  ✔ Aggiornato ${LIB}: ${deps[LIB]} → ${LIB_VERSION}`);
+      deps[LIB] = LIB_VERSION;
+      changed = true;
+    }
+
     // Aggiorna tutti i pacchetti @angular/* presenti
     for (const section of [deps, devDeps]) {
       for (const pkg of Object.keys(section)) {
         if (pkg.startsWith('@angular/')) {
-          const target = LIB_TARGET_VERSIONS[pkg] ?? (BUILD_TOOLS.has(pkg) ? angularMajorVersion : angularVersion);
+          const target = BUILD_TOOLS.has(pkg)
+            ? angularMajorVersion
+            : exact(LIB_TARGET_VERSIONS[pkg] ?? angularVersion);
           if (section[pkg] !== target) {
             context.logger.info(`  ✔ Aggiornato ${pkg}: ${section[pkg]} → ${target}`);
             section[pkg] = target;
@@ -40,16 +55,17 @@ export function ngUpdate(): Rule {
       }
     }
 
-    // Aggiorna o aggiunge le dipendenze non-Angular (tailwindcss, postcss, typescript…)
+    // Aggiorna le dipendenze non-Angular (tailwindcss, postcss, typescript…)
     const nonAngular = Object.entries(LIB_TARGET_VERSIONS).filter(([pkg]) => !pkg.startsWith('@angular/'));
     for (const [pkg, version] of nonAngular) {
-      if (deps[pkg] && deps[pkg] !== version) {
-        context.logger.info(`  ✔ Aggiornato ${pkg}: ${deps[pkg]} → ${version}`);
-        deps[pkg] = version;
+      const target = exact(version);
+      if (deps[pkg] && deps[pkg] !== target) {
+        context.logger.info(`  ✔ Aggiornato ${pkg}: ${deps[pkg]} → ${target}`);
+        deps[pkg] = target;
         changed = true;
-      } else if (devDeps[pkg] && devDeps[pkg] !== version) {
-        context.logger.info(`  ✔ Aggiornato ${pkg}: ${devDeps[pkg]} → ${version}`);
-        devDeps[pkg] = version;
+      } else if (devDeps[pkg] && devDeps[pkg] !== target) {
+        context.logger.info(`  ✔ Aggiornato ${pkg}: ${devDeps[pkg]} → ${target}`);
+        devDeps[pkg] = target;
         changed = true;
       }
     }
