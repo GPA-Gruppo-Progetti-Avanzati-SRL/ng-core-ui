@@ -10,6 +10,19 @@ function exact(v: string): string {
   return v.replace(/^[^0-9]*/, '');
 }
 
+/** Ritorna true se la versione a (con o senza prefisso) è >= b (stringa semver pulita). */
+function semverGte(a: string, b: string): boolean {
+  const parse = (v: string): [number, number, number] => {
+    const parts = exact(v).split('.').map(n => parseInt(n ?? '0', 10));
+    return [parts[0] ?? 0, parts[1] ?? 0, parts[2] ?? 0];
+  };
+  const [amaj, amin, apatch] = parse(a);
+  const [bmaj, bmin, bpatch] = parse(b);
+  if (amaj !== bmaj) return amaj > bmaj;
+  if (amin !== bmin) return amin > bmin;
+  return apatch >= bpatch;
+}
+
 export function alignDependencies(): Rule {
   return (tree: Tree, context: SchematicContext) => {
     if (!tree.exists('package.json')) {
@@ -35,28 +48,42 @@ export function alignDependencies(): Rule {
       changed = true;
     }
 
-    // Aggiorna tutti i pacchetti @angular/* già presenti (sia deps che devDeps)
-    // Priorità: versione specifica in targetVersions > major per build tool > versione core
+    // Aggiorna i pacchetti @angular/* già presenti.
+    // Build tool → ^major.0.0 (versioning indipendente da Angular core).
+    // Altri → aggiorna solo se la versione corrente è più vecchia del target:
+    //   evita downgrade (es. 21.2.11 → 21.2.10) che causano ERESOLVE per le
+    //   peer dep esatte tra pacchetti Angular.
     for (const section of [deps, devDeps]) {
       for (const pkg of Object.keys(section)) {
         if (pkg.startsWith('@angular/')) {
-          const target = BUILD_TOOLS.has(pkg)
-            ? angularMajorVersion
-            : exact(LIB_TARGET_VERSIONS[pkg] ?? angularVersion);
-          if (section[pkg] !== target) {
-            context.logger.info(`  ✔ Allineato ${pkg}: ${section[pkg]} → ${target}`);
-            section[pkg] = target;
-            changed = true;
+          if (BUILD_TOOLS.has(pkg)) {
+            if (section[pkg] !== angularMajorVersion) {
+              context.logger.info(`  ✔ Allineato ${pkg}: ${section[pkg]} → ${angularMajorVersion}`);
+              section[pkg] = angularMajorVersion;
+              changed = true;
+            }
+          } else {
+            const pkgTarget = LIB_TARGET_VERSIONS[pkg] ?? angularVersion;
+            if (!semverGte(section[pkg], pkgTarget)) {
+              const target = `^${exact(pkgTarget)}`;
+              context.logger.info(`  ✔ Allineato ${pkg}: ${section[pkg]} → ${target}`);
+              section[pkg] = target;
+              changed = true;
+            }
           }
         }
       }
     }
 
-    // Aggiunge pacchetti Angular mancanti
+    // Aggiunge pacchetti Angular mancanti usando la stessa versione di @angular/core
+    // già presente nel progetto (dopo eventuali update sopra): garantisce che
+    // animations e material siano alla stessa versione di core, evitando che npm
+    // installi versioni diverse e crei duplicati di @angular/core in node_modules.
+    const resolvedCoreVersion = deps['@angular/core'] || devDeps['@angular/core'];
     const angularExtras = ['@angular/animations', '@angular/material'];
     for (const pkg of angularExtras) {
       if (!deps[pkg] && !devDeps[pkg]) {
-        const target = exact(LIB_TARGET_VERSIONS[pkg] ?? angularVersion);
+        const target = resolvedCoreVersion ?? `^${angularVersion}`;
         deps[pkg] = target;
         context.logger.info(`  ✔ Aggiunta dipendenza: ${pkg}@${target}`);
         changed = true;
