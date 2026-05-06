@@ -13,6 +13,19 @@ function exact(v: string): string {
   return v.replace(/^[^0-9]*/, '');
 }
 
+/** Ritorna true se la versione a (con o senza prefisso) è >= b (stringa semver pulita). */
+function semverGte(a: string, b: string): boolean {
+  const parse = (v: string): [number, number, number] => {
+    const parts = exact(v).split('.').map(n => parseInt(n ?? '0', 10));
+    return [parts[0] ?? 0, parts[1] ?? 0, parts[2] ?? 0];
+  };
+  const [amaj, amin, apatch] = parse(a);
+  const [bmaj, bmin, bpatch] = parse(b);
+  if (amaj !== bmaj) return amaj > bmaj;
+  if (amin !== bmin) return amin > bmin;
+  return apatch >= bpatch;
+}
+
 export function ngUpdate(): Rule {
   return (tree: Tree, context: SchematicContext) => {
     context.logger.info('');
@@ -39,17 +52,26 @@ export function ngUpdate(): Rule {
       changed = true;
     }
 
-    // Aggiorna tutti i pacchetti @angular/* presenti
+    // Aggiorna i pacchetti @angular/* presenti.
+    // Build tool → ^major.0.0. Altri → aggiorna solo se la versione corrente
+    // è più vecchia del target (no downgrade → evita ERESOLVE e type errors).
     for (const section of [deps, devDeps]) {
       for (const pkg of Object.keys(section)) {
         if (pkg.startsWith('@angular/')) {
-          const target = BUILD_TOOLS.has(pkg)
-            ? angularMajorVersion
-            : exact(LIB_TARGET_VERSIONS[pkg] ?? angularVersion);
-          if (section[pkg] !== target) {
-            context.logger.info(`  ✔ Aggiornato ${pkg}: ${section[pkg]} → ${target}`);
-            section[pkg] = target;
-            changed = true;
+          if (BUILD_TOOLS.has(pkg)) {
+            if (section[pkg] !== angularMajorVersion) {
+              context.logger.info(`  ✔ Aggiornato ${pkg}: ${section[pkg]} → ${angularMajorVersion}`);
+              section[pkg] = angularMajorVersion;
+              changed = true;
+            }
+          } else {
+            const pkgTarget = LIB_TARGET_VERSIONS[pkg] ?? angularVersion;
+            if (!semverGte(section[pkg], pkgTarget)) {
+              const target = `^${exact(pkgTarget)}`;
+              context.logger.info(`  ✔ Aggiornato ${pkg}: ${section[pkg]} → ${target}`);
+              section[pkg] = target;
+              changed = true;
+            }
           }
         }
       }
