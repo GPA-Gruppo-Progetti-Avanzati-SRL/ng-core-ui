@@ -41,7 +41,7 @@ const HOME_COMPONENT_HTML = `<core-page-header [title]="homeTitle()" [subtitle]=
     />
   }
   @empty {
-    <p class="ui:text-on-surface-variant ui:text-center ui:p-8">Nessuna funzionela gener disponibile.</p>
+    <p class="ui:text-on-surface-variant ui:text-center ui:p-8">Nessuna funzione disponibile.</p>
   }
 </div>
 `;

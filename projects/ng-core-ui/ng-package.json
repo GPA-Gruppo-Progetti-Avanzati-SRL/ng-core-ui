@@ -11,6 +11,7 @@
     "assets/**/*.woff2",
     "tailwind.config.js",
     "bin/generate-acl.mjs",
+    "bin/generate-mongo.mjs",
     "schematics/collection.json",
     "schematics/migrations.json",
     "schematics/ng-add/schema.json",

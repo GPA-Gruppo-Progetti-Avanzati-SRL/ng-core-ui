@@ -3,7 +3,7 @@ import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 import { LIB, LIB_TARGET_VERSIONS } from '../constants';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const LIB_VERSION: string = (require('../../package.json') as { version: string }).version;
+const LIB_VERSION: string = (require('../../../package.json') as { version: string }).version;
 
 /** Rimuove prefissi semver (^, ~, >=, <=, >, <) per forzare versione esatta. */
 function exact(v: string): string {
