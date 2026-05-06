@@ -75,15 +75,19 @@ export function alignDependencies(): Rule {
       }
     }
 
-    // Aggiunge pacchetti Angular mancanti usando la stessa versione di @angular/core
-    // già presente nel progetto (dopo eventuali update sopra): garantisce che
-    // animations e material siano alla stessa versione di core, evitando che npm
-    // installi versioni diverse e crei duplicati di @angular/core in node_modules.
+    // Aggiunge pacchetti Angular mancanti.
+    // - Pacchetti con versione propria in LIB_TARGET_VERSIONS (es. @angular/material,
+    //   che può avere patch più basse di @angular/core): usa ^targetVersion specifica.
+    // - Pacchetti senza entry specifica (es. @angular/animations, rilasciato in sincronia
+    //   con core): usa la stessa versione di @angular/core già presente nel progetto,
+    //   così npm non installa versioni miste e non crea duplicati di @angular/core.
     const resolvedCoreVersion = deps['@angular/core'] || devDeps['@angular/core'];
     const angularExtras = ['@angular/animations', '@angular/material'];
     for (const pkg of angularExtras) {
       if (!deps[pkg] && !devDeps[pkg]) {
-        const target = resolvedCoreVersion ?? `^${angularVersion}`;
+        const target = LIB_TARGET_VERSIONS[pkg]
+          ? `^${exact(LIB_TARGET_VERSIONS[pkg])}`
+          : (resolvedCoreVersion ?? `^${angularVersion}`);
         deps[pkg] = target;
         context.logger.info(`  ✔ Aggiunta dipendenza: ${pkg}@${target}`);
         changed = true;
