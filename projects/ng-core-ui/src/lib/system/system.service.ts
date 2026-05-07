@@ -80,6 +80,9 @@ export class SystemService {
   getContextByType(contextType: string): Signal<Context[]> {
     return computed(() => (this.contexts() ?? []).filter(c => c.contextType === contextType));
   }
+  getContext(contextType: string, id: string): Signal<Context | undefined> {
+    return computed(() => (this.contexts() ?? []).find(c => c.contextType === contextType && c.id === id));
+  }
 
   canDo(action: CoreAction | string): boolean {
     const id = typeof action === 'string' ? action : action.id;
