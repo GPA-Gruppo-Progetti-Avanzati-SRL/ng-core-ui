@@ -18,13 +18,16 @@ export interface App {
   order?: number;
 }
 
-export interface Site {
+export interface Context {
   id: string;
   name?: string;
   description?: string;
   icon?: string;
   path?: string;
   order?: number;
+  contextType:string;
+  properties?: Record<string, string>;
+
 }
 
 export interface TokenResponse {
@@ -34,6 +37,6 @@ export interface TokenResponse {
   capabilities?: string[] | null;
   paths?: PathNode[] | null;
   apps?: App[] | null;
-  sites?: Site[] | null;
+  contexts?: Context[] | null;
 }
 

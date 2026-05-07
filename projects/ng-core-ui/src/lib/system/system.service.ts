@@ -1,7 +1,7 @@
-import { Injectable, computed, inject, signal, effect, isDevMode } from '@angular/core';
+import { Injectable, computed, inject, signal, effect, isDevMode, Signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Title } from '@angular/platform-browser';
-import { App, Site, PathNode, TokenResponse } from './system.models';
+import { App, Context, PathNode, TokenResponse } from './system.models';
 import { CoreAction } from './routes';
 import { Environment } from './environment';
 import { firstValueFrom } from 'rxjs';
@@ -24,7 +24,7 @@ export class SystemService {
     return p === null ? null : this._sortByOrder(p.filter(n => n.menu));
   });
   readonly apps          = signal<App[] | null>(null);
-  readonly sites         = signal<Site[] | null>(null);
+  private readonly contexts         = signal<Context[] | null>(null);
   readonly environment   = signal<Environment | null>(null);
   readonly environmentProperties = computed(() => this.environment()?.properties ?? {});
 
@@ -77,6 +77,10 @@ export class SystemService {
     return this.environmentProperties()[key];
   }
 
+  getContextByType(contextType: string): Signal<Context[]> {
+    return computed(() => (this.contexts() ?? []).filter(c => c.contextType === contextType));
+  }
+
   canDo(action: CoreAction | string): boolean {
     const id = typeof action === 'string' ? action : action.id;
     console.log("id:"+id)
@@ -120,7 +124,7 @@ export class SystemService {
     this.paths.set(data.paths ?? []);
 
     this.apps.set(this._sortByOrder(data.apps ?? []));
-    this.sites.set(this._sortByOrder(data.sites ?? []));
+    this.contexts.set(this._sortByOrder(data.contexts ?? []));
 
     return data;
   }
