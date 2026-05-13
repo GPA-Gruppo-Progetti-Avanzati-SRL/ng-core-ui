@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "$id": "NgCoreUiGenerateActionSchema",
+  "title": "ng generate @gpa-gruppo-progetti-avanzati-srl/ng-core-ui:action",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Id dell'azione in kebab-case (es. 'save-document'). Determina l'id della capability.",
+      "$default": { "$source": "argv", "index": 0 },
+      "x-prompt": "Id dell'azione (kebab-case, es: save-document):"
+    },
+    "description": {
+      "type": "string",
+      "description": "Descrizione leggibile dell'azione.",
+      "x-prompt": "Descrizione dell'azione (es: 'Salva documento'):"
+    }
+  },
+  "required": ["id", "description"]
+}

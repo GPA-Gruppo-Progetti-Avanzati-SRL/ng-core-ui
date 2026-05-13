@@ -8,6 +8,7 @@ import { updateStylesScss }           from './steps/update-styles-scss';
 import { createDeclarations }         from './steps/create-declarations';
 import { updateAppConfig }            from './steps/update-app-config';
 import { createRoutesConfig }         from './steps/create-routes-config';
+import { createAppActionsConfig }     from './steps/create-app-actions-config';
 import { createHomeComponent }        from './steps/create-home-component';
 import { cleanAppHtml }               from './steps/clean-app-html';
 import { createFontsScss }            from './steps/create-fonts-scss';
@@ -30,6 +31,7 @@ export function ngAdd(options: Schema): Rule {
       createDeclarations(),
       updateAppConfig(options),
       createRoutesConfig(options),
+      createAppActionsConfig(options),
       createHomeComponent(),
       cleanAppHtml(),
       createFontsScss(),
