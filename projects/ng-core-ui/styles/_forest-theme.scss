@@ -25,4 +25,12 @@ $forest-theme: mat.define-theme((
   --layout-toolbar-border: none;
 
   @include color-bridge.apply();
+
+  .mat-mdc-select-panel {
+    background-color: var(--mat-sys-surface-container) !important;
+  }
+
+  .mat-datepicker-content-container {
+    background-color: var(--mat-sys-surface-container) !important;
+  }
 }
