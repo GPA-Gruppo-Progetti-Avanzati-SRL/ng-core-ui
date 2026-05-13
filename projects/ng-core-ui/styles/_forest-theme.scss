@@ -23,14 +23,14 @@ $forest-theme: mat.define-theme((
 
   --layout-sidenav-border: none;
   --layout-toolbar-border: none;
+  --mat-sys-surface-variant: var(--mat-sys-tertiary-container);
 
   @include color-bridge.apply();
+}
 
-  .mat-mdc-select-panel {
-    background-color: var(--mat-sys-surface-container) !important;
-  }
-
-  .mat-datepicker-content-container {
-    background-color: var(--mat-sys-surface-container) !important;
-  }
+.error-snackbar {
+  @include mat.snack-bar-overrides((
+    container-color: var(--mat-sys-error),
+    button-color: var(--mat-sys-on-error),
+  ))
 }
