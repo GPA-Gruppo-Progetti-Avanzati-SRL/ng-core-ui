@@ -10,12 +10,12 @@ export function updatePackageDescription(options: Schema): Rule {
       pkg.description = options.description;
       context.logger.info(`  ✔ description aggiunta in package.json`);
     }
-
+/*
     if (pkg.type !== 'module') {
       pkg.type = 'module';
       context.logger.info(`  ✔ "type": "module" aggiunto in package.json`);
     }
-
+ */
     tree.overwrite(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
   };
 }

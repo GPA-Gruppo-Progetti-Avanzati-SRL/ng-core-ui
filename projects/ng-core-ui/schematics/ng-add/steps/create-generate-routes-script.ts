@@ -4,7 +4,8 @@ import { LIB } from '../constants';
 const SCRIPTS: Record<string, string> = {
   'generate-acl':   `node node_modules/${LIB}/bin/generate-acl.mjs`,
   'generate-mongo': `node node_modules/${LIB}/bin/generate-mongo.mjs`,
-  'generate-page':  `ng generate ${LIB}:page`,
+  'generate-page':   `ng generate ${LIB}:page`,
+  'generate-action': `ng generate ${LIB}:action`,
 };
 
 export function createGenerateRoutesScript(): Rule {

@@ -10,6 +10,11 @@
       "description": "Genera una nuova pagina (componente + rotta CoreRoute) nell'app",
       "factory": "./generate-page/index#generatePage",
       "schema": "./generate-page/schema.json"
+    },
+    "action": {
+      "description": "Aggiunge una nuova CoreAction all'array APP_ACTIONS in app.actions.config.ts",
+      "factory": "./generate-action/index#generateAction",
+      "schema": "./generate-action/schema.json"
     }
   }
 }
