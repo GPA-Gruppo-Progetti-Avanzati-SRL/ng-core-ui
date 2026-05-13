@@ -50,6 +50,9 @@
                 [routerLink]="[endpointFor(link)]"
                 [activated]="isActive(link)"
                 [attr.aria-label]="link.name || link.id"
+                [matTooltip]="link.name || link.id"
+                [matTooltipDisabled]="isExpanded()"
+                matTooltipPosition="right"
               >
                 <mat-icon>{{ link.icon || 'chevron_right' }}</mat-icon>
                 <span class="label" [class.hidden]="!isExpanded()">{{ link.name || link.id }}</span>

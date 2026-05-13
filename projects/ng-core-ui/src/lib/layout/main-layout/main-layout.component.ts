@@ -26,6 +26,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import {ConfirmComponent} from '../../components/confirm.component/confirm.component';
@@ -43,6 +44,7 @@ import {ErrorPage} from '../../pages/error.page';
     MatIconModule,
     MatSidenavModule,
     MatToolbarModule,
+    MatTooltipModule,
     MatListModule,
     MatDividerModule,
     RouterOutlet,
