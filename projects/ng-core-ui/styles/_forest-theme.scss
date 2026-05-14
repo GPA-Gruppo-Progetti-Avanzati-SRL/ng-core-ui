@@ -28,6 +28,14 @@ $forest-theme: mat.define-theme((
   @include color-bridge.apply();
 }
 
+@include mat.select-overrides((
+  panel-background-color: mat.get-theme-color($forest-theme, neutral, 95),
+));
+
+@include mat.datepicker-overrides((
+  calendar-container-background-color: mat.get-theme-color($forest-theme, neutral, 95),
+));
+
 .error-snackbar {
   @include mat.snack-bar-overrides((
     container-color: var(--mat-sys-error),
