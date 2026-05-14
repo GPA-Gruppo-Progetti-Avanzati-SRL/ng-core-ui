@@ -7,6 +7,7 @@ export interface ToastMessage {
   type: ToastType;
   message: string;
   duration: number;
+  isHtml?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -14,20 +15,20 @@ export class ToastService {
   private _counter = 0;
   readonly messages = signal<ToastMessage[]>([]);
 
-  success(message: string, duration = 3000): void {
-    this._push({ type: 'success', message, duration });
+  success(message: string, duration = 3000, isHtml = false): void {
+    this._push({ type: 'success', message, duration, isHtml });
   }
 
-  error(message: string, duration = 5000): void {
-    this._push({ type: 'error', message, duration });
+  error(message: string, duration = 5000, isHtml = false): void {
+    this._push({ type: 'error', message, duration, isHtml });
   }
 
-  info(message: string, duration = 3000): void {
-    this._push({ type: 'info', message, duration });
+  info(message: string, duration = 3000, isHtml = false): void {
+    this._push({ type: 'info', message, duration, isHtml });
   }
 
-  warning(message: string, duration = 4000): void {
-    this._push({ type: 'warning', message, duration });
+  warning(message: string, duration = 4000, isHtml = false): void {
+    this._push({ type: 'warning', message, duration, isHtml });
   }
 
   dismiss(id: number): void {
