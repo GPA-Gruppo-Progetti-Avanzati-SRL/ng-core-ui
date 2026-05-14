@@ -1,0 +1,38 @@
+<div class="relative rounded-xl transition-all duration-200"
+     [class.ring-2]="isDraggingOver()"
+     [class.ring-primary]="isDraggingOver()"
+     [class.bg-primary-10]="isDraggingOver()"
+     (dragover)="onDragOver($event)"
+     (dragleave)="onDragLeave($event)"
+     (drop)="onFileDropped($event)">
+
+  <mat-form-field appearance="outline" floatLabel="always" class="w-full mb-[-0.5rem]">
+    <mat-label>{{ label() }}</mat-label>
+
+    <input #fileInput hidden type="file" [multiple]="multiple()" [accept]="accepts()" (change)="onFileSelected($event)" />
+    <input matInput readonly
+           [value]="fileName()"
+           [placeholder]="valuePlaceHolder()"
+           [required]="showAsRequired()"
+           [class.ng-invalid]="hasError()"
+           [class.ng-touched]="touched()" />
+
+    <div matSuffix class="flex items-center">
+      @if (selected() && !disabled()) {
+        <button mat-icon-button type="button" matTooltip="Annulla selezione file"
+                (click)="fileInput.value=''; clearFile($event)">
+          <mat-icon class="!text-[20px] !w-[35px] !h-[20px] !leading-none">close</mat-icon>
+        </button>
+      }
+      <button mat-icon-button type="button" matTooltip="Seleziona file"
+              [disabled]="disabled()" (click)="fileInput.value=''; fileInput.click()">
+        <mat-icon class="!text-[20px] !w-[35px] !h-[20px] !leading-none">upload</mat-icon>
+      </button>
+    </div>
+
+    @if (hasError()) {
+      <mat-error>{{ errorMessage() }}</mat-error>
+    }
+  </mat-form-field>
+
+</div>

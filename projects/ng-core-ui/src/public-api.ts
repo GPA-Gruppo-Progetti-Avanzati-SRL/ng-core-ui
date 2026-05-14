@@ -39,6 +39,7 @@ export * from './lib/components/form-shell.component/fields/datepicker-field.com
 export * from './lib/components/form-shell.component/fields/lookup-field.component';
 export * from './lib/components/form-shell.component/fields/radio-button-list-field.component';
 export * from './lib/components/form-shell.component/fields/checkbox-list-field.component';
+export * from './lib/components/form-shell.component/fields/file-input-field.component';
 
 // LOADING
 export * from './lib/system/loading.service';
