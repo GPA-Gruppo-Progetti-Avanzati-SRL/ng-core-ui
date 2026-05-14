@@ -1,9 +1,6 @@
 import {ToastComponent} from '../../components/toast.component/toast.component';
 import {LoadingOverlayComponent} from '../../components/loading-overlay.component/loading-overlay.component';
 
-declare const AppSha: string;
-declare const AppVersion: string;
-
 import {
   Component,
   signal,
@@ -16,7 +13,6 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
-import { NgOptimizedImage } from '@angular/common';
 import { filter, map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { PathNode } from '../../system/system.models';
@@ -28,13 +24,13 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatListModule } from '@angular/material/list';
-import { MatDividerModule } from '@angular/material/divider';
 import {ConfirmComponent} from '../../components/confirm.component/confirm.component';
 import {AlertComponent} from '../../components/alert.component/alert.component';
 import {ErrorPage} from '../../pages/error.page';
+import {AppSwitcherComponent} from '../app-switcher/app-switcher.component';
 
 @Component({
-  selector: 'app-main-layout',
+  selector: 'app-full-layout',
   imports: [
     MatButtonModule,
     ToastComponent,
@@ -46,18 +42,17 @@ import {ErrorPage} from '../../pages/error.page';
     MatToolbarModule,
     MatTooltipModule,
     MatListModule,
-    MatDividerModule,
     RouterOutlet,
     RouterLink,
     ErrorPage,
-    NgOptimizedImage
+    AppSwitcherComponent,
   ],
-  templateUrl: './main-layout.component.html',
+  templateUrl: './full-layout.component.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ui block h-screen bg-surface text-on-surface' },
 })
-export class MainLayoutComponent {
+export class FullLayoutComponent {
 
   private router: Router = inject(Router);
   private system: SystemService = inject(SystemService);
@@ -67,10 +62,6 @@ export class MainLayoutComponent {
   whoami = this.system.whoami;
   environment = this.system.environment;
   menuTree = this.system.menuTree;
-  apps = this.system.apps;
-  currentAppId = computed(() => this.environment()?.appId || '');
-  readonly appSha = AppSha;
-  readonly appVersion = AppVersion;
   layoutState = this.system.layoutState;
   sidenavExpanded = signal(false);
   isExpanded = computed(() => this.sidenavExpanded());

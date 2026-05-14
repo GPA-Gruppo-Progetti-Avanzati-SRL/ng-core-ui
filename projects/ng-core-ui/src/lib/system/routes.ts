@@ -3,7 +3,8 @@ import { Routes } from '@angular/router';
 import { Type } from '@angular/core';
 
 import { MenuGuard } from './menu.guard';
-import { MainLayoutComponent } from '../layout/main-layout/main-layout.component';
+import { FullLayoutComponent } from '../layout/full-layout/full-layout.component';
+import { RightLayoutComponent } from '../layout/right-layout/right-layout.component';
 import { SimpleLayoutComponent } from '../layout/simple-layout/simple-layout.component';
 import { ForbiddenPage } from '../pages/forbidden.page';
 import { NotFoundPage } from '../pages/not-found.page';
@@ -18,18 +19,22 @@ export interface CoreRoute extends CoreRouteBase {
 }
 
 export interface CoreRoutesOptions {
-  layout?: 'main' | 'simple';
+  layout?: 'full' | 'right' | 'simple';
   guard?: boolean;
 }
 
 export function toRoutes(routes: CoreRoute[], options?: CoreRoutesOptions): Routes {
-  const layout = options?.layout ?? 'main';
+  const layout = options?.layout ?? 'full';
   const guard = options?.guard ?? true;
+  const layoutComponent =
+    layout === 'full'  ? FullLayoutComponent  :
+    layout === 'right' ? RightLayoutComponent :
+    SimpleLayoutComponent;
 
   return [
     {
       path: '',
-      component: layout === 'main' ? MainLayoutComponent : SimpleLayoutComponent,
+      component: layoutComponent,
       ...(guard ? { canActivateChild: [MenuGuard] } : {}),
       children: [
         ...routes.map(r => ({

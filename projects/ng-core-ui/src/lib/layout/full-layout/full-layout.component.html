@@ -1,43 +1,11 @@
 @switch (layoutState()) {
   @case ('ready') {
-    <mat-sidenav-container class="extra-sidenav-container h-screen">
+<mat-sidenav-container class="extra-sidenav-container h-screen">
 
       <mat-sidenav position="end" mode="over" class="extra-sidenav bg-primary text-on-primary"
                    [opened]="extraSidenavOpen()"
                    (closed)="extraSidenavOpen.set(false)">
-        @if (environment()?.logoUrl) {
-          <a href="/" (click)="closeExtraSidenav()" class="flex justify-center my-2 no-underline outline-none" aria-label="Vai alla home">
-            <img class="app-logo-img bg-surface" [ngSrc]="environment()!.logoUrl!" width="96" height="96" alt="Logo" />
-          </a>
-        }
-        <mat-divider class="apps-divider"></mat-divider>
-        <div class="extra-content flex-1 min-h-0 overflow-y-auto overflow-x-hidden flex flex-col">
-          <mat-nav-list>
-            @for (app of apps(); track app.id) {
-              @if (app.id === currentAppId()) {
-                <a mat-list-item class="extra-menu-item text-on-inverse-surface disabled-app" [attr.aria-label]="app.title || app.id">
-                  <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
-                  <span class="app-label">{{ app.title || app.id }}</span>
-                </a>
-              } @else {
-                <a mat-list-item class="extra-menu-item text-on-inverse-surface" [attr.aria-label]="app.title || app.id" [href]="app.path || '#'">
-                  <mat-icon>{{ app.icon || 'apps' }}</mat-icon>
-                  <span class="app-label">{{ app.title || app.id }}</span>
-                </a>
-              }
-            }
-          </mat-nav-list>
-        </div>
-        <mat-divider class="apps-divider"></mat-divider>
-        <mat-nav-list class="extra-footer shrink-0 pt-1 flex justify-center">
-          <a mat-list-item class="extra-menu-item text-on-inverse-surface" [href]="environment()?.logoutPath || '#'" aria-label="Logout">
-            <mat-icon>logout</mat-icon>
-            <span class="app-label">Logout</span>
-          </a>
-        </mat-nav-list>
-        <div class="shrink-0 mt-1 px-4 text-[10px] text-on-primary opacity-80 text-center">
-          Version: {{ appVersion }} - Sha: {{ appSha }}
-        </div>
+        <core-app-switcher (close)="closeExtraSidenav()" />
       </mat-sidenav>
 
       <mat-sidenav-content>

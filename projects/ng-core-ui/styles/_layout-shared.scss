@@ -1,6 +1,6 @@
 @use '@angular/material' as mat;
 
-/* ───────────────── Toolbar (condiviso da main-layout e simple-layout) ───────────────── */
+/* ───────────────── Toolbar (condiviso da full-layout e simple-layout) ───────────────── */
 mat-toolbar.toolbar {
   @include mat.toolbar-overrides((
     container-background-color: var(--mat-sys-primary),

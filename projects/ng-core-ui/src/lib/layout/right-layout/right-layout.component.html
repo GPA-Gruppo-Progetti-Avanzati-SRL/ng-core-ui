@@ -1,0 +1,44 @@
+@switch (layoutState()) {
+  @case ('ready') {
+    <mat-sidenav-container class="extra-sidenav-container h-screen">
+
+      <mat-sidenav position="end" mode="over" class="extra-sidenav bg-primary text-on-primary"
+                   [opened]="extraSidenavOpen()"
+                   (closed)="extraSidenavOpen.set(false)">
+        <core-app-switcher (close)="closeExtraSidenav()" />
+      </mat-sidenav>
+
+      <mat-sidenav-content>
+        <main class="flex flex-col flex-1 overflow-hidden">
+          <mat-toolbar color="primary" class="toolbar">
+            <span class="ml-3 font-semibold text-lg text-on-primary">{{ currentPageTitle() }}</span>
+            <span class="flex-1"></span>
+
+            <span class="mr-2 font-semibold text-lg text-on-primary">{{ whoami()?.user }}</span>
+
+            <a mat-icon-button [href]="environment()?.logoutPath || '#'" aria-label="Logout">
+              <mat-icon>logout</mat-icon>
+            </a>
+            <button mat-icon-button (click)="openExtraSidenav()" aria-label="Apri menu laterale destro">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </mat-toolbar>
+
+          <div class="relative flex-1 overflow-auto">
+            <router-outlet />
+            <core-confirm />
+            <core-alert />
+            <core-toast />
+          </div>
+        </main>
+      </mat-sidenav-content>
+
+    </mat-sidenav-container>
+  }
+  @case ('error') {
+   <page-error/>
+  }
+  @default {
+    <core-loading-overlay />
+  }
+}

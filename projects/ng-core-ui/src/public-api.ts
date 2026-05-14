@@ -12,7 +12,9 @@ export { contextInterceptor } from './lib/system/context-interceptor';
 export * from './lib/pages/not-found.page';
 export * from './lib/pages/forbidden.page';
 //LAYOUT
-export * from './lib/layout/main-layout/main-layout.component';
+export * from './lib/layout/app-switcher/app-switcher.component';
+export * from './lib/layout/full-layout/full-layout.component';
+export * from './lib/layout/right-layout/right-layout.component';
 export * from './lib/layout/simple-layout/simple-layout.component';
 
 // COMPONENTI

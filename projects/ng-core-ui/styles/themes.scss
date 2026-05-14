@@ -2,7 +2,7 @@
 @forward 'gpa-theme';
 @forward 'forest-theme';
 @use 'layout-shared';
-@use 'main-layout';
+@use 'full-layout';
 @use '@angular/material' as mat;
 
 .error-snackbar {
