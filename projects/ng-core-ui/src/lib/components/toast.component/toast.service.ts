@@ -38,6 +38,8 @@ export class ToastService {
   private _push(opts: Omit<ToastMessage, 'id'>): void {
     const id = ++this._counter;
     this.messages.update(list => [...list, { id, ...opts }]);
-    setTimeout(() => this.dismiss(id), opts.duration);
+    if (opts.duration !== -1) {
+      setTimeout(() => this.dismiss(id), opts.duration);
+    }
   }
 }

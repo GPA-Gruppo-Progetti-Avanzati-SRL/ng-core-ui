@@ -7,7 +7,7 @@
     >
       <mat-icon class="shrink-0 !text-[20px] !w-5 !h-5 !leading-none">{{ cfg[msg.type].icon }}</mat-icon>
       @if (msg.isHtml) {
-        <span class="flex-1 text-sm leading-snug" [innerHTML]="safeHtml(msg.message)"></span>
+        <div class="flex-1 text-sm leading-snug" [innerHTML]="safeHtml(msg.message)"></div>
       } @else {
         <span class="flex-1 text-sm leading-snug">{{ msg.message }}</span>
       }
