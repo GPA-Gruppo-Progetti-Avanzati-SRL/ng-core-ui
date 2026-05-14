@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ToastService, ToastType } from './toast.service';
 
 const TOAST_CONFIG: Record<ToastType, { icon: string; bg: string; fg: string }> = {
@@ -19,4 +20,9 @@ const TOAST_CONFIG: Record<ToastType, { icon: string; bg: string; fg: string }> 
 export class ToastComponent {
   protected readonly svc = inject(ToastService);
   protected readonly cfg = TOAST_CONFIG;
+  private readonly sanitizer = inject(DomSanitizer);
+
+  protected safeHtml(message: string) {
+    return this.sanitizer.bypassSecurityTrustHtml(message);
+  }
 }
