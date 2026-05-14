@@ -10,7 +10,7 @@
         {{ title() }}
     </h2>
 
-    <hr class="mt-1 mb-2 border-t border-outline-variant" />
+    <hr class="mt-1 mb-1 border-t border-outline-variant" />
 
 <div class="flex items-center justify-center py-1">
   <mat-icon
@@ -22,7 +22,7 @@
   </mat-icon>
 </div>
 
-<hr class="mt-2 mb-2 border-t border-outline-variant" />
+<hr class="mt-1 mb-2 border-t border-outline-variant" />
 
     <div class="mt-1 flex flex-col">
       <p
@@ -30,7 +30,7 @@
         [matTooltip]="subtitle()"
         [matTooltipDisabled]="isSubtitleTooltipDisabled(subtitleEl)"
         matTooltipPosition="above"
-        class="m-0 min-h-10 line-clamp-2 text-[13px] leading-[1.4] break-words text-on-surface-variant cursor-default">
+        class="m-0 h-[calc(1.4em*3)] line-clamp-3 text-[13px] leading-[1.4] break-words text-on-surface-variant cursor-default">
         {{ subtitle() }}
       </p>
 
