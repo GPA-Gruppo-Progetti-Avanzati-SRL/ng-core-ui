@@ -14,16 +14,18 @@
   <!-- Right: Action Buttons — large screens -->
   @if (actions().length) {
     <div class="hidden sm:flex items-center justify-center shrink-0">
-      @for (action of actions(); track action.icon) {
+      @for (action of actions(); track action.icon; let first = $first) {
         <div class="flex items-center">
-          <div class="w-px h-8 bg-outline-variant mx-1"></div>
+          @if (!first) {
+            <div class="w-px h-8 bg-outline-variant mx-1"></div>
+          }
           <button
             mat-icon-button
-            class="flex flex-col items-center justify-center !w-auto !h-auto !px-3 !py-1 gap-1.5"
+            class="flex flex-col items-center justify-center !w-auto !h-auto !px-3 !py-1 gap-2"
             [attr.aria-label]="action.label"
             (click)="action.onClick()"
           >
-            <mat-icon class="!text-[22px] !w-[22px] !h-[22px] !leading-none" style="color: var(--mat-sys-primary)">
+            <mat-icon class="!text-[26px] !w-[26px] !h-[26px] !leading-none" style="color: var(--mat-sys-primary)">
               {{ action.icon }}
             </mat-icon>
             <span class="text-[11px] leading-none font-medium whitespace-nowrap" style="color: var(--mat-sys-primary)">
@@ -49,4 +51,6 @@
       </mat-menu>
     </div>
   }
+
+  <ng-content></ng-content>
 </div>
