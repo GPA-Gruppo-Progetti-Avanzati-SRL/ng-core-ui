@@ -44,12 +44,29 @@ export const APP_ROUTES: CoreRoute[] = [
 
 ---
 
+## Layout disponibili
+
+| Componente | Layout | Documentazione |
+|-----------|--------|----------------|
+| `FullLayoutComponent` | Sidenav sinistra + toolbar + app-switcher destra | [Layout Full](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Layout-Full) |
+| `RightLayoutComponent` | Toolbar + app-switcher destra (senza sidenav) | [Layout Right](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Layout-Right) |
+| `SimpleLayoutComponent` | Solo toolbar minimale | [Layout Simple](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Layout-Simple) |
+
+Seleziona il layout in `toRoutes()`:
+
+```typescript
+// app.config.ts
+provideRouter(toRoutes(APP_ROUTES))               // default: 'full'
+provideRouter(toRoutes(APP_ROUTES, { layout: 'right' }))
+provideRouter(toRoutes(APP_ROUTES, { layout: 'simple' }))
+```
+
+---
+
 ## Componenti disponibili
 
 | Componente | Selettore | Documentazione |
 |-----------|-----------|----------------|
-| `MainLayoutComponent` | — | [Layout Main](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Layout-Main) |
-| `SimpleLayoutComponent` | — | [Layout Simple](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Layout-Simple) |
 | `CardComponent` | `core-card` | [Card](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Component-Card) |
 | `TopbarComponent` | `core-topbar` | [Topbar](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Component-Topbar) |
 | `PageHeaderComponent` | `core-page-header` | [Page Header](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Component-Page-Header) |
@@ -59,7 +76,7 @@ export const APP_ROUTES: CoreRoute[] = [
 | `ConfirmComponent` | `core-confirm` | [Confirm](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Component-Confirm) |
 | `AlertComponent` | `core-alert` | [Alert](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Component-Alert) |
 
-> `core-toast`, `core-confirm` e `core-alert` sono già inclusi nel `MainLayoutComponent`.
+> `core-toast`, `core-confirm` e `core-alert` sono già inclusi in `FullLayoutComponent` e `RightLayoutComponent`.
 
 ---
 
