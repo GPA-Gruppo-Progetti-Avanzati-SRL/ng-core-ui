@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.0.50] — 2026-05-18
+
+### Nuove funzionalità
+
+- **`DatatableComponent` — input `[data]` signal-based** — nuova sorgente dati reattiva: passare direttamente un `Signal<T[]>` (o qualsiasi `() => T[]`) senza HTTP né loader. Paginazione, ordinamento e refresh sono gestiti automaticamente ogni volta che il signal cambia, senza bisogno di chiamare `refresh()`.
+
+  ```typescript
+  readonly items = signal<User[]>([]);
+
+  // La tabella si aggiorna automaticamente ad ogni items.set(...)
+  ```
+
+  ```html
+  <core-datatable [columns]="columns" [data]="items" />
+  ```
+
+- **`createSignalLoader`** — factory alternativa da usare con `[load]` quando si preferisce il pattern loader tradizionale ma con sorgente dati signal. Supporta le stesse opzioni `filter`/`filterFn` di `createInMemoryLoader`.
+
+  ```typescript
+  readonly loader = createSignalLoader(() => this.items(), {
+    filter: () => this.filterText(),
+  });
+  ```
+
+- **Righe nascoste durante il caricamento** — durante il fetch HTTP (modalità `[load]`) le righe dati e i bottoni azione diventano invisibili (`visibility: hidden`), preservando l'altezza della tabella e lasciando visibile solo lo spinner overlay. Le righe riappaiono al completamento del caricamento.
+
+### Miglioramenti interni
+
+- **`DatatableComponent` completamente signal-based** — rimossi `ngOnInit`, `Subject<void>` e tutte le chiamate imperative `_trigger$.next()`. La pipeline di caricamento HTTP ora usa `toObservable(computed(...))` + `switchMap` nel costruttore. La dimensione pagina è ora un `linkedSignal` da `initialPageSize`. Comportamento esterno invariato.
+
+- **`[load]` ora facoltativo** — era `input.required`, ora `input<DatatableLoader | null>(null)`. I template esistenti con `[load]="..."` continuano a funzionare senza modifiche.
+
+---
+
 ## [0.0.49] — 2026-05-14
 
 ### Breaking Changes

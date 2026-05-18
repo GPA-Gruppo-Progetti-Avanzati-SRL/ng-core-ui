@@ -10,15 +10,13 @@ import { NgComponentOutlet } from '@angular/common';
 import { map } from 'rxjs';
 import { BreakpointObserver, Breakpoints, LayoutModule } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormFieldDef, FormModel, FormShellAction } from './form-field.models';
+import { CoreButtonComponent } from '../button.component/button.component';
 
 @Component({
   selector: 'core-form-shell',
   standalone: true,
-  imports: [NgComponentOutlet, MatButtonModule, MatIconModule, MatTooltipModule, LayoutModule],
+  imports: [NgComponentOutlet, LayoutModule, CoreButtonComponent],
   templateUrl: './form-shell.component.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -92,10 +90,6 @@ protected readonly columnGap = computed(() => {
       .filter(a => a.visible?.() ?? true)
   );
 
-
-  protected variant(a: FormShellAction): 'icon' | 'text' | 'filled' {
-    return a.variant ?? (a.label ? 'text' : 'icon');
-  }
 
   protected isHidden<T>(f: FormFieldDef<T>): boolean {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

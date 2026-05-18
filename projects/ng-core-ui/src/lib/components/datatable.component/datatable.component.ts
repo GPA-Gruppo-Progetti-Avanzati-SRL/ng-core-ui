@@ -2,23 +2,24 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  OnInit,
   Type,
   ViewEncapsulation,
   computed,
+  effect,
   inject,
   input,
+  linkedSignal,
   signal,
 } from '@angular/core';
 import { NgComponentOutlet } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Observable, Subject, catchError, finalize, of, switchMap } from 'rxjs';
+import { EMPTY, Observable, catchError, finalize, of, switchMap } from 'rxjs';
 
 export interface DatatableColumn {
   key: string;
@@ -63,9 +64,11 @@ const ACTIONS_COL = '_actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ui' },
 })
-export class DatatableComponent implements OnInit {
+export class DatatableComponent {
   readonly columns         = input.required<DatatableColumn[]>();
-  readonly load            = input.required<DatatableLoader>();
+  readonly load            = input<DatatableLoader | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  readonly data            = input<(() => any[]) | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly actions         = input<DatatableAction<any>[]>([]);
   readonly pageSizeOptions = input<number[]>([10, 25, 50]);
@@ -74,17 +77,16 @@ export class DatatableComponent implements OnInit {
   readonly rowBackground   = input<(row: any) => string | null>();
 
   private readonly _destroyRef = inject(DestroyRef);
-  private readonly _trigger$   = new Subject<void>();
 
   protected readonly ACTIONS_COL = ACTIONS_COL;
 
-  protected readonly isLoading        = signal(false);
-  protected readonly hasError         = signal(false);
-  protected readonly data             = signal<unknown[]>([]);
-  protected readonly total            = signal(0);
-  protected readonly currentPage      = signal(1);
-  protected readonly pageSize         = signal(10);
-  protected readonly currentSort      = signal<DatatableSort>(null);
+  protected readonly isLoading         = signal(false);
+  protected readonly hasError          = signal(false);
+  protected readonly rows              = signal<unknown[]>([]);
+  protected readonly total             = signal(0);
+  protected readonly currentPage       = signal(1);
+  protected readonly pageSize          = linkedSignal(() => this.initialPageSize());
+  protected readonly currentSort       = signal<DatatableSort>(null);
   protected readonly hasVisibleActions = computed(() =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.actions().some(a => a.visible?.(null as any) ?? true)
@@ -93,24 +95,68 @@ export class DatatableComponent implements OnInit {
     const cols = this.columns().map(c => c.key);
     return this.hasVisibleActions() ? [...cols, ACTIONS_COL] : cols;
   });
-  /** Accessor pre-calcolati per le colonne per evitare split('.') ripetuti */
   private readonly _accessors = computed(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const accs = new Map<string, (row: any) => any>();
     for (const col of this.columns()) {
       const parts = col.key.split('.');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       accs.set(col.key, (row: any) => parts.reduce((obj, k) => (obj != null && typeof obj === 'object' ? obj[k] : undefined), row));
     }
     return accs;
   });
 
-  ngOnInit(): void {
-    this.pageSize.set(this.initialPageSize());
+  // Incrementato da refresh() per forzare un reload senza cambiare page/sort.
+  private readonly _refreshTick = signal(0);
 
-    this._trigger$.pipe(
-      switchMap(() => {
+  constructor() {
+    if (typeof ngDevMode !== 'undefined' && ngDevMode) {
+      effect(() => {
+        if (!this.load() && !this.data()) {
+          console.warn('core-datatable: nessuna sorgente dati — fornire [load] o [data].');
+        }
+      });
+    }
+
+    // Modalità signal: sort + paginazione in-memory, reattiva automaticamente.
+    effect(() => {
+      const dataFn = this.data();
+      if (!dataFn) return;
+
+      let items = dataFn() as unknown[];
+      const sort    = this.currentSort();
+      const page    = this.currentPage();
+      const size    = this.pageSize();
+      this._refreshTick(); // tracked: refresh() forza la riesecuzione
+
+      if (sort) {
+        items = [...items].sort((a, b) => {
+          const cmp = _compareValues(_getNestedValue(a, sort.field), _getNestedValue(b, sort.field));
+          return sort.dir === 'asc' ? cmp : -cmp;
+        });
+      }
+
+      const total = items.length;
+      const start  = (page - 1) * size;
+      this.rows.set(items.slice(start, start + size));
+      this.total.set(total);
+    });
+
+    // Modalità loader: fetch HTTP con switchMap (cancellazione automatica).
+    toObservable(
+      computed(() => ({
+        load: this.load(),
+        page: this.currentPage(),
+        size: this.pageSize(),
+        sort: this.currentSort(),
+        tick: this._refreshTick(),
+      })),
+    ).pipe(
+      switchMap(({ load, page, size, sort }) => {
+        if (!load) return EMPTY;
         this.isLoading.set(true);
         this.hasError.set(false);
-        return this.load()(this.currentPage(), this.pageSize(), this.currentSort()).pipe(
+        return load(page, size, sort).pipe(
           catchError(() => {
             this.hasError.set(true);
             return of({ items: [], total: 0 });
@@ -120,22 +166,19 @@ export class DatatableComponent implements OnInit {
       }),
       takeUntilDestroyed(this._destroyRef),
     ).subscribe(result => {
-      this.data.set(result.items);
+      this.rows.set(result.items);
       this.total.set(result.total);
     });
-
-    this._trigger$.next();
   }
 
   refresh(resetPage = false): void {
     if (resetPage) this.currentPage.set(1);
-    this._trigger$.next();
+    this._refreshTick.update(n => n + 1);
   }
 
   protected onPageChange(event: PageEvent): void {
     this.currentPage.set(event.pageIndex + 1);
     this.pageSize.set(event.pageSize);
-    this._trigger$.next();
   }
 
   protected onSortChange(col: DatatableColumn): void {
@@ -147,7 +190,6 @@ export class DatatableComponent implements OnInit {
       this.currentSort.set({ field: col.key, dir: 'asc' });
     }
     this.currentPage.set(1);
-    this._trigger$.next();
   }
 
   protected getValue(row: unknown, key: string): unknown {
@@ -161,4 +203,19 @@ export class DatatableComponent implements OnInit {
   protected onActionClick(action: DatatableAction, row: unknown): void {
     action.onClick(row);
   }
+}
+
+function _getNestedValue(obj: unknown, key: string): unknown {
+  return key.split('.').reduce(
+    (o: unknown, k) => (o != null && typeof o === 'object' ? (o as Record<string, unknown>)[k] : undefined),
+    obj,
+  );
+}
+
+function _compareValues(a: unknown, b: unknown): number {
+  if (a == null && b == null) return 0;
+  if (a == null) return -1;
+  if (b == null) return 1;
+  if (typeof a === 'number' && typeof b === 'number') return a - b;
+  return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' });
 }

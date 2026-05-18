@@ -16,10 +16,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { LookupResult } from '../form-field.models';
+import { LookupPickerDialogComponent } from './lookup-picker-dialog.component';
 
 export interface LookupDialogConfig {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component:  Type<any>;
+  title?:     string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?:      Record<string, any>;
   width?:     string;
@@ -56,10 +58,10 @@ export class LookupFieldComponent {
     if (this.disabled()) return;
     const cfg = this.dialogConfig();
     this._dialog
-      .open(cfg.component, {
+      .open(LookupPickerDialogComponent, {
         width:    cfg.width    ?? '600px',
         maxWidth: cfg.maxWidth ?? '95vw',
-        data:     cfg.data,
+        data:     cfg,
       })
       .afterClosed()
       .pipe(takeUntilDestroyed(this._destroyRef))

@@ -18,6 +18,7 @@ export * from './lib/layout/right-layout/right-layout.component';
 export * from './lib/layout/simple-layout/simple-layout.component';
 
 // COMPONENTI
+export * from './lib/components/button.component/button.component';
 export * from './lib/components/card.component/card.component';
 export * from './lib/components/topbar.component/topbar.component';
 export * from './lib/components/page-header.component/page-header.component';
@@ -37,6 +38,7 @@ export * from './lib/components/form-shell.component/fields/textarea-field.compo
 export * from './lib/components/form-shell.component/fields/combobox-field.component';
 export * from './lib/components/form-shell.component/fields/datepicker-field.component';
 export * from './lib/components/form-shell.component/fields/lookup-field.component';
+export * from './lib/components/form-shell.component/fields/lookup-picker-dialog.component';
 export * from './lib/components/form-shell.component/fields/radio-button-list-field.component';
 export * from './lib/components/form-shell.component/fields/checkbox-list-field.component';
 export * from './lib/components/form-shell.component/fields/file-input-field.component';

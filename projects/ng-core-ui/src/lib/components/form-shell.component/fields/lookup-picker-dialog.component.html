@@ -1,0 +1,12 @@
+<div class="flex items-center justify-between px-6 pt-4 pb-2">
+  <span class="text-title-large text-on-surface">{{ pickerData.title ?? 'Seleziona' }}</span>
+  <button mat-icon-button (click)="close()" matTooltip="Chiudi">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content class="!pt-2">
+  <ng-container
+    [ngComponentOutlet]="pickerData.component"
+    [ngComponentOutletInjector]="contentInjector"
+  />
+</mat-dialog-content>

@@ -14,7 +14,7 @@
       </div>
     }
 
-    <table mat-table [dataSource]="data()" class="w-full" [class.hidden]="hasError()">
+    <table mat-table [dataSource]="rows()" class="w-full" [class.hidden]="hasError()">
 
       @for (col of columns(); track col.key) {
         <ng-container [matColumnDef]="col.key">
@@ -107,6 +107,7 @@
         mat-row
         *matRowDef="let row; columns: displayedColumns()"
         class="transition-colors hover:bg-black/[0.02]"
+        [class.invisible]="isLoading()"
         [style.background-color]="rowBackground()?.(row) ?? null"
       ></tr>
     </table>

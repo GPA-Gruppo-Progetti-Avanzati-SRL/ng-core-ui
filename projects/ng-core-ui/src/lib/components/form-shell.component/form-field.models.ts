@@ -69,8 +69,8 @@ export class FormModel<T = any> {
  * Bottoni della shell.
  * - `variant`  — 'icon' (solo icona, default se manca label) | 'text' | 'filled'
  * - `position` — 'inline' (stessa riga, default) | 'footer' (riga dedicata sotto)
- * - `visible`  — funzione (anche signal-based) che controlla la visibilità; default `true`
- * - `disabled` — funzione (anche signal-based) che controlla lo stato disabilitato; defnoault `false`
+ * - `visible`  — funzione che controlla la visibilità; default `true`
+ * - `disabled` — funzione che controlla lo stato disabilitato; default `false`
  */
 export interface FormShellAction {
   icon?:      string;

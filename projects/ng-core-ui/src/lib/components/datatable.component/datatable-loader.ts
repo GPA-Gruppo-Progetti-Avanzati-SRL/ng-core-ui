@@ -170,6 +170,81 @@ export function createInMemoryLoader<T>(
 
 // ---------------------------------------------------------------------------
 
+export interface SignalLoaderOptions<T> {
+  /**
+   * Segnale (o funzione) che restituisce il testo di ricerca corrente.
+   * Rievalutato ad ogni chiamata del loader.
+   */
+  filter?: () => string;
+
+  /**
+   * Predicato di filtro custom.
+   * Se omesso ma `filter` è fornito, viene applicata una ricerca case-insensitive
+   * su tutti i campi stringa del record.
+   */
+  filterFn?: (row: T, filterText: string) => boolean;
+}
+
+/**
+ * Crea un DatatableLoader che legge i dati direttamente da un signal (o qualsiasi
+ * funzione `() => T[]`) e gestisce paginazione, ordinamento e filtro lato client.
+ *
+ * Ogni chiamata al loader rilegge il signal, quindi basta chiamare
+ * `datatable.refresh()` per riflettere i cambiamenti nel signal.
+ *
+ * @param data   Signal Angular o funzione che restituisce l'array corrente.
+ * @param options  Filtro testuale opzionale (stesso schema di createInMemoryLoader).
+ *
+ * @example
+ *   readonly items = signal<Person[]>([]);
+ *   readonly loader = createSignalLoader(() => this.items());
+ *
+ *   // Con filtro:
+ *   readonly filterText = signal('');
+ *   readonly loader = createSignalLoader(() => this.items(), {
+ *     filter: () => this.filterText(),
+ *   });
+ */
+export function createSignalLoader<T>(
+  data: () => T[],
+  options?: SignalLoaderOptions<T>,
+): DatatableLoader<T> {
+  const defaultFilterFn = (row: T, text: string): boolean => {
+    const lower = text.toLowerCase();
+    return Object.values(row as object).some(
+      v => v != null && String(v).toLowerCase().includes(lower),
+    );
+  };
+
+  return (page: number, pageSize: number, sort?: DatatableSort): Observable<DatatableResult<T>> => {
+    let items = data();
+
+    // --- filtro ---
+    const filterText = options?.filter?.() ?? '';
+    if (filterText) {
+      const fn = options?.filterFn ?? defaultFilterFn;
+      items = items.filter(row => fn(row, filterText));
+    }
+
+    // --- sort ---
+    if (sort) {
+      items = [...items].sort((a, b) => {
+        const av = getNestedValue(a, sort.field);
+        const bv = getNestedValue(b, sort.field);
+        const cmp = compareValues(av, bv);
+        return sort.dir === 'asc' ? cmp : -cmp;
+      });
+    }
+
+    // --- paginazione ---
+    const total = items.length;
+    const start = (page - 1) * pageSize;
+    return of({ items: items.slice(start, start + pageSize), total });
+  };
+}
+
+// ---------------------------------------------------------------------------
+
 function getNestedValue(obj: unknown, key: string): unknown {
   return key.split('.').reduce(
     (o: unknown, k) => (o != null && typeof o === 'object' ? (o as Record<string, unknown>)[k] : undefined),

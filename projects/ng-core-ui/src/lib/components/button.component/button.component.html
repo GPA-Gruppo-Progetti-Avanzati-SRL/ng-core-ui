@@ -1,0 +1,17 @@
+@switch (effectiveVariant()) {
+  @case ('icon') {
+    <button mat-icon-button type="button" [matTooltip]="tooltip()" [disabled]="disabled()">
+      <mat-icon>{{ icon() }}</mat-icon>
+    </button>
+  }
+  @case ('filled') {
+    <button mat-flat-button type="button" [matTooltip]="tooltip()" [disabled]="disabled()">
+      @if (icon()) { <mat-icon>{{ icon() }}</mat-icon> }{{ label() }}
+    </button>
+  }
+  @default {
+    <button mat-button type="button" [matTooltip]="tooltip()" [disabled]="disabled()">
+      @if (icon()) { <mat-icon>{{ icon() }}</mat-icon> }{{ label() }}
+    </button>
+  }
+}
