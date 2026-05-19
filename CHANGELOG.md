@@ -2,26 +2,32 @@
 
 ## [Unreleased]
 
+---
+
+## [0.0.50] — 2026-05-19
+
 ### Nuove funzionalità
 
-- **`CoreButtonComponent` — input `color`** — nuova property `color: ButtonColor` per colorare il pulsante. Valori: `'primary' | 'secondary' | 'tertiary' | 'success' | 'info' | 'warn' | 'error'`. Default: `'tertiary'`. Colori Material (`primary`/`secondary`/`tertiary`/`error`) usano i token del color bridge (`bg-{color}`, `text-on-{color}`); colori semantici usano classi Tailwind fisse (`green-600`, `sky-600`, `amber-500`). Il `variant` default è `'filled'`.
+- **`DatatableComponent` — input `[data]` signal-based** — nuova sorgente dati reattiva: passare direttamente un `Signal<T[]>` (o qualsiasi `() => T[]`) senza HTTP né loader. Paginazione, ordinamento e refresh sono gestiti automaticamente ogni volta che il signal cambia, senza bisogno di chiamare `refresh()`.
 
-  ```html
-  <core-button icon="save" label="Salva" />                        <!-- tertiary filled (default) -->
-  <core-button icon="delete" label="Elimina" color="error" />
-  <core-button icon="info" variant="icon" color="info" />
-  <core-button label="Annulla" variant="text" color="secondary" />
+  ```typescript
+  readonly items = signal<User[]>([]);
+  // La tabella si aggiorna automaticamente ad ogni items.set(...)
   ```
 
-  Tipo `ButtonColor` esportato da `public-api`.
+  ```html
+  <core-datatable [columns]="columns" [data]="items" />
+  ```
 
-- **KV Picker — ordinamento automatico per `order`** — i picker URL-based (`KvSinglePickerComponent`, `KvMultiPickerComponent`) ordinano i record per il campo `KVProperty.order` (ascending) di default. Il click su una colonna sovrascrive il default. Nessuna modifica alle app consumatrici.
+- **`createSignalLoader`** — factory alternativa da usare con `[load]` quando si preferisce il pattern loader tradizionale ma con sorgente dati signal. Supporta le stesse opzioni `filter`/`filterFn` di `createInMemoryLoader`.
 
-### Bug fix
+  ```typescript
+  readonly loader = createSignalLoader(() => this.items(), {
+    filter: () => this.filterText(),
+  });
+  ```
 
-- **DatePicker — formato data italiano** — `provideGPAUICore()` ora include `{ provide: MAT_DATE_LOCALE, useValue: 'it' }` e `provideNativeDateAdapter()`. Il campo `core-datepicker-field` visualizza correttamente `gg/mm/aaaa` senza configurazione aggiuntiva. `DatepickerFieldComponent` non importa più `MatNativeDateModule` (eredita l'adapter dal root injector). L'effect `DateAdapter.setLocale()` in `SystemService` è ora funzionale.
-
-
+- **Righe nascoste durante il caricamento** — durante il fetch HTTP (modalità `[load]`) le righe dati e i bottoni azione diventano invisibili (`visibility: hidden`), preservando l'altezza della tabella e lasciando visibile solo lo spinner overlay.
 
 - **KV Picker — 4 componenti + 4 factory function** — picker generici per `KVOption`, in due varianti:
 
@@ -47,64 +53,47 @@
   Terzo parametro opzionale `{ width?, maxWidth? }` per dimensionare il dialog.
 
 - **`Environment.language`** — nuova property opzionale (`"it"`, `"en"`, ecc.) in `environment.json`. Guida automaticamente:
-  - **Angular Material DatePicker** — il `DateAdapter` viene aggiornato via effect non appena l'environment si carica (formato date: gg/mm/aaaa in italiano)
+  - **Angular Material DatePicker** — il `DateAdapter` viene aggiornato via effect non appena l'environment si carica
   - **MatPaginator labels** — testi italiani di default (`Righe per pagina:`, `Prima pagina`, `Pagina successiva`, …, `X – Y di Z`). Fornito tramite `GpaPaginatorIntl` registrato in `provideGPAUICore()`.
 
-  Nessuna modifica richiesta nelle app consumatrici esistenti (backward compatible). Basta aggiungere `"language": "it"` all'`environment.json`.
+  Backward compatible — basta aggiungere `"language": "it"` all'`environment.json`.
 
 - **`DatatableComponent` — row selection** — nuova feature per selezionare righe tramite `selectionMode` input. Tre modalità:
   - `'none'` (default) — comportamento invariato, zero breaking changes
   - `'single'` — radio button a sinistra, click per selezionare/deselezionare
   - `'multi'` — checkbox per riga + "select all" nell'header (agisce sulla pagina corrente), selezione persiste cross-page
 
-  Nuova API pubblica:
-  - `selectionMode = input<DatatableSelectionMode>('none')`
-  - `selectionChange = output<unknown[]>()` — emette ad ogni cambio
-  - `selectedRows: Signal<unknown[]>` — signal readonly accessibile via `@ViewChild`
-  - `clearSelection()` — resetta la selezione (utile dopo azioni bulk)
+  Nuova API pubblica: `selectionMode`, `selectionChange`, `selectedRows`, `clearSelection()`.
 
   ```html
-  <core-datatable
-    [columns]="columns"
-    [load]="loader"
-    selectionMode="multi"
-    (selectionChange)="selected = $event"
-    #dt
-  />
+  <core-datatable [columns]="columns" [load]="loader" selectionMode="multi"
+    (selectionChange)="selected = $event" #dt />
   <button (click)="dt.clearSelection()">Deseleziona tutto</button>
   ```
 
-## [0.0.50] — 2026-05-18
-
-### Nuove funzionalità
-
-- **`DatatableComponent` — input `[data]` signal-based** — nuova sorgente dati reattiva: passare direttamente un `Signal<T[]>` (o qualsiasi `() => T[]`) senza HTTP né loader. Paginazione, ordinamento e refresh sono gestiti automaticamente ogni volta che il signal cambia, senza bisogno di chiamare `refresh()`.
-
-  ```typescript
-  readonly items = signal<User[]>([]);
-
-  // La tabella si aggiorna automaticamente ad ogni items.set(...)
-  ```
+- **`CoreButtonComponent` — input `color`** — nuova property `color: ButtonColor` per colorare il pulsante. Valori: `'primary' | 'secondary' | 'tertiary' | 'success' | 'info' | 'warn' | 'error'`. Default: `'tertiary'`. Colori Material usano i token del color bridge; colori semantici usano classi Tailwind fisse (`green-600`, `sky-600`, `amber-500`). Tipo `ButtonColor` esportato da `public-api`.
 
   ```html
-  <core-datatable [columns]="columns" [data]="items" />
+  <core-button icon="save" label="Salva" />                    <!-- tertiary filled (default) -->
+  <core-button icon="delete" label="Elimina" color="error" />
+  <core-button icon="add" variant="icon" color="primary" />
+  <core-button label="Annulla" variant="text" color="secondary" />
   ```
 
-- **`createSignalLoader`** — factory alternativa da usare con `[load]` quando si preferisce il pattern loader tradizionale ma con sorgente dati signal. Supporta le stesse opzioni `filter`/`filterFn` di `createInMemoryLoader`.
+- **KV Picker — ordinamento automatico per `order`** — i picker URL-based ordinano i record per `KVProperty.order` (ascending) di default. Il click su un header colonna sovrascrive il default. Nessuna modifica alle app consumatrici.
 
-  ```typescript
-  readonly loader = createSignalLoader(() => this.items(), {
-    filter: () => this.filterText(),
-  });
-  ```
+### Bug fix
 
-- **Righe nascoste durante il caricamento** — durante il fetch HTTP (modalità `[load]`) le righe dati e i bottoni azione diventano invisibili (`visibility: hidden`), preservando l'altezza della tabella e lasciando visibile solo lo spinner overlay. Le righe riappaiono al completamento del caricamento.
+- **DatePicker — formato data italiano** — `provideGPAUICore()` ora include `{ provide: MAT_DATE_LOCALE, useValue: 'it' }` e `provideNativeDateAdapter()`. Il campo `core-datepicker-field` visualizza correttamente `gg/mm/aaaa` senza configurazione aggiuntiva. `DatepickerFieldComponent` non importa più `MatNativeDateModule` (eredita l'adapter dal root). L'effect `DateAdapter.setLocale()` in `SystemService` è ora funzionale.
 
-### Miglioramenti interni
+### Miglioramenti
 
-- **`DatatableComponent` completamente signal-based** — rimossi `ngOnInit`, `Subject<void>` e tutte le chiamate imperative `_trigger$.next()`. La pipeline di caricamento HTTP ora usa `toObservable(computed(...))` + `switchMap` nel costruttore. La dimensione pagina è ora un `linkedSignal` da `initialPageSize`. Comportamento esterno invariato.
+- **`DatatableComponent` completamente signal-based** — rimossi `ngOnInit`, `Subject<void>` e chiamate imperative `_trigger$.next()`. Pipeline HTTP via `toObservable(computed(...))` + `switchMap`. `[load]` ora facoltativo (era `input.required`). Comportamento esterno invariato.
 
-- **`[load]` ora facoltativo** — era `input.required`, ora `input<DatatableLoader | null>(null)`. I template esistenti con `[load]="..."` continuano a funzionare senza modifiche.
+- **`CoreButtonComponent` — refactoring stile e comportamento**:
+  - `variant` default `'filled'`; `effectiveVariant` rimosso (ridondante)
+  - Variante `icon` usa `matIconButton` + override Tailwind per stile filled — icona centrata correttamente
+  - `FormShellComponent` passa `a.variant ?? 'filled'` per evitare che `undefined` bypassi il default del signal input
 
 ---
 
