@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  Signal,
   Type,
   ViewEncapsulation,
   computed,
@@ -9,6 +10,7 @@ import {
   inject,
   input,
   linkedSignal,
+  output,
   signal,
 } from '@angular/core';
 import { NgComponentOutlet } from '@angular/common';
@@ -18,6 +20,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { EMPTY, Observable, catchError, finalize, of, switchMap } from 'rxjs';
 
@@ -48,6 +51,8 @@ export interface DatatableResult<T = unknown> {
 
 export type DatatableSort = { field: string; dir: 'asc' | 'desc' } | null;
 
+export type DatatableSelectionMode = 'none' | 'single' | 'multi';
+
 export type DatatableLoader<T = unknown> = (
   page: number,
   pageSize: number,
@@ -55,10 +60,11 @@ export type DatatableLoader<T = unknown> = (
 ) => Observable<DatatableResult<T>>;
 
 const ACTIONS_COL = '_actions';
+const SELECTION_COL = '_selection';
 
 @Component({
   selector: 'core-datatable',
-  imports: [NgComponentOutlet, MatTableModule, MatPaginatorModule, MatProgressSpinnerModule, MatIconModule, MatIconButton, MatTooltipModule],
+  imports: [NgComponentOutlet, MatTableModule, MatPaginatorModule, MatProgressSpinnerModule, MatIconModule, MatIconButton, MatTooltipModule, MatCheckbox],
   templateUrl: './datatable.component.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -75,10 +81,18 @@ export class DatatableComponent {
   readonly initialPageSize = input<number>(10);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly rowBackground   = input<(row: any) => string | null>();
+  readonly selectionMode   = input<DatatableSelectionMode>('none');
+
+  readonly selectionChange = output<unknown[]>();
 
   private readonly _destroyRef = inject(DestroyRef);
 
   protected readonly ACTIONS_COL = ACTIONS_COL;
+  protected readonly SELECTION_COL = SELECTION_COL;
+  protected readonly radioGroupName = `dt-sel-${Math.random().toString(36).slice(2)}`;
+
+  private readonly _selectedRows = signal<unknown[]>([]);
+  readonly selectedRows: Signal<unknown[]> = this._selectedRows.asReadonly();
 
   protected readonly isLoading         = signal(false);
   protected readonly hasError          = signal(false);
@@ -93,7 +107,8 @@ export class DatatableComponent {
   );
   protected readonly displayedColumns = computed(() => {
     const cols = this.columns().map(c => c.key);
-    return this.hasVisibleActions() ? [...cols, ACTIONS_COL] : cols;
+    const withSel = this.selectionMode() !== 'none' ? [SELECTION_COL, ...cols] : cols;
+    return this.hasVisibleActions() ? [...withSel, ACTIONS_COL] : withSel;
   });
   private readonly _accessors = computed(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -202,6 +217,52 @@ export class DatatableComponent {
 
   protected onActionClick(action: DatatableAction, row: unknown): void {
     action.onClick(row);
+  }
+
+  protected isSelected(row: unknown): boolean {
+    return this._selectedRows().includes(row);
+  }
+
+  protected allPageSelected(): boolean {
+    const rows = this.rows();
+    return rows.length > 0 && rows.every(r => this._selectedRows().includes(r));
+  }
+
+  protected somePageSelected(): boolean {
+    const rows = this.rows();
+    return rows.some(r => this._selectedRows().includes(r)) && !this.allPageSelected();
+  }
+
+  protected toggleRow(row: unknown): void {
+    const mode = this.selectionMode();
+    if (mode === 'none') return;
+    const current = this._selectedRows();
+    let next: unknown[];
+    if (mode === 'single') {
+      next = current.includes(row) ? [] : [row];
+    } else {
+      next = current.includes(row)
+        ? current.filter(r => r !== row)
+        : [...current, row];
+    }
+    this._selectedRows.set(next);
+    this.selectionChange.emit(next);
+  }
+
+  protected toggleAllPage(): void {
+    const rows = this.rows();
+    const current = this._selectedRows();
+    const allSelected = rows.every(r => current.includes(r));
+    const next = allSelected
+      ? current.filter(r => !rows.includes(r))
+      : [...current.filter(r => !rows.includes(r)), ...rows];
+    this._selectedRows.set(next);
+    this.selectionChange.emit(next);
+  }
+
+  clearSelection(): void {
+    this._selectedRows.set([]);
+    this.selectionChange.emit([]);
   }
 }
 

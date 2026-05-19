@@ -16,6 +16,44 @@
 
     <table mat-table [dataSource]="rows()" class="w-full" [class.hidden]="hasError()">
 
+      @if (selectionMode() !== 'none') {
+        <ng-container [matColumnDef]="SELECTION_COL">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="h-12 w-10 px-2 bg-white border-b border-outline-variant/60"
+          >
+            @if (selectionMode() === 'multi') {
+              <mat-checkbox
+                [checked]="allPageSelected()"
+                [indeterminate]="somePageSelected()"
+                (change)="toggleAllPage()"
+              />
+            }
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let row"
+            class="h-14 w-10 px-2 bg-white border-b border-outline-variant/30"
+          >
+            @if (selectionMode() === 'single') {
+              <input
+                type="radio"
+                [name]="radioGroupName"
+                [checked]="isSelected(row)"
+                (click)="$event.stopPropagation(); toggleRow(row)"
+                class="accent-primary cursor-pointer"
+              >
+            } @else {
+              <mat-checkbox
+                [checked]="isSelected(row)"
+                (change)="toggleRow(row)"
+              />
+            }
+          </td>
+        </ng-container>
+      }
+
       @for (col of columns(); track col.key) {
         <ng-container [matColumnDef]="col.key">
           <th
@@ -108,6 +146,7 @@
         *matRowDef="let row; columns: displayedColumns()"
         class="transition-colors hover:bg-black/[0.02]"
         [class.invisible]="isLoading()"
+        [class.bg-primary/5]="isSelected(row)"
         [style.background-color]="rowBackground()?.(row) ?? null"
       ></tr>
     </table>

@@ -1,5 +1,31 @@
 # Changelog
 
+## [Unreleased]
+
+### Nuove funzionalità
+
+- **`DatatableComponent` — row selection** — nuova feature per selezionare righe tramite `selectionMode` input. Tre modalità:
+  - `'none'` (default) — comportamento invariato, zero breaking changes
+  - `'single'` — radio button a sinistra, click per selezionare/deselezionare
+  - `'multi'` — checkbox per riga + "select all" nell'header (agisce sulla pagina corrente), selezione persiste cross-page
+
+  Nuova API pubblica:
+  - `selectionMode = input<DatatableSelectionMode>('none')`
+  - `selectionChange = output<unknown[]>()` — emette ad ogni cambio
+  - `selectedRows: Signal<unknown[]>` — signal readonly accessibile via `@ViewChild`
+  - `clearSelection()` — resetta la selezione (utile dopo azioni bulk)
+
+  ```html
+  <core-datatable
+    [columns]="columns"
+    [load]="loader"
+    selectionMode="multi"
+    (selectionChange)="selected = $event"
+    #dt
+  />
+  <button (click)="dt.clearSelection()">Deseleziona tutto</button>
+  ```
+
 ## [0.0.50] — 2026-05-18
 
 ### Nuove funzionalità
