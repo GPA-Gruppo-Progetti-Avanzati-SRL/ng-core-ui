@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   ViewEncapsulation,
-  computed,
   input,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,8 +21,4 @@ export class CoreButtonComponent {
   readonly tooltip  = input<string>('');
   readonly variant  = input<'icon' | 'text' | 'filled'>('filled');
   readonly disabled = input<boolean>(false);
-
-  protected readonly effectiveVariant = computed<'icon' | 'text' | 'filled'>(() =>
-    this.variant() ?? (this.label() ? 'text' : 'icon')
-  );
 }
