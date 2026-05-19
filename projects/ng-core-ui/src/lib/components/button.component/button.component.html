@@ -1,6 +1,6 @@
 @switch (variant()) {
   @case ('icon') {
-    <button matButton="filled" [disabled]="disabled()" [matTooltip]="tooltip()" class="!rounded-lg !px-0 !min-w-0 !w-10 !h-10">
+    <button matIconButton [disabled]="disabled()" [matTooltip]="tooltip()" class="!bg-primary !text-on-primary !rounded-lg">
       @if (icon()) {
         <mat-icon>{{ icon() }}</mat-icon>
       }
