@@ -20,7 +20,7 @@ export class CoreButtonComponent {
   readonly icon     = input<string>();
   readonly label    = input<string>();
   readonly tooltip  = input<string>('');
-  readonly variant  = input<'icon' | 'text' | 'filled'>();
+  readonly variant  = input<'icon' | 'text' | 'filled'>('filled');
   readonly disabled = input<boolean>(false);
 
   protected readonly effectiveVariant = computed<'icon' | 'text' | 'filled'>(() =>
