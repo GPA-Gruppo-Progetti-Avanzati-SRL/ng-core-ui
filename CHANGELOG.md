@@ -4,6 +4,25 @@
 
 ### Nuove funzionalità
 
+- **`CoreButtonComponent` — input `color`** — nuova property `color: ButtonColor` per colorare il pulsante. Valori: `'primary' | 'secondary' | 'tertiary' | 'success' | 'info' | 'warn' | 'error'`. Default: `'tertiary'`. Colori Material (`primary`/`secondary`/`tertiary`/`error`) usano i token del color bridge (`bg-{color}`, `text-on-{color}`); colori semantici usano classi Tailwind fisse (`green-600`, `sky-600`, `amber-500`). Il `variant` default è `'filled'`.
+
+  ```html
+  <core-button icon="save" label="Salva" />                        <!-- tertiary filled (default) -->
+  <core-button icon="delete" label="Elimina" color="error" />
+  <core-button icon="info" variant="icon" color="info" />
+  <core-button label="Annulla" variant="text" color="secondary" />
+  ```
+
+  Tipo `ButtonColor` esportato da `public-api`.
+
+- **KV Picker — ordinamento automatico per `order`** — i picker URL-based (`KvSinglePickerComponent`, `KvMultiPickerComponent`) ordinano i record per il campo `KVProperty.order` (ascending) di default. Il click su una colonna sovrascrive il default. Nessuna modifica alle app consumatrici.
+
+### Bug fix
+
+- **DatePicker — formato data italiano** — `provideGPAUICore()` ora include `{ provide: MAT_DATE_LOCALE, useValue: 'it' }` e `provideNativeDateAdapter()`. Il campo `core-datepicker-field` visualizza correttamente `gg/mm/aaaa` senza configurazione aggiuntiva. `DatepickerFieldComponent` non importa più `MatNativeDateModule` (eredita l'adapter dal root injector). L'effect `DateAdapter.setLocale()` in `SystemService` è ora funzionale.
+
+
+
 - **KV Picker — 4 componenti + 4 factory function** — picker generici per `KVOption`, in due varianti:
 
   **URL-based** (caricano via `GET /api/{coreContext}/properties/{lookupName}`, `createInMemoryLoader`, filtro con `refresh`):
