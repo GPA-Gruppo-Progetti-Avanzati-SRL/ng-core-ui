@@ -25,7 +25,7 @@
           [icon]="a.icon"
           [label]="a.label"
           [tooltip]="a.tooltip ?? ''"
-          [variant]="a.variant"
+          [variant]="a.variant ?? 'filled'"
           [disabled]="a.disabled?.() ?? false"
           (click)="a.onClick()"
         />
@@ -41,7 +41,7 @@
         [icon]="a.icon"
         [label]="a.label"
         [tooltip]="a.tooltip ?? ''"
-        [variant]="a.variant"
+        [variant]="a.variant ?? 'filled'"
         [disabled]="a.disabled?.() ?? false"
         (click)="a.onClick()"
       />
