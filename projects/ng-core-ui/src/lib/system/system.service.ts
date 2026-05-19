@@ -1,6 +1,7 @@
 import { Injectable, computed, inject, signal, effect, isDevMode, Signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Title } from '@angular/platform-browser';
+import { DateAdapter } from '@angular/material/core';
 import { App, Context, PathNode, TokenResponse } from './system.models';
 import { CoreAction } from './routes';
 import { Environment } from './environment';
@@ -16,6 +17,8 @@ export class SystemService {
   private readonly environmentUrl   = inject(LIB_ENVIRONMENT_URL);
   private readonly styleManager     = inject(StyleManagerService);
   private readonly titleService     = inject(Title);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private readonly _dateAdapter     = inject<DateAdapter<unknown>>(DateAdapter as any, { optional: true });
 
   readonly whoami        = signal<{ user: string; roles: string[] | null; capabilities: string[] | null } | null>(null);
   readonly paths         = signal<PathNode[] | null>(null);
@@ -67,6 +70,12 @@ export class SystemService {
           break;
         }
       }
+    });
+
+    effect(() => {
+      const lang = this.environment()?.language ?? 'it';
+      this._dateAdapter?.setLocale(lang);
+      if (isDevMode()) console.log('[SystemService] locale →', lang);
     });
 
     // Differito a dopo la risoluzione del grafo DI (evita ciclo SystemService → HttpClient → contextInterceptor → SystemService)

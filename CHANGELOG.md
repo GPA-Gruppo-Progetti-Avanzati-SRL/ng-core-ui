@@ -4,6 +4,12 @@
 
 ### Nuove funzionalità
 
+- **`Environment.language`** — nuova property opzionale (`"it"`, `"en"`, ecc.) in `environment.json`. Guida automaticamente:
+  - **Angular Material DatePicker** — il `DateAdapter` viene aggiornato via effect non appena l'environment si carica (formato date: gg/mm/aaaa in italiano)
+  - **MatPaginator labels** — testi italiani di default (`Righe per pagina:`, `Prima pagina`, `Pagina successiva`, …, `X – Y di Z`). Fornito tramite `GpaPaginatorIntl` registrato in `provideGPAUICore()`.
+
+  Nessuna modifica richiesta nelle app consumatrici esistenti (backward compatible). Basta aggiungere `"language": "it"` all'`environment.json`.
+
 - **`DatatableComponent` — row selection** — nuova feature per selezionare righe tramite `selectionMode` input. Tre modalità:
   - `'none'` (default) — comportamento invariato, zero breaking changes
   - `'single'` — radio button a sinistra, click per selezionare/deselezionare

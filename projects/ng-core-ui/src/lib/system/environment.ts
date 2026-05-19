@@ -6,5 +6,6 @@ export interface Environment {
   logoutPath: string;
   logoUrl?: string;
   encryptToken?: boolean;
+  language?: string;
   properties?: Record<string, unknown>;
 }
