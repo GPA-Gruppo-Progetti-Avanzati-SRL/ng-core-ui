@@ -1,0 +1,33 @@
+<div class="px-6 pt-4 pb-2">
+  <mat-form-field class="w-full" subscriptSizing="dynamic">
+    <mat-label>Cerca</mat-label>
+    <input matInput [value]="filterText()"
+      (input)="onFilter($any($event.target).value)"
+      autocomplete="off" />
+  </mat-form-field>
+</div>
+
+<div class="px-6 py-2">
+  <core-datatable
+    #table
+    [columns]="columns()"
+    [load]="loader"
+    selectionMode="multi"
+    (selectionChange)="selectedItems.set($event)"
+    [pageSizeOptions]="[]"
+    [initialPageSize]="5"
+  />
+</div>
+
+<div class="flex justify-end gap-2 px-6 pb-4">
+  <core-button
+    variant="filled"
+    [label]="data.cancelLabel ?? 'Annulla'"
+    (click)="cancel()"
+  />
+  <core-button
+    variant="filled"
+    [label]="data.confirmLabel ?? 'Conferma'"
+    (click)="confirm()"
+  />
+</div>

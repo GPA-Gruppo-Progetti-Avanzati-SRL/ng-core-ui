@@ -4,6 +4,29 @@
 
 ### Nuove funzionalità
 
+- **KV Picker — 4 componenti + 4 factory function** — picker generici per `KVOption`, in due varianti:
+
+  **URL-based** (caricano via `GET /api/{coreContext}/properties/{lookupName}`, `createInMemoryLoader`, filtro con `refresh`):
+  - `KvSinglePickerComponent` — selezione singola, chiude al click riga
+  - `KvMultiPickerComponent` — selezione multipla, bottoni Annulla/Conferma
+
+  **Signal-based** (dati come `Signal<KVOption[]>`, filtro reattivo via `computed`):
+  - `KvSignalSinglePickerComponent` — selezione singola
+  - `KvSignalMultiPickerComponent` — selezione multipla
+
+  Tutti includono un campo filtro testo (ricerca "contiene" case-insensitive su `value` e `label`).
+
+  **Factory function** per costruire `LookupDialogConfig` senza `satisfies`:
+
+  ```typescript
+  readonly tipoConfig      = kvSinglePicker({ lookupName: 'tipo-contratto' }, 'Seleziona tipo');
+  readonly categorieConfig = kvMultiPicker({ lookupName: 'categoria', confirmLabel: 'Applica' }, 'Categorie');
+  readonly statiConfig     = kvSignalSinglePicker({ options: this.stati }, 'Seleziona stato');
+  readonly coloriConfig    = kvSignalMultiPicker({ options: signal(COLORI) }, 'Colori');
+  ```
+
+  Terzo parametro opzionale `{ width?, maxWidth? }` per dimensionare il dialog.
+
 - **`Environment.language`** — nuova property opzionale (`"it"`, `"en"`, ecc.) in `environment.json`. Guida automaticamente:
   - **Angular Material DatePicker** — il `DateAdapter` viene aggiornato via effect non appena l'environment si carica (formato date: gg/mm/aaaa in italiano)
   - **MatPaginator labels** — testi italiani di default (`Righe per pagina:`, `Prima pagina`, `Pagina successiva`, …, `X – Y di Z`). Fornito tramite `GpaPaginatorIntl` registrato in `provideGPAUICore()`.

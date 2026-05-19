@@ -2,13 +2,12 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation, input } from '@a
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
-import { MatNativeDateModule } from '@angular/material/core';
 import { FormField, FieldTree } from '@angular/forms/signals';
 
 
 @Component({
   selector: 'core-datepicker-field',
-  imports: [MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule, FormField],
+  imports: [MatFormFieldModule, MatInputModule, MatDatepickerModule, FormField],
   templateUrl: './datepicker-field.component.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,

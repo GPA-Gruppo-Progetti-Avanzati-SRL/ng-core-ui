@@ -42,6 +42,11 @@ export * from './lib/components/form-shell.component/fields/lookup-picker-dialog
 export * from './lib/components/form-shell.component/fields/radio-button-list-field.component';
 export * from './lib/components/form-shell.component/fields/checkbox-list-field.component';
 export * from './lib/components/form-shell.component/fields/file-input-field.component';
+export * from './lib/components/kv-picker.component/kv-picker.models';
+export * from './lib/components/kv-picker.component/kv-single-picker.component';
+export * from './lib/components/kv-picker.component/kv-multi-picker.component';
+export * from './lib/components/kv-picker.component/kv-signal-single-picker.component';
+export * from './lib/components/kv-picker.component/kv-signal-multi-picker.component';
 
 // LOADING
 export * from './lib/system/loading.service';
