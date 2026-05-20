@@ -68,7 +68,7 @@
             <span class="inline-flex items-center gap-1">
               {{ col.label }}
               @if (col.sortable) {
-                <mat-icon class="!text-[16px] !w-[16px] !h-[16px] !leading-none">
+                <mat-icon class="!text-[16px] !w-[16px] !h-[16px] !leading-none !inline-flex items-center justify-center">
                   @if (currentSort()?.field === col.key) {
                     {{ currentSort()!.dir === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
                   } @else {
@@ -124,7 +124,7 @@
                     class="!h-8 !w-8 rounded-full text-text-muted hover:bg-black/5 hover:text-text"
                     [class]="action.buttonClass ?? ''"
                   >
-                    <mat-icon class="!text-[18px] !w-[18px] !h-[18px] !leading-none">
+                    <mat-icon class="!text-[18px] !w-[18px] !h-[18px] !leading-none !inline-flex items-center justify-center">
                       {{ action.icon }}
                     </mat-icon>
                   </button>
