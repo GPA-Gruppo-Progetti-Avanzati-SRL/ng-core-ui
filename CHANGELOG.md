@@ -4,6 +4,31 @@
 
 ---
 
+## [0.0.51] — 2026-05-20
+
+### Nuove funzionalità
+
+- **`FormShellAction` — property `color`** — ogni bottone della shell può ora avere un colore esplicito tramite `color?: ButtonColor`. Funziona sia per le azioni `inline` che `footer`. Il default resta `'tertiary'` (comportamento precedente invariato). I valori disponibili sono gli stessi di `CoreButtonComponent`: `'primary' | 'secondary' | 'tertiary' | 'success' | 'info' | 'warn' | 'error'`.
+
+  ```typescript
+  actions: FormShellAction[] = [
+    {
+      label: 'Salva', icon: 'save', variant: 'filled', color: 'primary', position: 'footer',
+      onClick: () => this.formModel.submit(() => this.save()),
+    },
+    {
+      label: 'Elimina', icon: 'delete', variant: 'text', color: 'error', position: 'footer',
+      onClick: () => this.delete(),
+    },
+    {
+      label: 'Annulla', variant: 'text',
+      onClick: () => this.goBack(),
+    },
+  ];
+  ```
+
+---
+
 ## [0.0.50] — 2026-05-19
 
 ### Nuove funzionalità

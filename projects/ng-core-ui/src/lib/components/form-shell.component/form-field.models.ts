@@ -1,5 +1,6 @@
 import { InputSignal, Signal, Type, computed, signal, WritableSignal } from '@angular/core';
 import {FieldTree, form, SchemaOrSchemaFn, SchemaPath} from '@angular/forms/signals';
+import { ButtonColor } from '../button.component/button.component';
 
 /** Opzione generica per combobox, radio e checkbox */
 export interface KVOption {
@@ -77,6 +78,7 @@ export interface FormShellAction {
   label?:     string;
   tooltip?:   string;
   variant?:   'icon' | 'text' | 'filled';
+  color?:     ButtonColor;
   position?:  'inline' | 'footer';
   onClick:    () => void;
   visible?:   () => boolean;
