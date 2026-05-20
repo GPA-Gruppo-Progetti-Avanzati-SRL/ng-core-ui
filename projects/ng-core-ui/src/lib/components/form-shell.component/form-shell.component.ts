@@ -83,11 +83,13 @@ protected readonly columnGap = computed(() => {
     this.actions()
       .filter(a => (a.position ?? 'inline') === 'inline')
       .filter(a => a.visible?.() ?? true)
+      .map(a => ({ ...a, _disabled: a.disabled?.() ?? false }))
   );
   protected readonly footerActions = computed(() =>
     this.actions()
       .filter(a => a.position === 'footer')
       .filter(a => a.visible?.() ?? true)
+      .map(a => ({ ...a, _disabled: a.disabled?.() ?? false }))
   );
 
 

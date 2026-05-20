@@ -26,8 +26,9 @@
           [label]="a.label"
           [tooltip]="a.tooltip ?? ''"
           [variant]="a.variant ?? 'filled'"
-          [disabled]="a.disabled?.() ?? false"
-          (click)="a.onClick()"
+          [color]="a.color ?? 'tertiary'"
+          [disabled]="a._disabled"
+          (click)="!a._disabled && a.onClick()"
         />
       }
     </div>
@@ -42,8 +43,9 @@
         [label]="a.label"
         [tooltip]="a.tooltip ?? ''"
         [variant]="a.variant ?? 'filled'"
-        [disabled]="a.disabled?.() ?? false"
-        (click)="a.onClick()"
+        [color]="a.color ?? 'tertiary'"
+        [disabled]="a._disabled"
+        (click)="!a._disabled && a.onClick()"
       />
     }
   </div>
