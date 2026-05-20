@@ -21,15 +21,17 @@
           }
           <button
             mat-icon-button
-            class="flex flex-col items-center justify-center !w-[72px] !h-auto !px-3 !py-1 gap-2 !rounded-none"
+            class="flex flex-col items-center justify-center !w-auto !h-auto !px-4 !py-2 gap-2 !rounded-none [&_.mat-mdc-button-persistent-ripple]:!rounded-none [&_.mat-ripple]:!rounded-none [&_.mat-mdc-button-persistent-ripple]:!inset-0 [&_.mat-mdc-button-touch-target]:!h-full"
             [attr.aria-label]="action.label"
             (click)="action.onClick()"
           >
             <mat-icon class="!text-[26px] !w-[26px] !h-[26px] !leading-none" style="color: var(--mat-sys-primary)">
               {{ action.icon }}
             </mat-icon>
-            <span class="text-[11px] leading-none font-medium whitespace-nowrap" style="color: var(--mat-sys-primary)">
-              {{ action.label }}
+            <span class="flex flex-col items-center text-[11px] leading-tight font-medium" style="color: var(--mat-sys-primary)">
+              @for (word of action.label.split(' '); track word) {
+              <span>{{ word }}</span>
+              }
             </span>
           </button>
         </div>
