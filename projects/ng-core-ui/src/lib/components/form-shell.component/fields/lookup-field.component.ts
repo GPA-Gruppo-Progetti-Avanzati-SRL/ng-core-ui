@@ -57,11 +57,15 @@ export class LookupFieldComponent {
   protected open(): void {
     if (this.disabled()) return;
     const cfg = this.dialogConfig();
+    const currentIds = this.selected()?.id;
+    const initialIds: unknown[] = Array.isArray(currentIds)
+      ? currentIds
+      : currentIds != null ? [currentIds] : [];
     this._dialog
       .open(LookupPickerDialogComponent, {
         width:    cfg.width    ?? '600px',
         maxWidth: cfg.maxWidth ?? '95vw',
-        data:     cfg,
+        data:     { ...cfg, data: { ...(cfg.data ?? {}), initialIds } },
       })
       .afterClosed()
       .pipe(takeUntilDestroyed(this._destroyRef))

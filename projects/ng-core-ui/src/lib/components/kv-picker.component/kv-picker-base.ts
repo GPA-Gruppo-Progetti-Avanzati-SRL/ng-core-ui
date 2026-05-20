@@ -5,10 +5,11 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { DatatableColumn, DatatableComponent, DatatableSort } from '../datatable.component/datatable.component';
-import { createInMemoryLoader } from '../datatable.component/datatable-loader';
+import { DatatableColumn, DatatableComponent, DatatableLoader, DatatableSort } from '../datatable.component/datatable.component';
+import { InMemoryLoader, createInMemoryLoader } from '../datatable.component/datatable-loader';
 import { KVProperty } from '../../kv-options';
 import { SystemService } from '../../system/system.service';
 import { buildApiPath } from '../../utils';
@@ -19,10 +20,11 @@ export abstract class KvPickerBase<T extends KvPickerBaseConfig = KvPickerBaseCo
   protected readonly data = inject(MAT_DIALOG_DATA) as T;
   protected readonly _ref = inject(MatDialogRef);
 
-  @ViewChild('table') private _table?: DatatableComponent;
+  @ViewChild('table') protected _table?: DatatableComponent;
 
   protected readonly filterText = signal('');
-  protected readonly loader;
+  protected readonly loader: DatatableLoader<KVProperty>;
+  private readonly _raw: InMemoryLoader<KVProperty>;
 
   protected readonly columns = computed<DatatableColumn[]>(() => {
     const cols: DatatableColumn[] = [];
@@ -44,10 +46,13 @@ export abstract class KvPickerBase<T extends KvPickerBaseConfig = KvPickerBaseCo
                row.value.toLowerCase().includes(lower);
       },
     });
-    const wrapped = (page: number, pageSize: number, sort?: DatatableSort) =>
+    this._raw = raw;
+    this.loader = (page: number, pageSize: number, sort?: DatatableSort) =>
       raw(page, pageSize, sort ?? { field: 'order', dir: 'asc' });
-    wrapped.invalidate = raw.invalidate;
-    this.loader = wrapped;
+  }
+
+  protected getAllItems(): Observable<KVProperty[]> {
+    return this._raw.getAll();
   }
 
   protected onFilter(text: string): void {

@@ -13,7 +13,7 @@
     [columns]="columns()"
     [load]="loader"
     selectionMode="multi"
-    (selectionChange)="selectedItems.set($event)"
+    [initialSelection]="preSelected()"
     [pageSizeOptions]="[]"
     [initialPageSize]="5"
   />

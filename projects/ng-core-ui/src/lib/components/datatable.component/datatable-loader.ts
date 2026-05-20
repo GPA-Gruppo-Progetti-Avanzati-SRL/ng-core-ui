@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { DatatableLoader, DatatableResult, DatatableSort } from './datatable.component';
+
+export type InMemoryLoader<T> = DatatableLoader<T> & { invalidate(): void; getAll(): Observable<T[]> };
 
 /**
  * Crea un DatatableLoader per le API GPA che seguono la convenzione scatolotto-be:
@@ -106,21 +108,27 @@ export function createInMemoryLoader<T>(
   http: HttpClient,
   url: string,
   options?: InMemoryLoaderOptions<T>,
-): DatatableLoader<T> & { invalidate(): void } {
+): DatatableLoader<T> & { invalidate(): void; getAll(): Observable<T[]> } {
   let cache: T[] | null = null;
+  let pendingFetch: Observable<T[]> | null = null;
 
   const fetchAll = (): Observable<T[]> => {
     if (cache !== null) return of(cache);
-    return http.get<T[] | { body: T[] }>(url, {
-      headers: options?.headers?.() ?? {},
-      params: { ...(options?.extraParams?.() ?? {}) },
-    }).pipe(
-      map(resp => {
-        const data: T[] = Array.isArray(resp) ? resp : ((resp as { body: T[] }).body ?? []);
-        cache = data;
-        return data;
-      }),
-    );
+    if (!pendingFetch) {
+      pendingFetch = http.get<T[] | { body: T[] }>(url, {
+        headers: options?.headers?.() ?? {},
+        params: { ...(options?.extraParams?.() ?? {}) },
+      }).pipe(
+        map(resp => {
+          const data: T[] = Array.isArray(resp) ? resp : ((resp as { body: T[] }).body ?? []);
+          cache = data;
+          pendingFetch = null;
+          return data;
+        }),
+        shareReplay(1),
+      );
+    }
+    return pendingFetch;
   };
 
   const defaultFilterFn = (row: T, text: string): boolean => {
@@ -164,6 +172,7 @@ export function createInMemoryLoader<T>(
   loader.invalidate = (): void => {
     cache = null;
   };
+  loader.getAll = fetchAll;
 
   return loader;
 }

@@ -1,16 +1,21 @@
 import {
+  Directive,
+  ViewChild,
   computed,
   inject,
   signal,
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { DatatableColumn } from '../datatable.component/datatable.component';
+import { DatatableColumn, DatatableComponent } from '../datatable.component/datatable.component';
 import { KVOption } from '../form-shell.component/form-field.models';
 import { KvSignalPickerBaseConfig } from './kv-picker.models';
 
+@Directive()
 export abstract class KvSignalPickerBase<T extends KvSignalPickerBaseConfig = KvSignalPickerBaseConfig> {
   protected readonly data = inject(MAT_DIALOG_DATA) as T;
   protected readonly _ref  = inject(MatDialogRef);
+
+  @ViewChild('table') protected _table?: DatatableComponent;
 
   protected readonly filterText = signal('');
 

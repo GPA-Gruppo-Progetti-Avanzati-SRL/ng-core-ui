@@ -14,6 +14,7 @@ export interface KvSinglePickerConfig extends KvPickerBaseConfig {}
 
 export interface KvMultiPickerConfig extends KvPickerBaseConfig {
   confirmLabel?: string;
+  initialIds?:   unknown[];
 }
 
 // --- Signal-based pickers (dati già in memoria) ---
@@ -29,4 +30,5 @@ export interface KvSignalSinglePickerConfig extends KvSignalPickerBaseConfig {}
 
 export interface KvSignalMultiPickerConfig extends KvSignalPickerBaseConfig {
   confirmLabel?: string;
+  initialIds?:   unknown[];
 }

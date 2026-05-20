@@ -4,6 +4,18 @@
 
 ---
 
+## [0.0.52] — 2026-05-20
+
+### Nuove funzionalità
+
+- **KV multi-picker — pre-selezione alla riapertura** — `KvMultiPickerComponent` e `KvSignalMultiPickerComponent` ripristinano ora automaticamente le voci selezionate in precedenza quando il dialog viene riaperto. `LookupFieldComponent` inietta gli ID correnti nel dialog; i picker li usano per pre-spuntare le righe corrispondenti nel datatable senza alcuna modifica richiesta al codice consumer.
+
+- **`DatatableComponent` — input `[initialSelection]`** — nuova proprietà opzionale `initialSelection: unknown[]` (default `[]`). Permette di inizializzare la selezione del datatable con un insieme di righe pre-selezionate. Retrocompatibile: i datatable esistenti senza questa prop non cambiano comportamento.
+
+- **`createInMemoryLoader` — protezione concorrenza e `getAll()`** — risolto il bug per cui chiamate concorrenti a `fetchAll()` prima della risposta HTTP potevano generare due richieste separate con array distinti, causando il fallimento della reference equality nella selezione. Introdotto `pendingFetch` con `shareReplay(1)` per garantire un'unica richiesta condivisa. Aggiunto metodo `getAll(): Observable<T[]>` per accedere al dataset completo senza paginazione.
+
+---
+
 ## [0.0.51] — 2026-05-20
 
 ### Nuove funzionalità

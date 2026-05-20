@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation, computed } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { DatatableComponent } from '../datatable.component/datatable.component';
@@ -16,10 +16,12 @@ import { KvSignalMultiPickerConfig } from './kv-picker.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KvSignalMultiPickerComponent extends KvSignalPickerBase<KvSignalMultiPickerConfig> {
-  protected readonly selectedItems = signal<unknown[]>([]);
+  protected readonly preSelected = computed(() =>
+    this.data.options().filter(o => (this.data.initialIds ?? []).includes(o.value))
+  );
 
   protected confirm(): void {
-    const items = this.selectedItems() as KVOption[];
+    const items = (this._table?.selectedRows() ?? []) as KVOption[];
     this._ref.close({
       id:    items.map(i => i.value),
       label: items.map(i => i.label).join(', '),

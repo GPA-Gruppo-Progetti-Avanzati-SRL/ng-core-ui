@@ -81,7 +81,8 @@ export class DatatableComponent {
   readonly initialPageSize = input<number>(10);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly rowBackground   = input<(row: any) => string | null>();
-  readonly selectionMode   = input<DatatableSelectionMode>('none');
+  readonly selectionMode      = input<DatatableSelectionMode>('none');
+  readonly initialSelection   = input<unknown[]>([]);
 
   readonly selectionChange = output<unknown[]>();
 
@@ -91,7 +92,7 @@ export class DatatableComponent {
   protected readonly SELECTION_COL = SELECTION_COL;
   protected readonly radioGroupName = `dt-sel-${Math.random().toString(36).slice(2)}`;
 
-  private readonly _selectedRows = signal<unknown[]>([]);
+  private readonly _selectedRows = linkedSignal(() => this.initialSelection());
   readonly selectedRows: Signal<unknown[]> = this._selectedRows.asReadonly();
 
   protected readonly isLoading         = signal(false);
