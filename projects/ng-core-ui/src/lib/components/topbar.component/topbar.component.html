@@ -19,9 +19,8 @@
           @if (!first) {
             <div class="w-px self-stretch bg-outline-variant mx-1"></div>
           }
-          <button
-            mat-icon-button
-            class="flex flex-col items-center justify-center !w-auto !h-auto !px-4 !py-2 gap-2 !rounded-none [&_.mat-mdc-button-persistent-ripple]:!rounded-none [&_.mat-ripple]:!rounded-none [&_.mat-mdc-button-persistent-ripple]:!inset-0 [&_.mat-mdc-button-touch-target]:!h-full"
+          <div
+            class="flex flex-col items-center justify-center px-4 py-2 gap-2 cursor-pointer hover:bg-black/8 transition-colors"
             [attr.aria-label]="action.label"
             (click)="action.onClick()"
           >
@@ -33,7 +32,7 @@
               <span>{{ word }}</span>
               }
             </span>
-          </button>
+          </div>
         </div>
       }
     </div>
