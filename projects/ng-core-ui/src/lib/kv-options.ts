@@ -10,20 +10,8 @@ export interface KVProperty {
   kind:  string;
 }
 
-export interface KVResponse {
-  _id:         string;
-  _bid:        string;
-  scope:       string;
-  _et:         string;
-  category:    string;
-  description: string;
-  inherited:   boolean;
-  properties:  KVProperty[];
-  sys_info:    any;
-}
-
 /**
- * Carica le opzioni da un endpoint GPA che ritorna un `KVResponse`.
+ * Carica le opzioni da un endpoint GPA che ritorna un array di `KVProperty[]`.
  * Deve essere chiamata in contesto di iniezione (field initializer o costruttore).
  *
  * @param url     Path completo dell'endpoint (es. buildApiPath(...))
@@ -34,9 +22,9 @@ export function loadKVOptions(url: string, blank = true): Signal<KVOption[]> {
   const toast = inject(ToastService);
   const opts  = signal<KVOption[]>([]);
 
-  http.get<KVResponse>(url).subscribe({
+  http.get<KVProperty[]>(url).subscribe({
     next: (res) => {
-      const mapped: KVOption[] = res.properties
+      const mapped: KVOption[] = res
         .sort((a, b) => a.order - b.order)
         .map(p => ({ value: p.key, label: p.value }));
       opts.set(blank ? [{ value: '', label: '' }, ...mapped] : mapped);
