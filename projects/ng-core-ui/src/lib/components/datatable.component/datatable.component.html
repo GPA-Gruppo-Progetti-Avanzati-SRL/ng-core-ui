@@ -153,7 +153,7 @@
 
   @if (!hasError()) {
     <mat-paginator
-      class="border-t border-outline-variant/60 bg-white px-4"
+      class="border-t border-outline-variant/60 bg-white px-4 [&_.mat-mdc-form-field-infix]:!py-1 [&_.mat-mdc-form-field-infix]:!min-h-0"
       [length]="total()"
       [pageIndex]="currentPage() - 1"
       [pageSize]="pageSize()"
