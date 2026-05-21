@@ -145,7 +145,6 @@
         mat-row
         *matRowDef="let row; columns: displayedColumns()"
         class="transition-colors hover:bg-black/[0.02]"
-        [class.invisible]="isLoading()"
         [class.bg-primary/5]="isSelected(row)"
         [style.background-color]="rowBackground()?.(row) ?? null"
       ></tr>

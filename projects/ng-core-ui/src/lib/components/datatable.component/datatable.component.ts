@@ -95,7 +95,7 @@ export class DatatableComponent {
   private readonly _selectedRows = linkedSignal(() => this.initialSelection());
   readonly selectedRows: Signal<unknown[]> = this._selectedRows.asReadonly();
 
-  protected readonly isLoading         = signal(false);
+  protected readonly isLoading         = linkedSignal(() => this.load() != null);
   protected readonly hasError          = signal(false);
   protected readonly rows              = signal<unknown[]>([]);
   protected readonly total             = signal(0);
