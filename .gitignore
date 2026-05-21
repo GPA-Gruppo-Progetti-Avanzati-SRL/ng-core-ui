@@ -52,3 +52,6 @@ Thumbs.db
 projects/ng-core-ui/README.md
 /projects/ng-core-ui/styles/_logos.scss
 /projects/ng-core-ui/bin/generate-mongo.mjs
+/skills-lock.json
+/.ai/mcp/mcp.json
+/scripts/build-skills.mjs
