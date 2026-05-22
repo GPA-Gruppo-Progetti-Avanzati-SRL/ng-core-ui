@@ -121,10 +121,10 @@
                     [attr.aria-label]="action.tooltip || action.icon"
                     [disabled]="action.disabled?.(row) ?? false"
                     (click)="onActionClick(action, row)"
-                    class="!h-8 !w-8 rounded-full text-text-muted hover:bg-black/5 hover:text-text"
+                    class="!h-7 !w-7 rounded-full text-text-muted hover:bg-black/5 hover:text-text"
                     [class]="action.buttonClass ?? ''"
                   >
-                    <mat-icon class="!text-[18px] !w-[18px] !h-[18px] !leading-none !inline-flex items-center justify-center">
+                    <mat-icon class="!text-[16px] !w-4 !h-4 !leading-4 !inline-flex items-center justify-center">
                       {{ action.icon }}
                     </mat-icon>
                   </button>
@@ -153,27 +153,7 @@
 
   @if (!hasError()) {
     <mat-paginator
-      class="border-t border-outline-variant/60 bg-white px-4
-      [--mat-paginator-container-size:48px]
-      [--mat-paginator-page-size-select-touch-target-height:36px]
-         [--mat-icon-button-touch-target-size:36px]
-
-         [&_.mat-mdc-paginator-container]:!min-h-12
-         [&_.mat-mdc-form-field-infix]:!py-1
-         [&_.mat-mdc-form-field-infix]:!min-h-0
-
-         [&_.mat-mdc-paginator-touch-target]:!h-9
-         [&_.mat-mdc-paginator-touch-target]:!min-h-9
-
-         [&_.mat-mdc-icon-button]:!w-9
-         [&_.mat-mdc-icon-button]:!h-9
-         [&_.mat-mdc-icon-button]:!p-0
-
-         [&_.mat-mdc-button-touch-target]:!w-9
-         [&_.mat-mdc-button-touch-target]:!h-9
-
-         [&_.mat-mdc-paginator-icon]:!w-5
-         [&_.mat-mdc-paginator-icon]:!h-5"
+      class="app-paginator border-t border-outline-variant/60 bg-white px-4"
       [length]="total()"
       [pageIndex]="currentPage() - 1"
       [pageSize]="pageSize()"

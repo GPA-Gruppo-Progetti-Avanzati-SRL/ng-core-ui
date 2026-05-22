@@ -49,3 +49,86 @@
   justify-content: center !important;
 }
 
+.app-paginator {
+  --mat-paginator-container-size: 48px;
+  --mat-paginator-page-size-select-touch-target-height: 36px;
+  --mat-icon-button-touch-target-size: 36px;
+}
+
+.app-paginator .mat-mdc-paginator-container {
+  min-height: 48px;
+  padding: 0 16px;
+  align-items: center;
+}
+
+.app-paginator .mat-mdc-paginator-page-size {
+  align-items: center;
+}
+
+.app-paginator .mat-mdc-paginator-page-size-label,
+.app-paginator .mat-mdc-paginator-range-label {
+  font-size: 12px;
+  line-height: 16px;
+  margin: 0;
+}
+
+.app-paginator .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+.app-paginator .mat-mdc-text-field-wrapper {
+  height: 36px !important;
+}
+
+.app-paginator .mat-mdc-form-field-flex {
+  height: 36px !important;
+  align-items: center;
+}
+
+.app-paginator .mat-mdc-form-field-infix {
+  min-height: 36px !important;
+  height: 36px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  display: flex;
+  align-items: center;
+}
+
+.app-paginator .mat-mdc-select-value,
+.app-paginator .mat-mdc-select-arrow,
+.app-paginator .mat-mdc-select-min-line {
+  font-size: 12px !important;
+  line-height: 16px !important;
+}
+
+.app-paginator .mat-mdc-paginator-touch-target {
+  height: 36px !important;
+}
+
+.app-paginator .mat-mdc-icon-button {
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+}
+
+.app-paginator .mat-mdc-button-touch-target {
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.app-paginator .mat-mdc-paginator-icon {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.mat-mdc-option {
+  min-height: 36px !important;
+  height: 36px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.mat-mdc-option .mdc-list-item__primary-text {
+  font-size: 12px !important;
+  line-height: 36px !important;
+}
