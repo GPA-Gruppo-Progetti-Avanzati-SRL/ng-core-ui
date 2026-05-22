@@ -13,6 +13,10 @@ $cobalt-theme: mat.define-theme((
   typography: (
     brand-family: 'Roboto, sans-serif',
     plain-family: 'Roboto, sans-serif',
+
+  ),
+  density: (
+  scale: -2,
   )
 ));
 
@@ -21,6 +25,13 @@ $cobalt-theme: mat.define-theme((
   @include mat.all-component-themes($cobalt-theme);
   @include mat.system-level-colors($cobalt-theme);
   @include mat.system-level-typography($cobalt-theme);
+  @include mat.form-field-density(-3);
+  @include mat.paginator-density(-2);
+  @include mat.option-density(-2);
+  @include mat.button-density(0);
+  @include mat.checkbox-density(-2);
+  @include mat.radio-density(-2);
+  @include mat.table-density(-5);
 
 
   --layout-sidenav-border: none;
