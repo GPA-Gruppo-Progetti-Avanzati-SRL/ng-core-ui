@@ -1,7 +1,7 @@
 <div class="w-full overflow-hidden rounded-lg border border-outline-variant/60 bg-white">
   <div class="relative overflow-x-auto">
 
-    @if (isLoading()) {
+    @if (isLoading() && rows().length > 0) {
       <div class="absolute inset-0 z-10 flex items-center justify-center bg-white/70 backdrop-blur-sm">
         <mat-spinner diameter="36" />
       </div>
@@ -149,6 +149,12 @@
         [style.background-color]="rowBackground()?.(row) ?? null"
       ></tr>
     </table>
+
+    @if (isLoading() && rows().length === 0) {
+      <div class="flex items-center justify-center py-12">
+        <mat-spinner diameter="36" />
+      </div>
+    }
   </div>
 
   @if (!hasError()) {
