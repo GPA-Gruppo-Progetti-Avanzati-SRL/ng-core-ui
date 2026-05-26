@@ -4,6 +4,7 @@
     matInput
     [type]="type()"
     [formField]="formField()"
+    class="!text-sm"
   />
   @if (formField()().touched() && formField()().errors().length) {
     <mat-error>{{ formField()().errors()[0]?.message ?? 'Campo non valido' }}</mat-error>
