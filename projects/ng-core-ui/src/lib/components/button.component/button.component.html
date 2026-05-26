@@ -1,11 +1,18 @@
 @switch (variant()) {
-  @case ('icon') {
+  @case ('iconfilled') {
     <button matIconButton [disabled]="disabled()" [matTooltip]="tooltip()"
             class="!rounded-lg !w-11 !h-11 !min-w-11 !p-0
             [&_.mat-mdc-button-touch-target]:!w-9
             [&_.mat-mdc-button-touch-target]:!h-9
             [&_.mat-mdc-button-persistent-ripple]:!rounded-lg"
             [class]="disabled() ? '' : bgClass()">
+      @if (icon()) {
+        <mat-icon class="!text-[20px] !w-5 !h-5 !leading-5">{{ icon() }}</mat-icon>
+      }
+    </button>
+  }
+  @case ('icon') {
+    <button matIconButton [disabled]="disabled()" [matTooltip]="tooltip()">
       @if (icon()) {
         <mat-icon class="!text-[20px] !w-5 !h-5 !leading-5">{{ icon() }}</mat-icon>
       }

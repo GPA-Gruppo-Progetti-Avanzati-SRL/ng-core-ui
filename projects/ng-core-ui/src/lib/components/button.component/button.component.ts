@@ -42,7 +42,7 @@ export class CoreButtonComponent {
   readonly icon     = input<string>();
   readonly label    = input<string>();
   readonly tooltip  = input<string>('');
-  readonly variant  = input<'icon' | 'text' | 'filled'>('filled');
+  readonly variant  = input<'icon' | 'iconfilled'| 'text' | 'filled'>('filled');
   readonly color    = input<ButtonColor>('tertiary');
   readonly disabled = input<boolean>(false);
 
