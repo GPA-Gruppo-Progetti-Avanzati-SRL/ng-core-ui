@@ -13,6 +13,9 @@ $gpa-theme: mat.define-theme((
   typography: (
     brand-family: 'Roboto, sans-serif',
     plain-family: 'Roboto, sans-serif',
+  ),
+  density: (
+    scale: -2,
   )
 ));
 

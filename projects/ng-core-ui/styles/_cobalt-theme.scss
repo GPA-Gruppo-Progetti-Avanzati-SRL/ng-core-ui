@@ -25,13 +25,7 @@ $cobalt-theme: mat.define-theme((
   @include mat.all-component-themes($cobalt-theme);
   @include mat.system-level-colors($cobalt-theme);
   @include mat.system-level-typography($cobalt-theme);
-  @include mat.form-field-density(-3);
-  @include mat.paginator-density(-2);
-  @include mat.option-density(-2);
-  @include mat.button-density(0);
-  @include mat.checkbox-density(-2);
-  @include mat.radio-density(-2);
-  @include mat.table-density(-5);
+
 
 
   --layout-sidenav-border: none;

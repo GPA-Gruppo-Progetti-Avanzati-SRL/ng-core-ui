@@ -18,6 +18,15 @@
   ));
 }
 
+
+@include mat.form-field-density(-3);
+@include mat.paginator-density(-2);
+@include mat.option-density(-2);
+@include mat.button-density(0);
+@include mat.checkbox-density(-2);
+@include mat.radio-density(-2);
+@include mat.table-density(-5);
+
 .mat-mdc-unelevated-button .mdc-button__ripple {
   border-radius: 8px !important;
 }
