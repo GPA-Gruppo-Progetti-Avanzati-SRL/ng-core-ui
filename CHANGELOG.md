@@ -4,7 +4,7 @@
 
 ---
 
-## [0.0.52] — 2026-05-20
+## [0.0.52] — 2026-05-26
 
 ### Nuove funzionalità
 
@@ -13,6 +13,33 @@
 - **`DatatableComponent` — input `[initialSelection]`** — nuova proprietà opzionale `initialSelection: unknown[]` (default `[]`). Permette di inizializzare la selezione del datatable con un insieme di righe pre-selezionate. Retrocompatibile: i datatable esistenti senza questa prop non cambiano comportamento.
 
 - **`createInMemoryLoader` — protezione concorrenza e `getAll()`** — risolto il bug per cui chiamate concorrenti a `fetchAll()` prima della risposta HTTP potevano generare due richieste separate con array distinti, causando il fallimento della reference equality nella selezione. Introdotto `pendingFetch` con `shareReplay(1)` per garantire un'unica richiesta condivisa. Aggiunto metodo `getAll(): Observable<T[]>` per accedere al dataset completo senza paginazione.
+
+- **`CoreButtonComponent` — variante `iconfilled`** — nuova variante per bottoni icona con sfondo colorato pieno. A differenza di `icon` (trasparente), `iconfilled` usa `matIconButton` con angoli arrotondati (`!rounded-lg`), sfondo pieno (`bgClass()`), dimensioni 44×44 px e touch target 36×36 px. Ideale per azioni di toolbox dove l'icona deve risaltare visivamente.
+
+  ```html
+  <core-button icon="edit" variant="iconfilled" color="primary" />
+  <core-button icon="delete" variant="iconfilled" color="error" />
+  ```
+
+- **`TopbarComponent` — rendering adattivo responsive** — le azioni del topbar si adattano al breakpoint. Su schermi >= 640 px vengono mostrati i bottoni con icona e label multi-riga; su schermi < 640 px le azioni collassano in un menu `mat-menu` accessibile tramite `more_vert`. Basato su `BreakpointObserver` (CDK). Nessuna modifica all'API pubblica: `TopbarAction` invariato.
+
+### Miglioramenti
+
+- **`ToastComponent` — Popover API (top layer)** — `core-toast` usa ora `popover="manual"` e l'API `showPopover()/hidePopover()` del browser. Il toast entra nel CSS top layer e risulta sempre visibile sopra i dialog Angular Material (CDK 21 usa anch'esso il top layer). Un `effect()` nel costruttore chiama `hidePopover()` + `showPopover()` ad ogni cambio di `svc.messages()`. Gli stili UA del popover sono sovrascritti via `style` inline nell'`host`.
+
+- **`ToastComponent` — spostato fuori da `<mat-sidenav-content>`** — in `FullLayoutComponent` e `RightLayoutComponent`, `<core-toast>` è ora renderizzato al di fuori di `<mat-sidenav-content>`, eliminando possibili problemi di clipping.
+
+- **`DatatableComponent` — `isLoading` via `linkedSignal`** — `isLoading` usa ora `linkedSignal(() => this.load() != null)` invece di `signal(false)`, garantendo che lo spinner sia visibile al primo render se un loader è fornito (evita il flash senza spinner su loader sincroni con cache).
+
+- **`DatatableComponent` — spinner condizionale per dati vuoti** — aggiunto rendering condizionale dello spinner durante il caricamento quando la tabella è vuota, coerente con il comportamento su tabelle già popolate.
+
+- **`DatatableComponent` — allineamento icone e styling paginator** — le `mat-icon` nelle celle usano `inline-flex` per allineamento verticale corretto; padding ridondante rimosso dal `mat-paginator`; altezza del paginator e dimensioni delle icone allineate al design system.
+
+- **`KVPicker` — `loadOptions` refactoring** — eliminata l'interfaccia wrapper `KVResponse`; `loadOptions` ritorna direttamente `KVProperty[]`, riducendo il boilerplate consumer.
+
+- **`CobaltTheme` — density e tipografia** — riunite le dichiarazioni di density in un unico punto, rimosso codice ridondante. Riviste le impostazioni tipografiche per maggiore consistenza.
+
+- **Campo testo e button size** — corretti font size per `TextInputFieldComponent` e dimensioni dei pulsanti per allineamento visivo uniforme.
 
 ---
 
