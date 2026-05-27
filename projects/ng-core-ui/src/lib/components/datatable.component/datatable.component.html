@@ -121,10 +121,10 @@
                     [attr.aria-label]="action.tooltip || action.icon"
                     [disabled]="action.disabled?.(row) ?? false"
                     (click)="onActionClick(action, row)"
-                    class="!h-6 !w-6 rounded-full text-text-muted hover:bg-black/5 hover:text-text"
+                    class="!h-7 !w-7 rounded-full text-text-muted hover:bg-black/5 hover:text-text"
                     [class]="action.buttonClass ?? ''"
                   >
-                    <mat-icon class="!text-[12px] !w-4 !h-4 !leading-4 !inline-flex items-center justify-center">
+                    <mat-icon class="!text-[16px] !w-5 !h-5 !leading-5 !inline-flex items-center justify-center">
                       {{ action.icon }}
                     </mat-icon>
                   </button>
