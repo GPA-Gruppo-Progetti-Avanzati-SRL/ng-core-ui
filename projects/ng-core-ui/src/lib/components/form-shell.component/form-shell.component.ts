@@ -63,7 +63,7 @@ export class FormShellComponent {
 protected readonly rowGap = computed(() => {
   if (this.isXSmall()) return '0.375rem';
   if (this.isSmall())  return '0.5rem';
-  return '0.75rem';
+  return '1rem';
 });
 
 protected readonly columnGap = computed(() => {
