@@ -40,7 +40,10 @@
           class="min-w-35 px-6 py-2 text-[13px] font-medium shadow-none bg-tertiary text-on-tertiary"
           (click)="buttonClick.emit()"
         >
-          {{ buttonLabel() }}
+          <span class="text-[12px]">
+            {{ buttonLabel() }}
+          </span>
+
         </button>
       </div>
     </div>

@@ -19,7 +19,7 @@
     </button>
   }
   @case ('filled') {
-    <button matButton="filled" [disabled]="disabled()" [matTooltip]="tooltip()" class="!rounded-lg" [class]="disabled() ? '' : bgClass()">
+    <button matButton="filled" [disabled]="disabled()" [matTooltip]="tooltip()" class="!rounded-lg !h-10" [class]="disabled() ? '' : bgClass()">
       @if (icon()) {
         <mat-icon>{{ icon() }}</mat-icon>
       }
