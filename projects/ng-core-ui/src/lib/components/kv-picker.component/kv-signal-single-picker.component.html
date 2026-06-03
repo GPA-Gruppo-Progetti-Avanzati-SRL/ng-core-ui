@@ -3,7 +3,7 @@
     <mat-label>Cerca</mat-label>
     <input matInput [value]="filterText()"
       (input)="filterText.set($any($event.target).value)"
-      autocomplete="off" />
+      autocomplete="off" class="!text-sm" />
   </mat-form-field>
 </div>
 

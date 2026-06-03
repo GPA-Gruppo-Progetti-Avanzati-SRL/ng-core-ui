@@ -15,7 +15,8 @@
            [placeholder]="valuePlaceHolder()"
            [required]="showAsRequired()"
            [class.ng-invalid]="hasError()"
-           [class.ng-touched]="touched()" />
+           [class.ng-touched]="touched()"
+           class="!text-sm"/>
 
     <div matSuffix class="flex items-center">
       @if (selected() && !disabled()) {

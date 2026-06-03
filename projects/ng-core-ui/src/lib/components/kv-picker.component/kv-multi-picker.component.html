@@ -1,9 +1,12 @@
 <div class="px-6 pt-4 pb-2">
   <mat-form-field class="w-full" subscriptSizing="dynamic">
     <mat-label>Cerca</mat-label>
-    <input matInput [value]="filterText()"
+    <input
+      matInput
+      [value]="filterText()"
       (input)="onFilter($any($event.target).value)"
-      autocomplete="off" />
+      autocomplete="off"
+      class="!text-sm"/>
   </mat-form-field>
 </div>
 
