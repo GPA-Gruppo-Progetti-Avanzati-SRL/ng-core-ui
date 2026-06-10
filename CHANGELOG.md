@@ -4,6 +4,22 @@
 
 ---
 
+## [0.0.53] — 2026-06-10
+
+### Miglioramenti
+
+- **`DatatableComponent` — font size celle e icone azioni** — aumentato il font size del testo nelle celle della tabella per migliore leggibilità; aumentate le dimensioni delle icone nei bottoni azione riga (da 12 × 12 px a 16 × 16 px) e il touch target dei bottoni (da 24 × 24 px a 28 × 28 px).
+
+- **`FormShellComponent` — spaziatura righe e font size errori** — la spaziatura verticale tra le righe del form passa da `0.75rem` a `1rem` per una respirazione più confortevole dei campi. Il font size dei messaggi di errore di validazione è ridotto a `11px` tramite override globale `.mat-mdc-form-field-error` in `themes.scss`.
+
+- **`ButtonComponent` — altezza e font size label** — l'altezza del bottone nella variante `iconfilled` è fissata a `2.5rem` (`!h-10`) per coerenza con gli altri bottoni. Il testo dei bottoni con label usa ora esplicitamente `text-[12px]` per uniformità tipografica.
+
+- **`CardComponent` — font size testo bottoni** — rivisto il font size del testo nei bottoni all'interno della card per allineamento al design system.
+
+- **Campi form — font size input uniformato** — aggiunta classe `!text-sm` sugli input di tutti i field component per garantire un font size coerente (14 px) tra le diverse tipologie di campo: `DatepickerField`, `FileInputField`, `LookupField`, `KvSinglePicker`, `KvMultiPicker`, `KvSignalSinglePicker`, `KvSignalMultiPicker`.
+
+---
+
 ## [0.0.52] — 2026-05-26
 
 ### Nuove funzionalità
