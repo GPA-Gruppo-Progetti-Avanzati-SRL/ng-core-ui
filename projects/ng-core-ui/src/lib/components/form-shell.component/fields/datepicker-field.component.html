@@ -1,12 +1,7 @@
 <mat-form-field appearance="outline" floatLabel="always" class="w-full">
   <mat-label>{{ label() }}</mat-label>
-  <input
-    matInput
-    [matDatepicker]="picker"
-    [formField]="formField()"
-    class="!text-sm"
-  />
-  <mat-datepicker-toggle matIconSuffix [for]="picker" />
+  <input matInput [matDatepicker]="picker" [formField]="formField()" class="!text-sm" />
+  <mat-datepicker-toggle matIconSuffix [for]="picker" [hidden]="!editable()"/>
   <mat-datepicker #picker />
   @if (formField()().touched() && formField()().errors().length) {
     <mat-error>{{ formField()().errors()[0]?.message ?? 'Campo non valido' }}</mat-error>
