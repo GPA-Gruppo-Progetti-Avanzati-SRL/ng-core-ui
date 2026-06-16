@@ -47,6 +47,10 @@ export class LookupFieldComponent {
   private readonly fieldState = computed<any>(() => this.formField()());
 
   protected readonly disabled     = computed(() => this.fieldState()?.disabled?.() ?? false);
+  readonly editable = computed(() => {
+    if (!this.formField() || ! this.formField()()) return true;
+    return !this.formField()().readonly?.() && !this.formField()().disabled?.();
+  });
   protected readonly selected     = computed<LookupResult | null>(() => this.fieldState()?.value?.() ?? null);
   /** true solo se c'è una selezione significativa (id non null/undefined) */
   protected readonly hasSelection = computed<boolean>(() => {

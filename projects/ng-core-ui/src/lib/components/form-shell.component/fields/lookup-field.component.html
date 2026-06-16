@@ -1,30 +1,21 @@
 <mat-form-field appearance="outline" floatLabel="always" class="w-full">
   <mat-label>{{ label() }}</mat-label>
 
-  <input
-    matInput
-    readonly
-    [value]="selected()?.label ?? ''"
-    [disabled]="disabled()"
-    class="cursor-default !text-sm"
+  <input matInput readonly [value]="selected()?.label ?? ''"
+    [disabled]="disabled()" class="cursor-default !text-sm"
   />
 
   <!-- Suffix: clear + search in un unico contenitore per evitare sovrapposizioni -->
   <div matSuffix class="flex items-center">
     @if (hasSelection() && !disabled()) {
-      <button
-        mat-icon-button
-        matTooltip="Rimuovi selezione"
-        (click)="clear()"
+      <button mat-icon-button matTooltip="Rimuovi selezione"
+        (click)="clear()" [hidden]="!editable()"
       >
         <mat-icon class="!text-[18px] !w-[18px] !h-[18px] !leading-none">close</mat-icon>
       </button>
     }
-    <button
-      mat-icon-button
-      [disabled]="disabled()"
-      [matTooltip]="'Seleziona ' + label()"
-      (click)="open()"
+    <button mat-icon-button [disabled]="disabled()" [hidden]="!editable()"
+      [matTooltip]="'Seleziona ' + label()" (click)="open()"
     >
       <mat-icon class="!text-[20px] !w-[20px] !h-[20px] !leading-none">search</mat-icon>
     </button>

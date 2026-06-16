@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation, computed, input } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
@@ -15,4 +15,9 @@ import { FormField, FieldTree } from '@angular/forms/signals';
 export class DatepickerFieldComponent {
   readonly formField   = input.required<any>();
   readonly label       = input<string>('');
+
+  readonly editable = computed(() => {
+    if (!this.formField() || ! this.formField()()) return true;
+    return !this.formField()().readonly?.() && !this.formField()().disabled?.();
+  });
 }
