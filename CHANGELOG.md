@@ -4,6 +4,22 @@
 
 ---
 
+## [0.0.54] — 2026-06-16
+
+### Nuove funzionalità
+
+- **`TopbarAction` — callback `visible` e `disabled`** (`topbar.component`) — aggiunte le proprietà opzionali `visible?: () => boolean` e `disabled?: () => boolean` all'interfaccia `TopbarAction`. Il template rispetta entrambe: `visible` nasconde completamente il bottone sia nella toolbar desktop che nel menu mobile; `disabled` applica `opacity-40` e `pointer-events-none` impedendo il click senza nascondere l'azione.
+
+### Miglioramenti
+
+- **`DatepickerFieldComponent` — supporto readonly** — il toggle del datepicker (icona calendario) viene nascosto con `[hidden]` quando il campo è in stato `readonly` o `disabled`, rendendo il campo visivamente non modificabile in modalità visualizzazione.
+
+- **`LookupFieldComponent` — supporto readonly** — i bottoni di apertura del dialog e di rimozione della selezione vengono nascosti con `[hidden]` quando il campo è in stato `readonly` o `disabled`. Il valore rimane visibile come testo non modificabile.
+
+- **`SystemService.canDo` — rimozione `console.log` di debug** — rimosso un `console.log` lasciato accidentalmente nel metodo `canDo`.
+
+---
+
 ## [0.0.53] — 2026-06-10
 
 ### Miglioramenti
