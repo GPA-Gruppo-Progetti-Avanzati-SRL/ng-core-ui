@@ -7,9 +7,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 
 export interface TopbarAction {
-  icon:    string;
-  label:   string;
-  onClick: () => void;
+  icon:     string;
+  label:    string;
+  onClick:  () => void;
+  visible?:  () => boolean;
+  disabled?: () => boolean;
 }
 
 @Component({
