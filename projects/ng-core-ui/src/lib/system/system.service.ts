@@ -95,7 +95,6 @@ export class SystemService {
 
   canDo(action: CoreAction | string): boolean {
     const id = typeof action === 'string' ? action : action.id;
-    console.log("id:"+id)
     return this.capabilitiesSet().has(id);
   }
 
