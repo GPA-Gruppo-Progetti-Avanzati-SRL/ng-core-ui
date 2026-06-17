@@ -4,6 +4,31 @@
 
 ---
 
+## [0.1.0] — 2026-06-17
+
+### Breaking Changes
+
+- **Angular 22** — la libreria richiede ora Angular 22. Le app consumer devono aggiornare tutte le dipendenze `@angular/*` e `@angular/material` alla versione `^22.0.1`.
+- **TypeScript 6.0** — richiesto TypeScript `~6.0.3` (era `~5.9.3`).
+
+### Aggiornamenti dipendenze
+
+| Pacchetto | Da | A |
+|---|---|---|
+| `@angular/core` / `common` / `forms` / `router` | `^21.2.x` | `^22.0.1` |
+| `@angular/material` / `cdk` | `^21.2.x` | `^22.0.1` |
+| `@angular/build` / `cli` / `compiler-cli` | `^21.2.x` | `^22.0.1` |
+| `@angular-devkit/core` / `schematics` | `^21.2.x` | `^22.0.1` |
+| `@schematics/angular` | `^21.2.x` | `^22.0.1` |
+| `ng-packagr` | `^21.1.0` | `^22.0.0` |
+| `typescript` | `~5.9.3` | `~6.0.3` |
+
+### Miglioramenti interni
+
+- **`schematics/tsconfig.json`** — aggiornati `module` e `moduleResolution` da `commonjs`/`node` a `node16`/`node16`; aggiunto `"types": ["node"]` per compatibilità con TypeScript 6 e Node 16+ module resolution.
+
+---
+
 ## [0.0.54] — 2026-06-16
 
 ### Nuove funzionalità
