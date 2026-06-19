@@ -112,6 +112,87 @@ export function toRoutesMongo(
   return `const COLLECTION = "acl";\n\n` + lines.join('\n\n') + '\n';
 }
 
+export function toRoutesSql(
+  routes: CoreRouteBase[],
+  actions?: CoreAction[],
+  appId = '',
+  appDescription = '',
+  dialect: 'pg' | 'oracle' = 'pg',
+): string {
+  const entries = toRoutesList(routes, actions);
+  const lines: string[] = [];
+  const esc = (s: string) => s.replace(/'/g, "''");
+  const groupId = `grp:${appId}:ALL`;
+
+  if (dialect === 'oracle') {
+    for (const e of entries) {
+      const src =
+        `SELECT '${esc(e._id)}' id,'${esc(appId)}' app,'${esc(e.category)}' category,` +
+        `'${esc(e.description ?? '')}' description,'${esc(e.name ?? '')}' name,` +
+        `'${esc(e.endpoint ?? '')}' endpoint,'${esc(e.icon ?? '')}' icon,` +
+        `${e.order ?? 0} ord,${e.menu ? 1 : 0} menu FROM DUAL`;
+      lines.push(
+        `MERGE INTO opem_acl_cap_def tgt\n` +
+        `USING (${src}) src\n` +
+        `ON (tgt.id = src.id)\n` +
+        `WHEN MATCHED THEN UPDATE SET\n` +
+        `    tgt.app = src.app, tgt.category = src.category, tgt.description = src.description,\n` +
+        `    tgt.name = src.name, tgt.endpoint = src.endpoint, tgt.icon = src.icon,\n` +
+        `    tgt.ord = src.ord, tgt.menu = src.menu\n` +
+        `WHEN NOT MATCHED THEN INSERT (id, app, category, description, name, endpoint, icon, ord, menu, mapping, method, status)\n` +
+        `    VALUES (src.id, src.app, src.category, src.description, src.name, src.endpoint, src.icon, src.ord, src.menu, '', '', 'active');`,
+      );
+    }
+    lines.push(
+      `MERGE INTO opem_acl_cap_group tgt\n` +
+      `USING (SELECT '${esc(groupId)}' id,'${esc(appDescription)}' description FROM DUAL) src\n` +
+      `ON (tgt.id = src.id)\n` +
+      `WHEN MATCHED THEN UPDATE SET tgt.description = src.description\n` +
+      `WHEN NOT MATCHED THEN INSERT (id, description, status) VALUES (src.id, src.description, 'active');`,
+    );
+    for (const e of entries) {
+      lines.push(
+        `MERGE INTO opem_acl_cap_group_def tgt\n` +
+        `USING (SELECT '${esc(groupId)}' cap_group_id,'${esc(e._id)}' cap_def_id FROM DUAL) src\n` +
+        `ON (tgt.cap_group_id = src.cap_group_id AND tgt.cap_def_id = src.cap_def_id)\n` +
+        `WHEN NOT MATCHED THEN INSERT (cap_group_id, cap_def_id) VALUES (src.cap_group_id, src.cap_def_id);`,
+      );
+    }
+  } else {
+    // PostgreSQL 9.5+: INSERT ... ON CONFLICT
+    for (const e of entries) {
+      lines.push(
+        `INSERT INTO opem_acl_cap_def (id, app, category, description, name, endpoint, icon, ord, menu, mapping, method, status)\n` +
+        `VALUES ('${esc(e._id)}', '${esc(appId)}', '${esc(e.category)}', '${esc(e.description ?? '')}', '${esc(e.name ?? '')}', '${esc(e.endpoint ?? '')}', '${esc(e.icon ?? '')}', ${e.order ?? 0}, ${e.menu ? 'TRUE' : 'FALSE'}, '', '', 'active')\n` +
+        `ON CONFLICT (id) DO UPDATE SET\n` +
+        `    app         = EXCLUDED.app,\n` +
+        `    category    = EXCLUDED.category,\n` +
+        `    description = EXCLUDED.description,\n` +
+        `    name        = EXCLUDED.name,\n` +
+        `    endpoint    = EXCLUDED.endpoint,\n` +
+        `    icon        = EXCLUDED.icon,\n` +
+        `    ord         = EXCLUDED.ord,\n` +
+        `    menu        = EXCLUDED.menu;`,
+      );
+    }
+    lines.push(
+      `INSERT INTO opem_acl_cap_group (id, description, status)\n` +
+      `VALUES ('${esc(groupId)}', '${esc(appDescription)}', 'active')\n` +
+      `ON CONFLICT (id) DO UPDATE SET\n` +
+      `    description = EXCLUDED.description;`,
+    );
+    for (const e of entries) {
+      lines.push(
+        `INSERT INTO opem_acl_cap_group_def (cap_group_id, cap_def_id)\n` +
+        `VALUES ('${esc(groupId)}', '${esc(e._id)}')\n` +
+        `ON CONFLICT DO NOTHING;`,
+      );
+    }
+  }
+
+  return lines.join('\n\n') + '\n';
+}
+
 export function toRoutesList(routes: CoreRouteBase[], actions?: CoreAction[]): CoreRouteEntry[] {
   const ui: CoreRouteEntry[] = routes.map((r) => {
     const { name, description, icon, endpoint, order, menu } = r;

@@ -3,8 +3,8 @@
 Libreria UI condivisa per le applicazioni GPA. Fornisce layout, componenti, gestione token/ambiente, routing pre-configurati, temi Angular Material 3 e utility Tailwind CSS v4.
 
 - **Pacchetto:** `@gpa-gruppo-progetti-avanzati-srl/ng-core-ui`
-- **Versione:** 0.0.39
-- **Angular:** 21.x · **Material:** 21.x · **Tailwind:** 4.x
+- **Versione:** 0.1.0
+- **Angular:** 22.x · **Material:** 22.x · **Tailwind:** 4.x · **TypeScript:** 6.x
 - **Documentazione completa:** [github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki)
 
 ---
@@ -106,8 +106,8 @@ La skill viene caricata automaticamente in ogni sessione Claude Code all'interno
 ```bash
 # 1. Aggiorna la versione in projects/ng-core-ui/package.json
 # 2. Committa e tagga
-git tag 0.0.39
-git push origin 0.0.39
+git tag 0.1.0
+git push origin 0.1.0
 ```
 
 La pubblicazione su npm avviene automaticamente via GitHub Actions al push del tag.

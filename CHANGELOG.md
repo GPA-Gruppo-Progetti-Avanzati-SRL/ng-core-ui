@@ -4,6 +4,35 @@
 
 ---
 
+## [0.1.1] — 2026-06-19
+
+### Nuove funzionalità
+
+- **`generate-sql` — seeding ACL via SQL (PostgreSQL e Oracle)** — nuovo script binario `bin/generate-sql.mjs` che genera `dist/caps/ui/acl.sql` per il seeding delle tabelle `opem_acl_cap_def`, `opem_acl_cap_group` e `opem_acl_cap_group_def`. Si aggiunge agli esistenti `generate-acl` (YAML) e `generate-mongo` (MongoDB).
+
+  Supporta due dialetti tramite il flag `--dialect`:
+  - `pg` (default) — `INSERT ... ON CONFLICT DO UPDATE/NOTHING` (PostgreSQL 9.5+)
+  - `oracle` — `MERGE INTO ... USING (SELECT ... FROM DUAL)` (Oracle 9i+)
+
+  ```bash
+  npm run generate-sql                      # PostgreSQL
+  npm run generate-sql -- --dialect=oracle  # Oracle
+  ```
+
+- **`toRoutesSql()` — nuova funzione pubblica in `routes-export`** — firma: `toRoutesSql(routes, actions?, appId?, appDescription?, dialect?: 'pg' | 'oracle')`. Il parametro `dialect` (default `'pg'`) seleziona la sintassi UPSERT. Esposta da `public-api.ts`.
+
+### Miglioramenti
+
+- **`ng-add` — script `generate-sql` aggiunto automaticamente** — il setup schematic aggiunge il comando `generate-sql` al `package.json` dell'app consumer insieme a `generate-acl` e `generate-mongo`.
+
+- **`ng-add` — flag `--no-warnings` sui comandi node** — tutti e tre gli script (`generate-acl`, `generate-mongo`, `generate-sql`) invocano ora `node --no-warnings` per sopprimere i warning ESM sperimentali di Node.js.
+
+### Correzioni
+
+- **`README.md` — versione e dipendenze** — corretti i riferimenti a versione (`0.0.39` → `0.1.0`), Angular (`21.x` → `22.x`), Material (`21.x` → `22.x`) e TypeScript (`~5.9` → `6.x`) nella documentazione radice.
+
+---
+
 ## [0.1.0] — 2026-06-17
 
 ### Breaking Changes

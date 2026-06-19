@@ -43,3 +43,17 @@ await build({
 });
 
 console.log('✔ Built projects/ng-core-ui/bin/generate-mongo.mjs');
+
+await build({
+  entryPoints: [resolve(libDir, 'bin/generate-sql.ts')],
+  outfile: resolve(libDir, 'bin/generate-sql.mjs'),
+  bundle: true,
+  platform: 'node',
+  format: 'esm',
+  external: ['fs', 'path'],
+  banner: {
+    js: '// @gpa-gruppo-progetti-avanzati-srl/ng-core-ui — generate-sql\n// Run from the consuming app root: node node_modules/@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/bin/generate-sql.mjs\n// Output: dist/caps/ui/acl.sql',
+  },
+});
+
+console.log('✔ Built projects/ng-core-ui/bin/generate-sql.mjs');

@@ -2,8 +2,9 @@ import { Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
 import { LIB } from '../constants';
 
 const SCRIPTS: Record<string, string> = {
-  'generate-acl':   `node node_modules/${LIB}/bin/generate-acl.mjs`,
-  'generate-mongo': `node node_modules/${LIB}/bin/generate-mongo.mjs`,
+  'generate-acl':   `node --no-warnings node_modules/${LIB}/bin/generate-acl.mjs`,
+  'generate-mongo': `node --no-warnings node_modules/${LIB}/bin/generate-mongo.mjs`,
+  'generate-sql':   `node --no-warnings node_modules/${LIB}/bin/generate-sql.mjs`,
   'generate-page':   `ng generate ${LIB}:page`,
   'generate-action': `ng generate ${LIB}:action`,
 };
