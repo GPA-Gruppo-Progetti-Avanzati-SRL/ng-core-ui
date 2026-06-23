@@ -1,7 +1,7 @@
 <mat-form-field appearance="outline" floatLabel="always" class="w-full">
   <mat-label>{{ label() }}</mat-label>
 
-  <mat-select [formField]="formField()">
+  <mat-select [formField]="formField()" (opened)="onOpened()">
     @for (opt of resolvedOptions(); track opt.value) {
       <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
     }

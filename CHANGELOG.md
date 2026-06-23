@@ -4,6 +4,14 @@
 
 ---
 
+## [0.1.2] — 2026-06-23
+
+### Miglioramenti
+
+- **`ComboboxFieldComponent` — supporto readonly** — quando il campo è in stato `readonly`, il pannello a tendina non si apre. Implementato tramite `ViewChild(MatSelect)` e intercettazione dell'evento `(opened)`: se `formField()().readonly()` è `true`, la select viene chiusa immediatamente. Il campo mantiene il suo aspetto visivo normale (non grigio come `disabled`), coerente con il comportamento già implementato su `LookupFieldComponent` e `DatepickerFieldComponent`.
+
+---
+
 ## [0.1.1] — 2026-06-19
 
 ### Nuove funzionalità
