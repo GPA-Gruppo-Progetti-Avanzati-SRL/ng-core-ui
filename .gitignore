@@ -11,6 +11,8 @@
 /projects/ng-core-ui/bin/generate-acl.mjs
 /projects/ng-core-ui/bin/generate-mongo.mjs
 /projects/ng-core-ui/bin/generate-routes.mjs
+/projects/ng-core-ui/bin/generate-sql.mjs
+/projects/ng-core-ui/node_modules
 /tmp
 /out-tsc
 /bazel-out
