@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.1.4] — 2026-06-30
+
+### Correzioni
+
+- **`RadioButtonListFieldComponent` — fix option value** —  rimesso l'option value nel radio button
 ---
 
 ## [0.1.3] — 2026-06-30
