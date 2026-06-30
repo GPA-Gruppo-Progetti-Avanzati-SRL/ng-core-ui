@@ -4,6 +4,14 @@
 
 ---
 
+## [0.1.3] — 2026-06-30
+
+### Correzioni
+
+- **`RadioButtonListFieldComponent` — fix allineamento e dimensioni** — corretto il layout del campo radio in entrambe le modalità (`inline` e stacked). In modalità `inline` l'altezza è ora fissa a 48 px (`h-[48px]`) con `items-center`; in modalità stacked il contenitore usa `min-h-[48px]` e `py-2` per padding verticale uniforme. Il `mat-radio-group` occupa ora tutta la larghezza disponibile (`w-full`) e il gap tra le opzioni è ridotto da 6 a 5 (inline) e da 2.5 a 2 (stacked). Aggiunta la classe `leading-none` su `mat-radio-button` per eliminare il line-height ereditato che causava disallineamento verticale dell'etichetta.
+
+---
+
 ## [0.1.2] — 2026-06-23
 
 ### Miglioramenti
