@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## [0.1.5] — 2026-07-01
+
+### Nuove funzionalità
+
+- **`redirectInterceptor` — redirect SSO delle XHR propagati al browser** — nuovo `HttpInterceptorFn` che gestisce i redirect (es. `302` emessi da un proxy davanti al frontdoor su sessione scaduta / login SSO) che il browser segue automaticamente sulle chiamate XHR/AJAX. Quando il browser segue il `302` verso un origin diverso (SSO) che non abilita CORS, la XHR fallisce con `status 0` e l'URL di destinazione non è leggibile lato JS. L'interceptor intercetta questo caso e chiama `window.location.reload()`: la **navigazione top-level non è soggetta a CORS**, quindi il browser segue liberamente il `302` fino alla pagina di login/SSO invece di lasciare l'app in stato di errore.
+
+  Registrato automaticamente dentro `provideGPAUICore` (`withInterceptors([contextInterceptor, redirectInterceptor, loadingInterceptor])`) ed esportato dalla public API — tutte le app consumer lo ereditano senza modifiche.
+
+  Nota: `status 0` non è esclusivo del redirect CORS (anche rete offline / richiesta abortita lo producono), quindi in quei casi scatta comunque un reload.
+
+---
+
 ## [0.1.4] — 2026-06-30
 
 ### Correzioni

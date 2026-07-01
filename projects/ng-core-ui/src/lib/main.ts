@@ -3,6 +3,7 @@ import { withInterceptors, provideHttpClient } from '@angular/common/http';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 import { contextInterceptor } from './system/context-interceptor';
+import { redirectInterceptor } from './system/redirect.interceptor';
 import { loadingInterceptor } from './system/loading.interceptor';
 import { GpaPaginatorIntl } from './system/gpa-paginator-intl';
 
@@ -18,7 +19,7 @@ export function provideGPAUICore(options?: GpaCoreOptions): EnvironmentProviders
   return makeEnvironmentProviders([
     ...(options?.tokenUrl ? [{ provide: LIB_TOKEN_URL, useValue: options.tokenUrl }] : []),
     ...(options?.environmentUrl ? [{ provide: LIB_ENVIRONMENT_URL, useValue: options.environmentUrl }] : []),
-    provideHttpClient(withInterceptors([contextInterceptor, loadingInterceptor])),
+    provideHttpClient(withInterceptors([contextInterceptor, redirectInterceptor, loadingInterceptor])),
     { provide: MatPaginatorIntl, useClass: GpaPaginatorIntl },
     { provide: MAT_DATE_LOCALE, useValue: 'it' },
     provideNativeDateAdapter(),

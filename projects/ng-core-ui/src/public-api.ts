@@ -7,6 +7,7 @@ export * from './lib/system/style-manager.service';
 export * from './lib/system/menu.guard';
 export * from './lib/system/routes';
 export { contextInterceptor } from './lib/system/context-interceptor';
+export { redirectInterceptor } from './lib/system/redirect.interceptor';
 
 //DEFAULT PAGES
 export * from './lib/pages/not-found.page';
