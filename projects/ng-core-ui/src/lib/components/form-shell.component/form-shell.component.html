@@ -1,14 +1,13 @@
-<div class="ui flex flex-wrap gap-4 items-start w-full" [style.padding]="padding()">
+<div class="ui w-full" [style.padding]="padding()">
   <div
-    class="grid flex-1"
+    class="grid"
     [style.grid-template-columns]="'repeat(' + currentColumns() + ', minmax(0, 1fr))'"
     [style.row-gap]="rowGap()"
     [style.column-gap]="columnGap()"
-    [style.direction]="inlineActions().length ? 'rtl' : 'ltr'"
   >
     @for (f of fields(); track $index) {
       @if (!isHidden(f)) {
-        <div [style.grid-column]="'span ' + clampSpan(f)" style="direction: ltr">
+        <div [style.grid-column]="'span ' + clampSpan(f)">
           <ng-container
             [ngComponentOutlet]="f.component"
             [ngComponentOutletInputs]="fieldInputs(f)"
@@ -16,23 +15,23 @@
         </div>
       }
     }
-  </div>
 
-  @if (inlineActions().length) {
-    <div class="mb-[1.34375em] flex gap-2 flex-wrap items-center self-end">
-      @for (a of inlineActions(); track $index) {
-        <core-button
-          [icon]="a.icon"
-          [label]="a.label"
-          [tooltip]="a.tooltip ?? ''"
-          [variant]="a.variant ?? 'icon'"
-          [color]="a.color ?? 'tertiary'"
-          [disabled]="a._disabled"
-          (click)="!a._disabled && a.onClick()"
-        />
-      }
-    </div>
-  }
+    @if (inlineActions().length) {
+      <div class="flex min-h-[48px] items-center gap-2 lg:self-start lg:mt-[0em]">
+        @for (a of inlineActions(); track $index) {
+          <core-button
+            [icon]="a.icon"
+            [label]="a.label"
+            [tooltip]="a.tooltip ?? ''"
+            [variant]="a.variant ?? 'icon'"
+            [color]="a.color ?? 'tertiary'"
+            [disabled]="a._disabled"
+            (click)="!a._disabled && a.onClick()"
+          />
+        }
+      </div>
+    }
+  </div>
 </div>
 
 @if (footerActions().length) {
