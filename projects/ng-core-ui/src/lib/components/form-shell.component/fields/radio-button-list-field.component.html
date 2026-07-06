@@ -11,22 +11,26 @@
 
   <div
     [class]="
-    inline()
-      ? 'flex h-[48px] items-center rounded-md border border-slate-500 bg-transparent px-3 dark:border-slate-600/60'
-      : 'flex min-h-[48px] rounded-md border border-slate-500 bg-transparent px-3 py-2 dark:border-slate-600/60'
-  "
+      inline()
+        ? 'flex min-h-[48px] rounded-md border border-slate-500 bg-transparent px-3 py-2 dark:border-slate-600/60'
+        : 'flex min-h-[48px] rounded-md border border-slate-500 bg-transparent px-3 py-2 dark:border-slate-600/60'
+    "
   >
     <mat-radio-group
       [formField]="formField()"
       [class]="
     inline()
-      ? 'flex w-full flex-row items-center gap-x-5'
+      ? 'flex w-full flex-col gap-2 md:flex-row md:flex-wrap md:items-start md:gap-x-6 md:gap-y-2'
       : 'flex w-full flex-col items-start gap-2'
   "
     >
       @for (opt of resolvedOptions(); track opt.value) {
-        <mat-radio-button [value]="opt.value">
-          {{ opt.label }}
+        <mat-radio-button
+          class="min-w-0"
+          [value]="opt.value">
+          <span class="block whitespace-normal break-words leading-5">
+            {{ opt.label }}
+          </span>
         </mat-radio-button>
       }
     </mat-radio-group>
