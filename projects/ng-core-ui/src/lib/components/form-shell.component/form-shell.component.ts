@@ -100,6 +100,16 @@ protected readonly columnGap = computed(() => {
     return this.hasActionColumn() ? cols + 1 : cols;
   });
 
+  protected readonly gridTemplateColumns = computed(() => {
+    const cols = this.currentColumns();
+
+    if (!this.hasActionColumn()) {
+      return `repeat(${cols}, minmax(0, 1fr))`;
+    }
+
+    return `repeat(${cols}, minmax(0, 1fr)) fit-content(64px)`;
+  });
+
   protected isHidden<T>(f: FormFieldDef<T>): boolean {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (f.field as any)()?.hidden?.() ?? false;
