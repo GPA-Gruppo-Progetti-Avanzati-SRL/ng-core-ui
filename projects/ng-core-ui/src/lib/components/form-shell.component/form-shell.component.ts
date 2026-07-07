@@ -100,6 +100,11 @@ protected readonly columnGap = computed(() => {
     return this.hasActionColumn() ? cols + 1 : cols;
   });
 
+  protected fieldsColumn(): string {
+    if (!this.hasActionColumn()) return '1 / -1';
+    return `1 / ${this.layoutColumns()}`;
+  }
+
   protected readonly gridTemplateColumns = computed(() => {
     const cols = this.currentColumns();
 

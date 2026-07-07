@@ -5,16 +5,18 @@
     [style.row-gap]="rowGap()"
     [style.column-gap]="columnGap()"
   >
-    @for (f of fields(); track $index) {
-      @if (!isHidden(f)) {
-        <div [style.grid-column]="'span ' + fieldSpan(f)">
-          <ng-container
-            [ngComponentOutlet]="f.component"
-            [ngComponentOutletInputs]="fieldInputs(f)"
-          />
-        </div>
+    <div class="grid"  [style.grid-column]="fieldsColumn()" [style.grid-template-columns]="'repeat(' + currentColumns() + ', minmax(0, 1fr))'" [style.row-gap]="rowGap()" [style.column-gap]="columnGap()" [style.direction]="'rtl'">
+      @for (f of fields(); track $index) {
+        @if (!isHidden(f)) {
+          <div [style.grid-column]="'span ' + fieldSpan(f)" [style.direction]="'ltr'">
+            <ng-container
+              [ngComponentOutlet]="f.component"
+              [ngComponentOutletInputs]="fieldInputs(f)"
+            />
+          </div>
+        }
       }
-    }
+    </div>
 
     @if (inlineActions().length) {
       <div
