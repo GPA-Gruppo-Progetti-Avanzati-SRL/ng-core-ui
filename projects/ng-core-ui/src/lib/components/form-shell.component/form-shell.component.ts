@@ -50,7 +50,6 @@ export class FormShellComponent {
     const cols = this.columns();
     if (this.isXSmall()) return 1;
     if (this.isSmall())  return Math.min(cols, 2);
-    if (this.isMedium()) return Math.min(cols, 3);
     return cols;
   });
 
@@ -92,14 +91,34 @@ protected readonly columnGap = computed(() => {
       .map(a => ({ ...a, _disabled: a.disabled?.() ?? false }))
   );
 
+  protected readonly hasActionColumn = computed(() =>
+    this.inlineActions().length > 0 && !this.isXSmall() && !this.isSmall()
+  );
+
+  protected readonly layoutColumns = computed(() => {
+    const cols = this.currentColumns();
+    return this.hasActionColumn() ? cols + 1 : cols;
+  });
 
   protected isHidden<T>(f: FormFieldDef<T>): boolean {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (f.field as any)()?.hidden?.() ?? false;
   }
 
-  protected clampSpan<T>(f: FormFieldDef<T>): number {
-    return Math.min(f.span ?? 1, this.currentColumns());
+  protected fieldSpan<T>(f: FormFieldDef<T>): number {
+    const maxFieldColumns = this.hasActionColumn()
+      ? this.currentColumns()
+      : this.layoutColumns();
+
+    return Math.min(f.span ?? 1, maxFieldColumns);
+  }
+
+  protected actionColumnStart(): string {
+    if (!this.inlineActions().length) return '1 / -1';
+    if (!this.hasActionColumn()) return '1 / -1';
+
+    const start = this.layoutColumns();
+    return `${start} / ${start + 1}`;
   }
 
   protected fieldInputs<T>(f: FormFieldDef<T>): Record<string, unknown> {

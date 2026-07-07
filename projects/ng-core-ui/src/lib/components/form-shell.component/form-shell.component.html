@@ -1,25 +1,26 @@
 <div class="ui w-full" [style.padding]="padding()">
-  <div class="flex w-full flex-col items-start gap-4 lg:flex-row">
-    <div
-      class="grid min-w-0 w-full flex-1"
-      [style.grid-template-columns]="'repeat(' + currentColumns() + ', minmax(0, 1fr))'"
-      [style.row-gap]="rowGap()"
-      [style.column-gap]="columnGap()"
-    >
-      @for (f of fields(); track $index) {
-        @if (!isHidden(f)) {
-          <div [style.grid-column]="'span ' + clampSpan(f)">
-            <ng-container
-              [ngComponentOutlet]="f.component"
-              [ngComponentOutletInputs]="fieldInputs(f)"
-            />
-          </div>
-        }
+  <div
+    class="grid"
+    [style.grid-template-columns]="'repeat(' + layoutColumns() + ', minmax(0, 1fr))'"
+    [style.row-gap]="rowGap()"
+    [style.column-gap]="columnGap()"
+  >
+    @for (f of fields(); track $index) {
+      @if (!isHidden(f)) {
+        <div [style.grid-column]="'span ' + fieldSpan(f)">
+          <ng-container
+            [ngComponentOutlet]="f.component"
+            [ngComponentOutletInputs]="fieldInputs(f)"
+          />
+        </div>
       }
-    </div>
+    }
 
     @if (inlineActions().length) {
-      <div class="flex w-full justify-end gap-2 lg:w-auto lg:shrink-0 lg:self-start">
+      <div
+        class="flex min-h-[48px] items-center justify-end gap-2 self-start lg:mt-[0em]"
+        [style.grid-column]="actionColumnStart()"
+      >
         @for (a of inlineActions(); track $index) {
           <core-button
             [icon]="a.icon"
