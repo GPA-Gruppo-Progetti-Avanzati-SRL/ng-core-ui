@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [0.1.6] — 2026-07-08
+
+### Correzioni
+
+- **`FormShellComponent` — fix allineamento search buttons** —  nella versione mobile i SearchButtons vanno a capo, nella versione desktop restano sulla stessa riga dei campi
+---
+
 ## [0.1.5] — 2026-07-01
 
 ### Nuove funzionalità
