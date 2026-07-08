@@ -19,10 +19,13 @@ export class DatepickerFieldComponent {
 
   @ViewChild(MatInput) private _input?: MatInput;
 
-  /** ErrorStateMatcher control-independent: riflette invalid && touched del field state. */
-  protected readonly errorMatcher = new FieldStateErrorMatcher(() => this.formField()());
-
   protected readonly required = computed(() => this.formField()()?.required?.() ?? false);
+  protected readonly hasError = computed(() =>
+    !!(this.formField()()?.touched?.() && this.formField()()?.invalid?.())
+  );
+
+  /** ErrorStateMatcher control-independent: riflette invalid && touched del field state. */
+  protected readonly errorMatcher = new FieldStateErrorMatcher(() => this.hasError());
 
   readonly editable = computed(() => {
     if (!this.formField() || ! this.formField()()) return true;
@@ -32,8 +35,7 @@ export class DatepickerFieldComponent {
   constructor() {
     // Forza il ricalcolo di errorState su invalid()/touched() (es. dopo submit).
     effect(() => {
-      this.formField()()?.invalid?.();
-      this.formField()()?.touched?.();
+      this.hasError();
       this._input?.updateErrorState();
     });
   }

@@ -2,16 +2,19 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   input,
   signal,
+  ViewChild,
   ViewEncapsulation
 } from '@angular/core';
-import { MatInputModule } from '@angular/material/input';
+import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule, MatError } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CoreFieldComponent } from '../form-field.models';
+import { FieldStateErrorMatcher } from './field-error-state-matcher';
 
 @Component({
   selector: 'core-file-input-field',
@@ -28,6 +31,8 @@ export class FileInputFieldComponent implements CoreFieldComponent {
   readonly multiple          = input<boolean>(false);
   readonly acceptedMimeTypes = input<string[]>([]);
   readonly valuePlaceHolder  = input<string>('Nessun file selezionato');
+
+  @ViewChild(MatInput) private _input?: MatInput;
 
   private readonly fieldState = computed<any>(() => this.formField()());
 
@@ -49,7 +54,18 @@ export class FileInputFieldComponent implements CoreFieldComponent {
     return errors[0]?.message ?? 'Campo non valido';
   });
 
+  /** ErrorStateMatcher control-independent: senza NgControl MatInput non ricalcola errorState. */
+  protected readonly errorMatcher = new FieldStateErrorMatcher(() => this.hasError());
+
   protected readonly isDraggingOver = signal<boolean>(false);
+
+  constructor() {
+    // Forza il ricalcolo di errorState al cambio di hasError() (es. dopo submit/mimeError).
+    effect(() => {
+      this.hasError();
+      this._input?.updateErrorState();
+    });
+  }
 
   protected onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;

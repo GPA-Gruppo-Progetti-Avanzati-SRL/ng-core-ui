@@ -51,11 +51,14 @@ export class LookupFieldComponent {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private readonly fieldState = computed<any>(() => this.formField()());
 
-  /** ErrorStateMatcher control-independent: riflette invalid && touched del field state. */
-  protected readonly errorMatcher = new FieldStateErrorMatcher(() => this.formField()());
-
   protected readonly required     = computed(() => this.fieldState()?.required?.() ?? false);
   protected readonly disabled     = computed(() => this.fieldState()?.disabled?.() ?? false);
+  protected readonly hasError     = computed(() =>
+    !!(this.fieldState()?.touched?.() && this.fieldState()?.invalid?.())
+  );
+
+  /** ErrorStateMatcher control-independent: riflette invalid && touched del field state. */
+  protected readonly errorMatcher = new FieldStateErrorMatcher(() => this.hasError());
   readonly editable = computed(() => {
     if (!this.formField() || ! this.formField()()) return true;
     return !this.formField()().readonly?.() && !this.formField()().disabled?.();
@@ -71,8 +74,7 @@ export class LookupFieldComponent {
     // Senza NgControl il ngDoCheck di MatInput non ricalcola errorState:
     // forziamo l'aggiornamento quando invalid()/touched() cambiano (es. dopo submit).
     effect(() => {
-      this.fieldState()?.invalid?.();
-      this.fieldState()?.touched?.();
+      this.hasError();
       this._input?.updateErrorState();
     });
   }

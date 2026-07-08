@@ -14,8 +14,7 @@
            [value]="fileName()"
            [placeholder]="valuePlaceHolder()"
            [required]="showAsRequired()"
-           [class.ng-invalid]="hasError()"
-           [class.ng-touched]="touched()"
+           [errorStateMatcher]="errorMatcher"
            class="!text-sm"/>
 
     <div matSuffix class="flex items-center">
