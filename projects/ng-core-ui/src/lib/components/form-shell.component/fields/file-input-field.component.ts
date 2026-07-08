@@ -75,6 +75,11 @@ export class FileInputFieldComponent implements CoreFieldComponent {
     afterNextRender(() => this._input()?.updateErrorState());
   }
 
+  /** Marca il campo touched all'uscita dal focus: mostra l'errore se si esce senza allegare. */
+  protected markTouched(): void {
+    this.fieldState()?.markAsTouched?.();
+  }
+
   protected onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.updateData(input.files?.[0] ?? null);

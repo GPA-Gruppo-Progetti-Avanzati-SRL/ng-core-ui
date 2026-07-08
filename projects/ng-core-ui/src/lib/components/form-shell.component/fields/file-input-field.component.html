@@ -6,7 +6,7 @@
      (dragleave)="onDragLeave($event)"
      (drop)="onFileDropped($event)">
 
-  <mat-form-field appearance="outline" floatLabel="always" class="w-full mb-[-0.5rem]">
+  <mat-form-field appearance="outline" floatLabel="always" class="w-full mb-[-0.5rem]" (focusout)="markTouched()">
     <mat-label>{{ label() }}</mat-label>
 
     <input #fileInput hidden type="file" [multiple]="multiple()" [accept]="accepts()" (change)="onFileSelected($event)" />
