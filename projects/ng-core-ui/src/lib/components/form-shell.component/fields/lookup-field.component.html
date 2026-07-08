@@ -2,7 +2,8 @@
   <mat-label>{{ label() }}</mat-label>
 
   <input matInput readonly [value]="selected()?.label ?? ''"
-    [disabled]="disabled()" class="cursor-default !text-sm"
+    [disabled]="disabled()" [required]="required()" [errorStateMatcher]="errorMatcher"
+    class="cursor-default !text-sm"
   />
 
   <!-- Suffix: clear + search in un unico contenitore per evitare sovrapposizioni -->
@@ -21,7 +22,7 @@
     </button>
   </div>
 
-  @if (formField()().errors()?.length) {
-    <mat-error>{{ formField()().errors()[0].message ?? 'Campo non valido' }}</mat-error>
+  @if (formField()().touched() && formField()().errors().length) {
+    <mat-error>{{ formField()().errors()[0]?.message ?? 'Campo non valido' }}</mat-error>
   }
 </mat-form-field>

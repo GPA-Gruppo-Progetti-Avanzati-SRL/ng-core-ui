@@ -1,6 +1,7 @@
 <mat-form-field appearance="outline" floatLabel="always" class="w-full">
   <mat-label>{{ label() }}</mat-label>
-  <input matInput [matDatepicker]="picker" [formField]="formField()" class="!text-sm" />
+  <input matInput [matDatepicker]="picker" [formField]="formField()"
+    [required]="required()" [errorStateMatcher]="errorMatcher" class="!text-sm" />
   <mat-datepicker-toggle matIconSuffix [for]="picker" [hidden]="!editable()"/>
   <mat-datepicker #picker />
   @if (formField()().touched() && formField()().errors().length) {

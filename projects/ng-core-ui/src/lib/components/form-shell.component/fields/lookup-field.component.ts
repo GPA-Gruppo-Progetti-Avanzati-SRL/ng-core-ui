@@ -3,20 +3,23 @@ import {
   Component,
   DestroyRef,
   Type,
+  ViewChild,
   ViewEncapsulation,
   computed,
+  effect,
   inject,
   input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { LookupResult } from '../form-field.models';
 import { LookupPickerDialogComponent } from './lookup-picker-dialog.component';
+import { FieldStateErrorMatcher } from './field-error-state-matcher';
 
 export interface LookupDialogConfig {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,9 +46,15 @@ export class LookupFieldComponent {
   private readonly _dialog     = inject(MatDialog);
   private readonly _destroyRef = inject(DestroyRef);
 
+  @ViewChild(MatInput) private _input?: MatInput;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private readonly fieldState = computed<any>(() => this.formField()());
 
+  /** ErrorStateMatcher control-independent: riflette invalid && touched del field state. */
+  protected readonly errorMatcher = new FieldStateErrorMatcher(() => this.formField()());
+
+  protected readonly required     = computed(() => this.fieldState()?.required?.() ?? false);
   protected readonly disabled     = computed(() => this.fieldState()?.disabled?.() ?? false);
   readonly editable = computed(() => {
     if (!this.formField() || ! this.formField()()) return true;
@@ -57,6 +66,16 @@ export class LookupFieldComponent {
     const s = this.selected();
     return s != null && s.id != null;
   });
+
+  constructor() {
+    // Senza NgControl il ngDoCheck di MatInput non ricalcola errorState:
+    // forziamo l'aggiornamento quando invalid()/touched() cambiano (es. dopo submit).
+    effect(() => {
+      this.fieldState()?.invalid?.();
+      this.fieldState()?.touched?.();
+      this._input?.updateErrorState();
+    });
+  }
 
   protected open(): void {
     if (this.disabled()) return;
