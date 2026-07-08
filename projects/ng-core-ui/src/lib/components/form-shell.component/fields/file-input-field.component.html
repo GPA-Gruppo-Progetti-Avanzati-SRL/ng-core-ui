@@ -30,9 +30,8 @@
       </button>
     </div>
 
-    @if (hasError()) {
-      <mat-error>{{ errorMessage() }}</mat-error>
-    }
+    <!-- Sempre in DOM (ContentChildren stabile): la visibilità è pilotata da errorState. -->
+    <mat-error>{{ errorMessage() }}</mat-error>
   </mat-form-field>
 
 </div>

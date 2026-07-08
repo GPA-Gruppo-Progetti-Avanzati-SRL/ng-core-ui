@@ -4,6 +4,7 @@ import {
   DestroyRef,
   Type,
   ViewEncapsulation,
+  afterNextRender,
   computed,
   effect,
   inject,
@@ -56,6 +57,9 @@ export class LookupFieldComponent {
   protected readonly hasError     = computed(() =>
     !!(this.fieldState()?.touched?.() && this.fieldState()?.invalid?.())
   );
+  protected readonly errorMessage = computed<string>(() =>
+    this.fieldState()?.errors?.()?.[0]?.message ?? 'Campo non valido'
+  );
 
   /** ErrorStateMatcher control-independent: riflette invalid && touched del field state. */
   protected readonly errorMatcher = new FieldStateErrorMatcher(() => this.hasError());
@@ -71,12 +75,16 @@ export class LookupFieldComponent {
   });
 
   constructor() {
-    // Senza NgControl il ngDoCheck di MatInput non ricalcola errorState:
-    // forziamo l'aggiornamento quando invalid()/touched() cambiano (es. dopo submit).
+    // Senza NgControl, MatInput non ricalcola mai errorState. Un effect() (reattivo,
+    // indipendente da OnPush) forza updateErrorState() a ogni cambio di hasError():
+    // il matcher restituisce hasError() e il subscript <mat-error> (sempre in DOM) appare.
     effect(() => {
       this.hasError();
       this._input()?.updateErrorState();
     });
+    // Sincronizza lo stato iniziale (caso form già invalid+touched al primo render:
+    // l'effect da solo non ri-esegue alla risoluzione del viewChild).
+    afterNextRender(() => this._input()?.updateErrorState());
   }
 
   protected open(): void {

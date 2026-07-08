@@ -22,7 +22,6 @@
     </button>
   </div>
 
-  @if (formField()().touched() && formField()().errors().length) {
-    <mat-error>{{ formField()().errors()[0]?.message ?? 'Campo non valido' }}</mat-error>
-  }
+  <!-- Sempre in DOM (ContentChildren stabile): la visibilità è pilotata da errorState. -->
+  <mat-error>{{ errorMessage() }}</mat-error>
 </mat-form-field>

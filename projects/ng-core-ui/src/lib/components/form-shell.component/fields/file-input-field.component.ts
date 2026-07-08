@@ -1,4 +1,5 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -60,11 +61,13 @@ export class FileInputFieldComponent implements CoreFieldComponent {
   protected readonly isDraggingOver = signal<boolean>(false);
 
   constructor() {
-    // Forza il ricalcolo di errorState al cambio di hasError() (es. dopo submit/mimeError).
+    // Forza il ricalcolo di errorState al cambio di hasError() (reattivo, indip. da OnPush).
     effect(() => {
       this.hasError();
       this._input()?.updateErrorState();
     });
+    // Sincronizza lo stato iniziale (l'effect non ri-esegue alla risoluzione del viewChild).
+    afterNextRender(() => this._input()?.updateErrorState());
   }
 
   protected onFileSelected(event: Event): void {

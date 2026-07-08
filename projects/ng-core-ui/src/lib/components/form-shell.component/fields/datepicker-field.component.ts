@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, computed, effect, input, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation, afterNextRender, computed, effect, input, viewChild } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInput, MatInputModule } from '@angular/material/input';
@@ -23,6 +23,9 @@ export class DatepickerFieldComponent {
   protected readonly hasError = computed(() =>
     !!(this.formField()()?.touched?.() && this.formField()()?.invalid?.())
   );
+  protected readonly errorMessage = computed<string>(() =>
+    this.formField()()?.errors?.()?.[0]?.message ?? 'Campo non valido'
+  );
 
   /** ErrorStateMatcher control-independent: riflette invalid && touched del field state. */
   protected readonly errorMatcher = new FieldStateErrorMatcher(() => this.hasError());
@@ -33,10 +36,12 @@ export class DatepickerFieldComponent {
   });
 
   constructor() {
-    // Forza il ricalcolo di errorState su invalid()/touched() (es. dopo submit).
+    // Forza il ricalcolo di errorState a ogni cambio di hasError() (reattivo, indip. da OnPush).
     effect(() => {
       this.hasError();
       this._input()?.updateErrorState();
     });
+    // Sincronizza lo stato iniziale (l'effect non ri-esegue alla risoluzione del viewChild).
+    afterNextRender(() => this._input()?.updateErrorState());
   }
 }
