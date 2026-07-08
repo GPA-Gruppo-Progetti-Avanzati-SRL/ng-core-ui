@@ -63,8 +63,13 @@ export class FileInputFieldComponent implements CoreFieldComponent {
   constructor() {
     // Forza il ricalcolo di errorState al cambio di hasError() (reattivo, indip. da OnPush).
     effect(() => {
+      // Leggere prima _input() (viewChild, sempre sicuro): risolve solo dopo il render,
+      // quando NgComponentOutlet ha già applicato gli input. Solo allora è sicuro leggere
+      // hasError() (che dereferenzia formField, input.required) senza incorrere in NG0950.
+      const input = this._input();
+      if (!input) return;
       this.hasError();
-      this._input()?.updateErrorState();
+      input.updateErrorState();
     });
     // Sincronizza lo stato iniziale (l'effect non ri-esegue alla risoluzione del viewChild).
     afterNextRender(() => this._input()?.updateErrorState());
