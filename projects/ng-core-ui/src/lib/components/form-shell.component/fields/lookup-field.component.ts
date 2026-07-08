@@ -3,12 +3,12 @@ import {
   Component,
   DestroyRef,
   Type,
-  ViewChild,
   ViewEncapsulation,
   computed,
   effect,
   inject,
   input,
+  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
@@ -46,7 +46,7 @@ export class LookupFieldComponent {
   private readonly _dialog     = inject(MatDialog);
   private readonly _destroyRef = inject(DestroyRef);
 
-  @ViewChild(MatInput) private _input?: MatInput;
+  private readonly _input = viewChild(MatInput);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private readonly fieldState = computed<any>(() => this.formField()());
@@ -75,7 +75,7 @@ export class LookupFieldComponent {
     // forziamo l'aggiornamento quando invalid()/touched() cambiano (es. dopo submit).
     effect(() => {
       this.hasError();
-      this._input?.updateErrorState();
+      this._input()?.updateErrorState();
     });
   }
 

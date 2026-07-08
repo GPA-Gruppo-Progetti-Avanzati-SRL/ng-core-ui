@@ -5,7 +5,7 @@ import {
   effect,
   input,
   signal,
-  ViewChild,
+  viewChild,
   ViewEncapsulation
 } from '@angular/core';
 import { MatInput, MatInputModule } from '@angular/material/input';
@@ -32,7 +32,7 @@ export class FileInputFieldComponent implements CoreFieldComponent {
   readonly acceptedMimeTypes = input<string[]>([]);
   readonly valuePlaceHolder  = input<string>('Nessun file selezionato');
 
-  @ViewChild(MatInput) private _input?: MatInput;
+  private readonly _input = viewChild(MatInput);
 
   private readonly fieldState = computed<any>(() => this.formField()());
 
@@ -63,7 +63,7 @@ export class FileInputFieldComponent implements CoreFieldComponent {
     // Forza il ricalcolo di errorState al cambio di hasError() (es. dopo submit/mimeError).
     effect(() => {
       this.hasError();
-      this._input?.updateErrorState();
+      this._input()?.updateErrorState();
     });
   }
 
