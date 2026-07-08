@@ -76,6 +76,17 @@ describe('LookupFieldComponent error/required rendering', () => {
     expect(errorWrapper()).withContext('errore rimosso').toBeNull();
   });
 
+  it('focusout (uscita dal campo senza valorizzare) marca touched e mostra l\'errore', async () => {
+    await setup({ invalid: true, touched: false, required: true });
+    expect(errorWrapper()).withContext('nessun errore iniziale').toBeNull();
+
+    const formField = (fixture.nativeElement as HTMLElement).querySelector('mat-form-field')!;
+    formField.dispatchEvent(new Event('focusout', { bubbles: true }));
+    fixture.detectChanges();
+
+    expect(errorWrapper()).withContext('errore dopo il blur').not.toBeNull();
+  });
+
   it('clear() marca il campo touched e mostra subito l\'errore', async () => {
     await setup({ invalid: true, touched: false, required: true });
     expect(errorWrapper()).withContext('nessun errore iniziale').toBeNull();

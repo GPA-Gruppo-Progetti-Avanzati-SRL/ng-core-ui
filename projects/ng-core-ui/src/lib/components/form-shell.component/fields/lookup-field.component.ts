@@ -116,6 +116,12 @@ export class LookupFieldComponent {
     this.updateValue(null);
   }
 
+  /** Marca il campo come touched all'uscita dal focus (comportamento standard dei form field):
+   *  così l'errore appare se si esce dal lookup senza valorizzarlo. */
+  protected markTouched(): void {
+    this.fieldState()?.markAsTouched?.();
+  }
+
   /** Aggiorna il valore e marca il campo touched/dirty (come file-input),
    *  così l'errore appare subito quando si cancella la selezione, non solo al submit. */
   private updateValue(value: LookupResult | null): void {
