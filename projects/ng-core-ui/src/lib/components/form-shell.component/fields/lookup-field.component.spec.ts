@@ -76,6 +76,17 @@ describe('LookupFieldComponent error/required rendering', () => {
     expect(errorWrapper()).withContext('errore rimosso').toBeNull();
   });
 
+  it('clear() marca il campo touched e mostra subito l\'errore', async () => {
+    await setup({ invalid: true, touched: false, required: true });
+    expect(errorWrapper()).withContext('nessun errore iniziale').toBeNull();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (fixture.componentInstance as any).clear();
+    fixture.detectChanges();
+
+    expect(errorWrapper()).withContext('errore dopo clear()').not.toBeNull();
+  });
+
   it('mostra l\'errore già al primo render se invalid+touched (es. form invalido al load)', async () => {
     await setup({ invalid: true, touched: true, required: true });
     await fixture.whenStable();

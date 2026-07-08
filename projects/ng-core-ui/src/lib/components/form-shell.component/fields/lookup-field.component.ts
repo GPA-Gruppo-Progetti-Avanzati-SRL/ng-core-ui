@@ -108,11 +108,20 @@ export class LookupFieldComponent {
       .afterClosed()
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe((result: LookupResult | null | undefined) => {
-        if (result) this.fieldState()?.value?.set(result);
+        if (result) this.updateValue(result);
       });
   }
 
   protected clear(): void {
-    this.fieldState()?.value?.set(null);
+    this.updateValue(null);
+  }
+
+  /** Aggiorna il valore e marca il campo touched/dirty (come file-input),
+   *  così l'errore appare subito quando si cancella la selezione, non solo al submit. */
+  private updateValue(value: LookupResult | null): void {
+    const fs = this.fieldState();
+    fs?.value?.set(value);
+    fs?.markAsTouched?.();
+    fs?.markAsDirty?.();
   }
 }
