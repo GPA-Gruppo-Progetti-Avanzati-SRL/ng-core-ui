@@ -2,6 +2,26 @@
 
 ## [Unreleased]
 
+## [0.1.7] — 2026-07-09
+
+### Correzioni
+
+- **Field picker (`LookupFieldComponent`, `FileInputFieldComponent`) — errori di validazione ora visibili** — i field custom del FormShell che non usano `[formField]` (quindi senza `NgControl`) non facevano mai ricalcolare l'`errorState` a Material, per cui il `mat-error` non compariva mai. Introdotto `FieldStateErrorMatcher` (interno), un `ErrorStateMatcher` control-independent che delega a un predicato `hasError = touched && invalid` basato sui signal del field state. Un `effect()` reattivo forza `updateErrorState()` a ogni cambio di `hasError()` e `afterNextRender()` sincronizza lo stato iniziale (form già invalid+touched al primo render).
+
+- **Field picker — `NG0950` in fase di error state** — l'accesso al field state durante il ricalcolo dell'error state avveniva prima che `NgComponentOutlet` avesse applicato gli input, generando `NG0950`. Ora l'`effect()` legge prima `viewChild(MatInput)` (sempre sicuro, risolve solo dopo il render) e solo allora dereferenzia `formField`/`required`.
+
+- **`LookupFieldComponent`, `FileInputFieldComponent` — errore mostrato all'interazione, non solo al submit** — l'aggiornamento del valore (selezione o clear) e il `focusout` marcano ora il campo come `touched`/`dirty` (`markTouched`, `updateValue`), così l'errore "campo obbligatorio" appare subito quando si esce dal campo o si cancella la selezione, senza attendere il submit.
+
+- **`ToastComponent` — centrato orizzontalmente** — il toast è ora centrato sull'asse X (`left-1/2 -translate-x-1/2`, `items-center`) mantenendo la stessa altezza verticale (`top-17`) invece di essere ancorato a destra.
+
+### Refactoring
+
+- **Field components — `@ViewChild` → `viewChild()`** — sostituito il decoratore con la signal-query `viewChild()` su tutti i field per coerenza e leggibilità.
+- **`DatepickerFieldComponent`** — nessun meccanismo custom di error state: il datepicker ha un `NgControl` reale via `[formField]`, quindi Material gestisce nativamente asterisco `required` e `mat-error`. Aggiunto commento esplicativo.
+- **Test** — aggiunti unit test per `datepicker`, `lookup` e `file-input` (inclusi outlet spec via `NgComponentOutlet`) a copertura del comportamento di validazione.
+
+---
+
 ## [0.1.6] — 2026-07-08
 
 ### Correzioni
