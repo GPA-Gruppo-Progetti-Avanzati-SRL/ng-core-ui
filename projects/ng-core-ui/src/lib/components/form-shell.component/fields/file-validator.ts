@@ -10,16 +10,16 @@ export interface MimeTypeValidatorOptions {
  * Validatore riutilizzabile per i Signal Forms di Angular
  */
 export function mimeTypeValidator(options: MimeTypeValidatorOptions) {
-  // Riceve il contesto del campo (ctx)
-  return ({ value }: { value: Signal<File | null> }) => {
-    const file = value();
+  // Usiamo un Generic <T> per intercettare il tipo reale del campo passato dal form
+  return <T>(ctx: { value: Signal<T> }) => {
+    const file = ctx.value() as unknown as File | null;
 
-    // Se non c'è il file, la validazione passa (gestita eventualmente da 'required')
+    // Se il campo è vuoto, la validazione passa
     if (!file) {
       return undefined;
     }
 
-    // Se il tipo non è tra quelli ammessi, restituisci l'oggetto dell'errore
+    // Controllo del MIME type
     if (!options.allowedTypes.includes(file.type)) {
       return {
         kind: 'mimeType',
@@ -27,6 +27,6 @@ export function mimeTypeValidator(options: MimeTypeValidatorOptions) {
       };
     }
 
-    return undefined; // Validazione superata
+    return undefined;
   };
 }
