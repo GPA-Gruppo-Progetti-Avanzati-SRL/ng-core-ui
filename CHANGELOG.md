@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [0.1.8] — 2026-07-13
+
+### Nuove funzionalità
+
+- **`mimeTypeValidator` — validatore per tipologia file** — introdotto un nuovo validatore reattivo per Signal Forms che permette di validare il MIME type di un file selezionato. Supporta messaggi di errore personalizzati e controlli su liste di tipi ammessi.
+
+### Correzioni
+
+- **Picker field — allineamento e stili** — migliorata la coerenza visiva e il comportamento dei componenti `LookupFieldComponent` e `FileInputFieldComponent`.
+- **Validazione — miglioramento messaggi d'errore** — perfezionata la visualizzazione degli stati d'errore nei campi di input complessi.
+
 ## [0.1.7] — 2026-07-09
 
 ### Correzioni
