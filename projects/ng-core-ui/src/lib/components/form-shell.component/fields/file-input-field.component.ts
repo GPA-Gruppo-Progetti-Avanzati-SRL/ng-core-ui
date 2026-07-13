@@ -28,7 +28,7 @@ export class FileInputFieldComponent implements CoreFieldComponent {
 
   readonly formField         = input.required<any>();
   readonly label             = input<string>('');
-  readonly showAsRequired    = input<boolean>(false);
+
   readonly multiple          = input<boolean>(false);
   readonly acceptedMimeTypes = input<string[]>([]);
   readonly valuePlaceHolder  = input<string>('Nessun file selezionato');
@@ -36,7 +36,7 @@ export class FileInputFieldComponent implements CoreFieldComponent {
   private readonly _input = viewChild(MatInput);
 
   private readonly fieldState = computed<any>(() => this.formField()());
-
+  protected readonly required     = computed(() => this.fieldState()?.required?.() ?? false);
   protected readonly disabled  = computed(() => this.fieldState()?.disabled?.() ?? false);
   protected readonly selected  = computed<File | null>(() => this.fieldState()?.value?.() ?? null);
   protected readonly fileName  = computed<string>(() => this.selected()?.name ?? '');
@@ -119,6 +119,10 @@ export class FileInputFieldComponent implements CoreFieldComponent {
     const mimeTypes = this.acceptedMimeTypes();
     if (file && mimeTypes.length > 0 && !mimeTypes.includes(file.type)) {
       this.mimeError.set('Tipologia file non accettata');
+      this.fieldState().errors.set([
+        ...(this.fieldState().errors?.() ?? []),
+        { kind: 'mimeType', message: 'Tipologia file non accettata' },
+      ]);
     } else {
       this.mimeError.set(null);
     }

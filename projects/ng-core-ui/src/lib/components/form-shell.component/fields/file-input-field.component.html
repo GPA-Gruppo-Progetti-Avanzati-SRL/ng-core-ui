@@ -13,7 +13,8 @@
     <input matInput readonly
            [value]="fileName()"
            [placeholder]="valuePlaceHolder()"
-           [required]="showAsRequired()"
+           [required]="required()"
+           [disabled]="disabled()"
            [errorStateMatcher]="errorMatcher"
            class="!text-sm"/>
 
