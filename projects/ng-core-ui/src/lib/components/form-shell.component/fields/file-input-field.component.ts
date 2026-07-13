@@ -43,14 +43,12 @@ export class FileInputFieldComponent implements CoreFieldComponent {
   protected readonly accepts   = computed<string>(() => this.acceptedMimeTypes().join(','));
   protected readonly touched   = computed<boolean>(() => this.fieldState()?.touched?.() ?? false);
 
-  protected readonly mimeError = signal<string | null>(null);
 
   protected readonly hasError = computed<boolean>(() =>
-    this.touched() && (this.fieldState()?.invalid?.() || !!this.mimeError())
+    this.touched() && (this.fieldState()?.invalid?.())
   );
 
   protected readonly errorMessage = computed<string>(() => {
-    if (this.mimeError()) return this.mimeError()!;
     const errors = this.fieldState()?.errors?.() ?? [];
     return errors[0]?.message ?? 'Campo non valido';
   });
@@ -115,16 +113,5 @@ export class FileInputFieldComponent implements CoreFieldComponent {
     this.fieldState().value.set(file ?? null);
     this.fieldState().markAsTouched();
     this.fieldState().markAsDirty();
-
-    const mimeTypes = this.acceptedMimeTypes();
-    if (file && mimeTypes.length > 0 && !mimeTypes.includes(file.type)) {
-      this.mimeError.set('Tipologia file non accettata');
-      this.fieldState().errors().set([
-        ...(this.fieldState().errors?.() ?? []),
-        { kind: 'mimeType', message: 'Tipologia file non accettata' },
-      ]);
-    } else {
-      this.mimeError.set(null);
-    }
   }
 }

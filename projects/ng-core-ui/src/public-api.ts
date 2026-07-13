@@ -34,6 +34,7 @@ export * from './lib/components/datatable.component/datatable.component';
 export * from './lib/components/datatable.component/datatable-loader';
 export * from './lib/components/form-shell.component/form-field.models';
 export * from './lib/components/form-shell.component/form-shell.component';
+export * from './lib/components/form-shell.component/fields/file-validator';
 export * from './lib/components/form-shell.component/fields/text-input-field.component';
 export * from './lib/components/form-shell.component/fields/textarea-field.component';
 export * from './lib/components/form-shell.component/fields/combobox-field.component';
