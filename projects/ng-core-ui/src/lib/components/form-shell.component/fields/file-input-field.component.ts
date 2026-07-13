@@ -119,7 +119,7 @@ export class FileInputFieldComponent implements CoreFieldComponent {
     const mimeTypes = this.acceptedMimeTypes();
     if (file && mimeTypes.length > 0 && !mimeTypes.includes(file.type)) {
       this.mimeError.set('Tipologia file non accettata');
-      this.fieldState().errors.set([
+      this.fieldState().errors().set([
         ...(this.fieldState().errors?.() ?? []),
         { kind: 'mimeType', message: 'Tipologia file non accettata' },
       ]);
