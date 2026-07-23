@@ -5,6 +5,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'core-card',
+  standalone: true,
   imports: [MatIconModule, MatButtonModule, MatTooltipModule],
   templateUrl: './card.component.html',
   encapsulation: ViewEncapsulation.None,
@@ -16,9 +17,16 @@ export class CardComponent {
   readonly subtitle    = input<string>('');
   readonly icon        = input<string>('info');
   readonly buttonLabel = input<string>('Procedi');
+  readonly disabled = input<boolean>(false);
+  readonly disabledReason = input<string>('');
   readonly buttonClick = output<void>();
 
   isSubtitleTooltipDisabled(el: HTMLElement): boolean {
     return el.scrollHeight <= el.clientHeight;
+  }
+
+  onClick(): void {
+    if (this.disabled()) return;
+    this.buttonClick.emit();
   }
 }
