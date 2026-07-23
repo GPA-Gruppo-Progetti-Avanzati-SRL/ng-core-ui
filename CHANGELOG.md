@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.1.9] — 2026-07-23
+
+### Nuove funzionalità
+
+- **`cardComponent` — nuova proprietà disabled — rende la card non interattiva se l’utente non è autorizzato o se la funzionalità non è ancora implementata.
+- 
 ## [0.1.8] — 2026-07-13
 
 ### Nuove funzionalità
