@@ -32,6 +32,10 @@ export interface LookupDialogConfig {
   maxWidth?:  string;
 }
 
+function hasId(r: LookupResult | null | undefined): boolean {
+  return r != null && r.id != null && !(Array.isArray(r.id) && r.id.length === 0);
+}
+
 @Component({
   selector: 'core-lookup-field',
   imports: [MatFormFieldModule, MatInputModule, MatIconModule, MatIconButton, MatTooltipModule],
@@ -68,11 +72,9 @@ export class LookupFieldComponent {
     return !this.formField()().readonly?.() && !this.formField()().disabled?.();
   });
   protected readonly selected     = computed<LookupResult | null>(() => this.fieldState()?.value?.() ?? null);
-  /** true solo se c'è una selezione significativa (id non null/undefined) */
-  protected readonly hasSelection = computed<boolean>(() => {
-    const s = this.selected();
-    return s != null && s.id != null;
-  });
+
+  /** true solo se c'è una selezione */
+  protected readonly hasSelection = computed<boolean>(() => hasId(this.selected()));
 
   constructor() {
     // Senza NgControl, MatInput non ricalcola mai errorState. Un effect() (reattivo,
@@ -108,7 +110,9 @@ export class LookupFieldComponent {
       .afterClosed()
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe((result: LookupResult | null | undefined) => {
-        if (result) this.updateValue(result);
+        // Conferma senza selezione (id vuoto) = nessun valore: altrimenti l'oggetto
+        // truthy farebbe passare il validatore required.
+        if (result) this.updateValue(hasId(result) ? result : null);
       });
   }
 
