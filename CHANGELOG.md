@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-10-14
+
+### Dipendenze
+
+- Workspace allineato ad **Angular 22.2.2** (core, common, forms, router, platform-browser, material, cdk, cli, build, compiler-cli, devkit), ng-packagr 22.2.4, Tailwind 4.3.3. TypeScript resta 6.0.x (Angular 22.2 richiede `>=6.0 <6.1`; TypeScript 7 non è ancora supportato).
+- `ng-add.targetVersions`: Angular/Material 22.2.2, Tailwind 4.3.3. Le peer della libreria restano `^22.0.0`.
+
 ### Sicurezza e correzioni (P0 dell'analisi 2026-10-14)
 
 - **`redirectInterceptor` — niente più reload infinito.** Su status 0 ricarica la pagina solo se la richiesta è verso l'origin della pagina (o un `trustedOrigins`), se il browser non è offline e se non c'è già stato un reload negli ultimi 10 secondi (marker in `sessionStorage`). Negli altri casi l'errore viene propagato: con backend giù o rete assente al bootstrap ora compare `page-error`.

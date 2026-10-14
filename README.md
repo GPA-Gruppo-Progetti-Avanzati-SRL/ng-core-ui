@@ -3,8 +3,8 @@
 Libreria UI condivisa per le applicazioni GPA. Fornisce layout, componenti, gestione token/ambiente, routing pre-configurati, temi Angular Material 3 e utility Tailwind CSS v4.
 
 - **Pacchetto:** `@gpa-gruppo-progetti-avanzati-srl/ng-core-ui`
-- **Versione:** 0.1.x
-- **Angular:** 22.x · **Material:** 22.x · **Tailwind:** 4.x · **TypeScript:** 6.x
+- **Versione:** 0.2.0
+- **Angular:** 22.2 · **Material:** 22.2 · **Tailwind:** 4.3 · **TypeScript:** 6.0
 - **Documentazione completa:** [github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki)
 
 ---
@@ -87,7 +87,7 @@ provideRouter(toRoutes(APP_ROUTES, { layout: 'simple' }))
 
 > `core-toast` è già incluso in tutti e tre i layout. Confirm e alert si aprono da `ConfirmService.confirm()` / `AlertService.alert()` (MatDialog): non vanno messi nei template.
 >
-> Documentazione allineata al commit [`298bd68`](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/commit/298bd686bd80e2137f6af17fe67c24c629edaa8a).
+> Documentazione allineata alla versione 0.2.0 (il wiki riporta lo SHA del commit di riferimento).
 
 ---
 

@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an Angular 22 monorepo containing **ng-core-ui** (v0.1.x), a reusable UI component library for GPA (Gruppo Progetti Avanzati) internal applications. It is published via ng-packagr and consumed by other Angular apps.
+This is an Angular 22 monorepo containing **ng-core-ui** (v0.2.x, Angular 22.2), a reusable UI component library for GPA (Gruppo Progetti Avanzati) internal applications. It is published via ng-packagr and consumed by other Angular apps.
 
 ## Commands
 

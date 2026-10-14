@@ -1,6 +1,6 @@
 {
   "name": "@gpa-gruppo-progetti-avanzati-srl/ng-core-ui",
-  "version": "0.1.10",
+  "version": "0.2.0",
   "peerDependencies": {
     "@angular/cdk":              "^22.0.0",
     "@angular/common":           "^22.0.0",
@@ -19,12 +19,12 @@
   },
   "ng-add": {
     "targetVersions": {
-      "@angular/common":      "22.0.1",
-      "@angular/router":      "22.0.1",
-      "@angular/core":        "22.0.1",
-      "@angular/material":    "22.0.1",
-      "tailwindcss":          "4.3.0",
-      "@tailwindcss/postcss": "4.3.0",
+      "@angular/common":      "22.2.2",
+      "@angular/router":      "22.2.2",
+      "@angular/core":        "22.2.2",
+      "@angular/material":    "22.2.2",
+      "tailwindcss":          "4.3.3",
+      "@tailwindcss/postcss": "4.3.3",
       "typescript":           "6.0.3"
     }
   },
