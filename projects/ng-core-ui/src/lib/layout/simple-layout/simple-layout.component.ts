@@ -1,7 +1,6 @@
+import { BUILD_INFO } from '../../system/build-info';
 import {ErrorPage} from '../../pages/error.page';
 
-declare const AppSha: string;
-declare const AppVersion: string;
 
 import {
   Component,
@@ -40,8 +39,8 @@ export class SimpleLayoutComponent {
   whoami = this.system.whoami;
   environment = this.system.environment;
   layoutState = this.system.layoutState;
-  readonly appSha = AppSha;
-  readonly appVersion = AppVersion;
+  readonly appSha = BUILD_INFO.sha;
+  readonly appVersion = BUILD_INFO.version;
 
   currentPageTitle = this.system.currentPageTitle;
 }

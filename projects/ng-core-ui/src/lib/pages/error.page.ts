@@ -1,8 +1,7 @@
+import { BUILD_INFO } from '../system/build-info';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {MatIcon} from '@angular/material/icon';
-declare const AppSha: string;
-declare const AppVersion: string;
 @Component({
   selector: 'page-error',
   imports: [CommonModule, MatIcon],
@@ -21,6 +20,6 @@ declare const AppVersion: string;
   host: { class: 'ui' },
 })
 export class ErrorPage {
-  readonly appSha = AppSha;
-  readonly appVersion = AppVersion;
+  readonly appSha = BUILD_INFO.sha;
+  readonly appVersion = BUILD_INFO.version;
 }

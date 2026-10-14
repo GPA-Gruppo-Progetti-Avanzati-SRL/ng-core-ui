@@ -19,6 +19,9 @@ export class MenuGuard implements CanActivateChild {
     // Consenti sempre le pagine di servizio per evitare loop
     if (path === '/forbidden' || path === '/not-found' || path === '/error') return true;
 
+    // Wildcard '**': l'URL non corrisponde a nessuna rotta → NotFoundPage (404), non /forbidden
+    if (childRoute.routeConfig?.path === '**') return true;
+
     // Attende il completamento del bootstrap (la promise è già avviata da SystemService)
     await this.system.bootstrap().catch(() => void 0);
 

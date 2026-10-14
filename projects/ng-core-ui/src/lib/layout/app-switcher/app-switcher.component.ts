@@ -1,6 +1,4 @@
-declare const AppSha: string;
-declare const AppVersion: string;
-
+import { BUILD_INFO } from '../../system/build-info';
 import {
   Component,
   computed,
@@ -31,8 +29,8 @@ export class AppSwitcherComponent {
   environment = this.system.environment;
   apps = this.system.apps;
   currentAppId = computed(() => this.environment()?.appId || '');
-  readonly appSha = AppSha;
-  readonly appVersion = AppVersion;
+  readonly appSha = BUILD_INFO.sha;
+  readonly appVersion = BUILD_INFO.version;
 
   close = output<void>();
 }
