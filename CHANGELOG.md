@@ -48,6 +48,8 @@
 
 - **`confirm()` / `alert()` con HTML** — nuova opzione `isHtml`, come per i toast: il messaggio viene reso come HTML con la sanitizzazione standard di Angular (formattazione sì, script e handler no).
 
+- **Schematic `action`** — `schematics/generate-action/schema.json` ora è incluso nel pacchetto (mancava dagli asset di `ng-package.json`, quindi `ng generate …:action` non trovava il proprio schema).
+
 ### Breaking (P2)
 
 - `MenuGuard`: con bootstrap fallito non reindirizza più a `/error`; lascia passare e il layout mostra la pagina di errore all'URL richiesto.

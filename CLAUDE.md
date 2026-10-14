@@ -96,7 +96,7 @@ Bootstrap is **owned by `SystemService`** and is started by `provideGPAUICore()`
 
 The sequence inside `bootstrap()`:
 1. `loadEnvironment()` — fetches `environmentUrl`, populates `environment`.
-2. `loadToken()` — reads `appId` from `environment()`, fetches token with `AppId` header. If `env.encryptToken` is true, decrypts via AES-GCM. Populates `whoami`, `paths`, `apps`, `sites`.
+2. `loadToken()` — reads `appId` from `environment()`, fetches token with `AppId` header. If `env.encryptToken` is true, decrypts via AES-GCM. Populates `whoami`, `paths`, `apps` and the private `contexts` (read with `getContextByType(type)` / `getContext(type, id)`).
 3. `menuTree` is a `computed` derived from `paths` — no explicit `.set()` needed.
 4. Deduplication via `bootstrapPromise` field — concurrent `await`s reuse the same promise. On failure (HTTP error or timeout) `layoutState` becomes `'error'` and the rejected promise is **kept cached** (no auto-retry); the error page's "Riprova" reloads the page at the same URL.
 
@@ -120,7 +120,6 @@ All exposed as Angular signals on `SystemService` (no `Sig` suffix):
 | `paths` | `signal` | `PathNode[] \| null` | All allowed route nodes |
 | `menuTree` | `computed` | `PathNode[] \| null` | Filtered+sorted menu nodes (`menu: true`), derived from `paths` |
 | `apps` | `signal` | `App[] \| null` | App switcher entries (sorted) |
-| `sites` | `signal` | `Site[] \| null` | Available sites |
 | `environment` | `signal` | `Environment \| null` | Runtime environment config |
 | `environmentProperties` | `computed` | `Record<string, unknown>` | Derived from `environment().properties` |
 | `layoutState` | `computed` | `'loading' \| 'ready' \| 'error'` | Bootstrap lifecycle state |
@@ -160,7 +159,7 @@ Route IDs follow the convention `cap:<appId>:ui:<page>`. Apps define routes usin
 ```ts
 // app.routes.config.ts
 export const APP_ROUTES: CoreRoute[] = [
-  { id: 'cap:my-app:ui:home', path: '', description: 'Home', icon: 'home', menu: true, order: 0,
+  { id: 'cap:my-app:ui:home', endpoint: '', name: 'Home', description: 'Home', icon: 'home', menu: true, order: 0,
     loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent) },
 ];
 
@@ -271,7 +270,7 @@ The library publishes these assets alongside the compiled JS:
 - `FormFieldDef<T> { field, label, component, span?, inputs? }` — solo layout UI. `field` è il riferimento diretto al `FieldTree` (es. `ft.nome`), NON una stringa. TypeScript cattura i typo a compile time.
 - Validazione, hidden, disabled: **sempre nello schema** del `FormModel` usando `required(p.field)`, `hidden(p.field, logic)`, `disabled(p.field, logic)` da `@angular/forms/signals`.
 - Shell inputs: `[model]="formModel"`, `[columns]="2"`, `[actions]="actions"`. **Nessun output** — tutto gestito via `actions`.
-- `FormShellAction { icon?, label?, tooltip?, variant?: 'icon'|'text'|'filled', position?: 'inline'|'footer', onClick, visible?: () => boolean, disabled?: () => boolean }` — `variant` default: `'filled'`; `position` default: `'inline'`. `visible` e `disabled` sono funzioni (anche signal-based).
+- `FormShellAction { icon?, label?, tooltip?, variant?: 'icon'|'text'|'filled', position?: 'inline'|'footer', onClick, visible?: () => boolean, disabled?: () => boolean }` — `variant` default: `'icon'` per le azioni inline, `'filled'` per quelle `position: 'footer'`; `position` default: `'inline'`. `color` (`ButtonColor`, default `'tertiary'`). `visible` e `disabled` sono funzioni (anche signal-based).
 - **`formField()()` pattern nei field component**: `formField()` = chiama InputSignal → FieldTree; `formField()()` = chiama FieldTree → FieldState con `.value`, `.errors()`, `.touched()`, `.invalid()`.
 - `[formField]="formField()"` nei template dei field — passare il FieldTree al directive Angular, NON l'InputSignal (`[formField]="formField"` è sbagliato).
 - Field component built-in: `TextInputFieldComponent` (`type?`), `TextareaFieldComponent` (`rows?`), `ComboboxFieldComponent` (`options: KVOption[]`), `DatepickerFieldComponent`, `LookupFieldComponent` (`dialogConfig: { component, data?, width?, maxWidth? }`), `RadioButtonListFieldComponent` (`options: KVOption[], inline?: boolean`), `CheckboxListFieldComponent` (`options: KVOption[], inline?: boolean` — valore è un array).
@@ -327,8 +326,8 @@ All exports go through `projects/ng-core-ui/src/public-api.ts`. When adding a ne
 | `project` | — | Target Angular project name |
 | `frontdoor` | `false` | Enable Opem Front Door integration |
 | `baseHref` | `__BASE_HREF__` | Base href for production build |
-| `tokenUrl` | `/api/token` (no FD) or `/api/core/acl` (FD) | Token endpoint |
-| `environmentUrl` | `/environment/environment.json` (no FD) or `/api/core/environment` (FD) | Environment endpoint |
+| `tokenUrl` | `/api/token` (no FD) or `/api/corectx/acl` (FD) | Token endpoint |
+| `environmentUrl` | `/environment/environment.json` (no FD) or `/api/corectx/environment` (FD) | Environment endpoint |
 | `deployUrl` | — | Custom deployUrl for Front Door static assets |
 
 ### generate-page Schematic

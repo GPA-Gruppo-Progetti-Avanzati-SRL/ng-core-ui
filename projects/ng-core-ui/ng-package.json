@@ -17,6 +17,7 @@
     "schematics/migrations.json",
     "schematics/ng-add/schema.json",
     "schematics/generate-page/schema.json",
+    "schematics/generate-action/schema.json",
     "schematics/package.json"
   ]
 }

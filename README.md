@@ -38,7 +38,8 @@ Lo schematic configura automaticamente Angular Material, Tailwind, routing, layo
 export const APP_ROUTES: CoreRoute[] = [
   {
     id: 'cap:my-app:ui:home',
-    path: '',
+    endpoint: '',
+    name: 'Home',
     description: 'Home',
     icon: 'home',
     menu: true,
@@ -81,10 +82,12 @@ provideRouter(toRoutes(APP_ROUTES, { layout: 'simple' }))
 | `ToastComponent` | `core-toast` | [Toast](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Component-Toast) |
 | `LoadingOverlayComponent` | `core-loading-overlay` | [Loading Overlay](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Component-Loading) |
 | `DatatableComponent` | `core-datatable` | [DataTable](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Component-Datatable) |
-| `ConfirmComponent` | `core-confirm` | [Confirm](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Component-Confirm) |
-| `AlertComponent` | `core-alert` | [Alert](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Component-Alert) |
+| `ConfirmService` | — (MatDialog) | [Confirm](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Component-Confirm) |
+| `AlertService` | — (MatDialog) | [Alert](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Component-Alert) |
 
-> `core-toast`, `core-confirm` e `core-alert` sono già inclusi in `FullLayoutComponent` e `RightLayoutComponent`.
+> `core-toast` è già incluso in tutti e tre i layout. Confirm e alert si aprono da `ConfirmService.confirm()` / `AlertService.alert()` (MatDialog): non vanno messi nei template.
+>
+> Documentazione allineata al commit [`298bd68`](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/commit/298bd686bd80e2137f6af17fe67c24c629edaa8a).
 
 ---
 
