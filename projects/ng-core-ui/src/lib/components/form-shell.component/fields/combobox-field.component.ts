@@ -6,8 +6,10 @@ import {
   ViewEncapsulation,
   computed,
   input,
+  inject,
   isSignal,
 } from '@angular/core';
+import { CoreLabelsService } from '../../../system/labels.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
@@ -22,7 +24,8 @@ import { KVOption } from '../form-field.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ComboboxFieldComponent {
-  readonly formField = input.required<any>();
+  protected readonly t = inject(CoreLabelsService).labels;
+  readonly formField = input.required<any>(); // eslint-disable-line @typescript-eslint/no-explicit-any
   readonly options = input<KVOption[] | Signal<KVOption[]>>([]);
   readonly label = input<string>('');
 

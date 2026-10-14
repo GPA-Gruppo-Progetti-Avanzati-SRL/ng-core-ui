@@ -15,7 +15,6 @@ import { CoreButtonComponent } from '../button.component/button.component';
 
 @Component({
   selector: 'core-form-shell',
-  standalone: true,
   imports: [NgComponentOutlet, LayoutModule, CoreButtonComponent],
   templateUrl: './form-shell.component.html',
   encapsulation: ViewEncapsulation.None,
@@ -37,14 +36,9 @@ export class FormShellComponent {
     this.breakpointObserver.observe(Breakpoints.Small).pipe(map(r => r.matches)),
     { initialValue: false }
   );
-  private readonly isMedium = toSignal(
-    this.breakpointObserver.observe(Breakpoints.Medium).pipe(map(r => r.matches)),
-    { initialValue: false }
-  );
-
   /**
-   * Riduzione proporzionale delle colonne per breakpoint:
-   * XSmall → 1  |  Small → min(2, cols)  |  Medium → min(3, cols)  |  Large+ → cols
+   * Riduzione delle colonne per breakpoint:
+   * XSmall → 1  |  Small → min(2, cols)  |  Medium+ → cols
    */
   protected readonly currentColumns = computed(() => {
     const cols = this.columns();
@@ -53,19 +47,13 @@ export class FormShellComponent {
     return cols;
   });
 
-  protected readonly gap = computed(() => {
-  if (this.isXSmall()) return '0.5rem';
-  if (this.isSmall())  return '0.625rem';
-  return '0.875rem';
-});
-
-protected readonly rowGap = computed(() => {
+  protected readonly rowGap = computed(() => {
   if (this.isXSmall()) return '0.375rem';
   if (this.isSmall())  return '0.5rem';
   return '1rem';
 });
 
-protected readonly columnGap = computed(() => {
+  protected readonly columnGap = computed(() => {
   if (this.isXSmall()) return '0.5rem';
   if (this.isSmall())  return '0.75rem';
   return '1rem';
@@ -78,6 +66,24 @@ protected readonly columnGap = computed(() => {
   });
 
   protected readonly fields        = computed(() => this.model().fields);
+  protected readonly visibleFields = computed(() => this.fields().filter(f => !this.isHidden(f)));
+
+  /**
+   * Con azioni inline, se i campi visibili stanno in una sola riga senza riempirla, il primo
+   * campo parte da questa colonna: i campi restano vicini ai bottoni (a destra) senza invertire
+   * l'ordine visivo e di tabulazione (prima si usava `direction: rtl`, che li invertiva).
+   */
+  protected readonly leadOffset = computed(() => {
+    if (!this.hasActionColumn()) return 0;
+    const cols  = this.currentColumns();
+    const total = this.visibleFields().reduce((sum, f) => sum + this.fieldSpan(f), 0);
+    return total < cols ? cols - total : 0;
+  });
+
+  protected fieldGridColumn<T>(f: FormFieldDef<T>, first: boolean): string {
+    const span = this.fieldSpan(f);
+    return first && this.leadOffset() ? `${this.leadOffset() + 1} / span ${span}` : `span ${span}`;
+  }
   protected readonly inlineActions = computed(() =>
     this.actions()
       .filter(a => (a.position ?? 'inline') === 'inline')

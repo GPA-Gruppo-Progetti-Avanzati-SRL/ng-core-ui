@@ -51,6 +51,9 @@ jobs:
           "
           echo "Migration version → $PKG_VERSION"
 
+      - name: Unit test
+        run: bun run test:ci
+
       - name: Build library + schematics
         run: bun run build:lib
 

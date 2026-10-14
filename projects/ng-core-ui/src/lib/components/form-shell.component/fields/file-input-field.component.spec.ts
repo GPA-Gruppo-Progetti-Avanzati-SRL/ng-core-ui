@@ -12,7 +12,7 @@ function makeFieldTree(opts: { invalid: boolean; touched: boolean }) {
     disabled: signal(false),
     readonly: signal(false),
     markAsTouched: () => state.touched.set(true),
-    markAsDirty: () => {},
+    markAsDirty: () => undefined,
   };
   const tree = () => state;
   return { tree, state };

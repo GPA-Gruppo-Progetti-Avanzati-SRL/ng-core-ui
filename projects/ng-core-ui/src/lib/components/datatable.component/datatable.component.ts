@@ -19,10 +19,12 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { EMPTY, Observable, catchError, finalize, of, switchMap } from 'rxjs';
+import { EMPTY, Observable, catchError, finalize, map, of, switchMap } from 'rxjs';
+import { CoreLabelsService } from '../../system/labels.service';
+import { compareValues, getNestedValue } from './datatable-utils';
 
 export interface DatatableColumn {
   key: string;
@@ -64,7 +66,7 @@ const SELECTION_COL = '_selection';
 
 @Component({
   selector: 'core-datatable',
-  imports: [NgComponentOutlet, MatTableModule, MatPaginatorModule, MatProgressSpinnerModule, MatIconModule, MatIconButton, MatTooltipModule, MatCheckbox],
+  imports: [NgComponentOutlet, MatTableModule, MatPaginatorModule, MatProgressSpinnerModule, MatIconModule, MatButton, MatIconButton, MatTooltipModule, MatCheckbox],
   templateUrl: './datatable.component.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -83,10 +85,21 @@ export class DatatableComponent {
   readonly rowBackground   = input<(row: any) => string | null>();
   readonly selectionMode      = input<DatatableSelectionMode>('none');
   readonly initialSelection   = input<unknown[]>([]);
+  /**
+   * Identità di una riga per la selezione (es. `row => row.id`). Senza, le righe si confrontano
+   * per riferimento: con un loader server-side ogni fetch crea oggetti nuovi e la selezione si perde.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  readonly rowKey             = input<((row: any) => unknown) | null>(null);
+  /** Default: testo `datatable.empty` del dizionario (it: 'Nessun dato'). */
+  readonly emptyMessage       = input<string>();
 
   readonly selectionChange = output<unknown[]>();
+  /** Errore del loader; la tabella mostra comunque il messaggio con "Riprova". */
+  readonly loadError       = output<unknown>();
 
   private readonly _destroyRef = inject(DestroyRef);
+  protected readonly t = inject(CoreLabelsService).labels;
 
   protected readonly ACTIONS_COL = ACTIONS_COL;
   protected readonly SELECTION_COL = SELECTION_COL;
@@ -116,9 +129,7 @@ export class DatatableComponent {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const accs = new Map<string, (row: any) => any>();
     for (const col of this.columns()) {
-      const parts = col.key.split('.');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      accs.set(col.key, (row: any) => parts.reduce((obj, k) => (obj != null && typeof obj === 'object' ? obj[k] : undefined), row));
+      accs.set(col.key, (row: unknown) => getNestedValue(row, col.key));
     }
     return accs;
   });
@@ -148,13 +159,14 @@ export class DatatableComponent {
 
       if (sort) {
         items = [...items].sort((a, b) => {
-          const cmp = _compareValues(_getNestedValue(a, sort.field), _getNestedValue(b, sort.field));
+          const cmp = compareValues(getNestedValue(a, sort.field), getNestedValue(b, sort.field));
           return sort.dir === 'asc' ? cmp : -cmp;
         });
       }
 
       const total = items.length;
       const start  = (page - 1) * size;
+      if (this._clampPage(page, size, total, start >= total)) return;
       this.rows.set(items.slice(start, start + size));
       this.total.set(total);
     });
@@ -174,15 +186,18 @@ export class DatatableComponent {
         this.isLoading.set(true);
         this.hasError.set(false);
         return load(page, size, sort).pipe(
-          catchError(() => {
+          map(result => ({ result, page, size })),
+          catchError(err => {
             this.hasError.set(true);
-            return of({ items: [], total: 0 });
+            this.loadError.emit(err);
+            return of({ result: { items: [], total: 0 }, page, size });
           }),
           finalize(() => this.isLoading.set(false)),
         );
       }),
       takeUntilDestroyed(this._destroyRef),
-    ).subscribe(result => {
+    ).subscribe(({ result, page, size }) => {
+      if (this._clampPage(page, size, result.total, result.items.length === 0)) return;
       this.rows.set(result.items);
       this.total.set(result.total);
     });
@@ -221,31 +236,46 @@ export class DatatableComponent {
     action.onClick(row);
   }
 
+  protected ariaSort(col: DatatableColumn): 'ascending' | 'descending' | 'none' | null {
+    if (!col.sortable) return null;
+    const sort = this.currentSort();
+    if (sort?.field !== col.key) return 'none';
+    return sort.dir === 'asc' ? 'ascending' : 'descending';
+  }
+
+  /** Chiavi delle righe selezionate, ricalcolate solo quando cambia la selezione o `rowKey`. */
+  private readonly _selectedKeys = computed(() => new Set(this._selectedRows().map(r => this._keyOf(r))));
+
+  private _keyOf(row: unknown): unknown {
+    const key = this.rowKey();
+    return key ? key(row) : row;
+  }
+
   protected isSelected(row: unknown): boolean {
-    return this._selectedRows().includes(row);
+    return this._selectedKeys().has(this._keyOf(row));
   }
 
   protected allPageSelected(): boolean {
     const rows = this.rows();
-    return rows.length > 0 && rows.every(r => this._selectedRows().includes(r));
+    return rows.length > 0 && rows.every(r => this.isSelected(r));
   }
 
   protected somePageSelected(): boolean {
-    const rows = this.rows();
-    return rows.some(r => this._selectedRows().includes(r)) && !this.allPageSelected();
+    return this.rows().some(r => this.isSelected(r)) && !this.allPageSelected();
   }
 
   protected toggleRow(row: unknown): void {
     const mode = this.selectionMode();
     if (mode === 'none') return;
-    const current = this._selectedRows();
+    const key = this._keyOf(row);
+    const selected = this.isSelected(row);
     let next: unknown[];
     if (mode === 'single') {
-      next = current.includes(row) ? [] : [row];
+      next = selected ? [] : [row];
     } else {
-      next = current.includes(row)
-        ? current.filter(r => r !== row)
-        : [...current, row];
+      next = selected
+        ? this._selectedRows().filter(r => this._keyOf(r) !== key)
+        : [...this._selectedRows(), row];
     }
     this._selectedRows.set(next);
     this.selectionChange.emit(next);
@@ -253,32 +283,27 @@ export class DatatableComponent {
 
   protected toggleAllPage(): void {
     const rows = this.rows();
-    const current = this._selectedRows();
-    const allSelected = rows.every(r => current.includes(r));
-    const next = allSelected
-      ? current.filter(r => !rows.includes(r))
-      : [...current.filter(r => !rows.includes(r)), ...rows];
+    const pageKeys = new Set(rows.map(r => this._keyOf(r)));
+    const others = this._selectedRows().filter(r => !pageKeys.has(this._keyOf(r)));
+    const next = this.allPageSelected() ? others : [...others, ...rows];
     this._selectedRows.set(next);
     this.selectionChange.emit(next);
+  }
+
+  /**
+   * Pagina oltre la fine (es. dopo aver cancellato l'ultima riga dell'ultima pagina): torna
+   * all'ultima pagina esistente invece di mostrare una pagina vuota. Ritorna true se ha corretto.
+   */
+  private _clampPage(page: number, size: number, total: number, pageEmpty: boolean): boolean {
+    if (page <= 1 || !pageEmpty || total <= 0) return false;
+    const last = Math.max(1, Math.ceil(total / size));
+    if (page <= last) return false;
+    this.currentPage.set(last);
+    return true;
   }
 
   clearSelection(): void {
     this._selectedRows.set([]);
     this.selectionChange.emit([]);
   }
-}
-
-function _getNestedValue(obj: unknown, key: string): unknown {
-  return key.split('.').reduce(
-    (o: unknown, k) => (o != null && typeof o === 'object' ? (o as Record<string, unknown>)[k] : undefined),
-    obj,
-  );
-}
-
-function _compareValues(a: unknown, b: unknown): number {
-  if (a == null && b == null) return 0;
-  if (a == null) return -1;
-  if (b == null) return 1;
-  if (typeof a === 'number' && typeof b === 'number') return a - b;
-  return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' });
 }

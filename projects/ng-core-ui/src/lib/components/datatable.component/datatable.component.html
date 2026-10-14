@@ -1,16 +1,20 @@
-<div class="w-full overflow-hidden rounded-lg border border-outline-variant/60 bg-white">
+<div class="w-full overflow-hidden rounded-lg border border-outline-variant/60 bg-surface">
   <div class="relative overflow-x-auto">
 
     @if (isLoading() && rows().length > 0) {
-      <div class="absolute inset-0 z-10 flex items-center justify-center bg-white/70 backdrop-blur-sm">
+      <div class="absolute inset-0 z-10 flex items-center justify-center bg-surface/70 backdrop-blur-sm">
         <mat-spinner diameter="36" />
       </div>
     }
 
     @if (hasError()) {
-      <div class="flex flex-col items-center justify-center gap-2 py-12 text-error">
-        <mat-icon class="text-[36px]! w-9! h-9! leading-none!">error_outline</mat-icon>
-        <span class="text-sm font-medium">Errore durante il caricamento dei dati</span>
+      <div role="alert" class="flex flex-col items-center justify-center gap-2 py-12 text-error">
+        <mat-icon aria-hidden="true" class="text-[36px]! w-9! h-9! leading-none!">error_outline</mat-icon>
+        <span class="text-sm font-medium">{{ t().datatable.loadError }}</span>
+        <button mat-button type="button" (click)="refresh()">
+          <mat-icon aria-hidden="true">refresh</mat-icon>
+          {{ t().datatable.retry }}
+        </button>
       </div>
     }
 
@@ -21,7 +25,7 @@
           <th
             mat-header-cell
             *matHeaderCellDef
-            class="h-12 w-10 px-2 bg-white border-b border-outline-variant/60"
+            class="h-12 w-10 px-2 bg-surface border-b border-outline-variant/60"
           >
             @if (selectionMode() === 'multi') {
               <mat-checkbox
@@ -34,7 +38,7 @@
           <td
             mat-cell
             *matCellDef="let row"
-            class="h-12 w-10 px-2 bg-white border-b border-outline-variant/30"
+            class="h-12 w-10 px-2 border-b border-outline-variant/30"
           >
             @if (selectionMode() === 'single') {
               <input
@@ -60,29 +64,33 @@
             mat-header-cell
             *matHeaderCellDef
             [style.width]="col.width ?? ''"
-            [class.cursor-pointer]="col.sortable"
-            [class.select-none]="col.sortable"
-            (click)="onSortChange(col)"
-            class="h-12 px-4 text-left text-sm font-medium text-text-muted bg-white border-b border-outline-variant/60 whitespace-nowrap"
+            [attr.aria-sort]="ariaSort(col)"
+            class="h-12 px-4 text-left text-sm font-medium text-on-surface-variant bg-surface border-b border-outline-variant/60 whitespace-nowrap"
           >
-            <span class="inline-flex items-center gap-1">
-              {{ col.label }}
-              @if (col.sortable) {
-                <mat-icon class="!text-[16px] !w-[18px] !h-[16px] !leading-none !inline-flex items-center justify-center">
+            @if (col.sortable) {
+              <button
+                type="button"
+                class="inline-flex items-center gap-1 cursor-pointer select-none border-none bg-transparent p-0 text-inherit"
+                (click)="onSortChange(col)"
+              >
+                {{ col.label }}
+                <mat-icon aria-hidden="true" class="!text-[16px] !w-[18px] !h-[16px] !leading-none !inline-flex items-center justify-center">
                   @if (currentSort()?.field === col.key) {
                     {{ currentSort()!.dir === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
                   } @else {
                     unfold_more
                   }
                 </mat-icon>
-              }
-            </span>
+              </button>
+            } @else {
+              {{ col.label }}
+            }
           </th>
 
           <td
             mat-cell
             *matCellDef="let row"
-            class="h-12 px-4 text-s font-normal text-text bg-white border-b border-outline-variant/30 whitespace-nowrap"
+            class="h-12 px-4 text-sm font-normal text-on-surface border-b border-outline-variant/30 whitespace-nowrap"
           >
             @if (col.component) {
               <ng-container
@@ -103,14 +111,14 @@
           <th
             mat-header-cell
             *matHeaderCellDef
-            class="h-12 px-4 text-right text-sm font-medium text-text-muted bg-white border-b border-outline-variant/60 whitespace-nowrap"
+            class="h-12 px-4 text-right text-sm font-medium text-on-surface-variant bg-surface border-b border-outline-variant/60 whitespace-nowrap"
           >
           </th>
 
           <td
             mat-cell
             *matCellDef="let row"
-            class="h-12 px-4 text-sm  bg-white border-b border-outline-variant/30"
+            class="h-12 px-4 text-sm border-b border-outline-variant/30"
           >
             <div class="flex items-center justify-end gap-1">
               @for (action of actions(); track $index) {
@@ -121,7 +129,7 @@
                     [attr.aria-label]="action.tooltip || action.icon"
                     [disabled]="action.disabled?.(row) ?? false"
                     (click)="onActionClick(action, row)"
-                    class="!h-7 !w-7 rounded-full text-text-muted hover:bg-black/5 hover:text-text"
+                    class="!h-7 !w-7 rounded-full text-on-surface-variant hover:bg-black/5 hover:text-on-surface"
                     [class]="action.buttonClass ?? ''"
                   >
                     <mat-icon class="!text-[16px] !w-5 !h-5 !leading-5 !inline-flex items-center justify-center">
@@ -138,7 +146,7 @@
       <tr
         mat-header-row
         *matHeaderRowDef="displayedColumns(); sticky: true"
-        class="!bg-white"
+        class="!bg-surface"
       ></tr>
 
       <tr
@@ -154,12 +162,16 @@
       <div class="flex items-center justify-center py-12">
         <mat-spinner diameter="36" />
       </div>
+    } @else if (!hasError() && rows().length === 0) {
+      <div class="flex items-center justify-center py-12 text-sm text-on-surface-variant">
+        {{ emptyMessage() ?? t().datatable.empty }}
+      </div>
     }
   </div>
 
   @if (!hasError()) {
     <mat-paginator
-      class="app-paginator border-t border-outline-variant/60 bg-white px-4"
+      class="app-paginator border-t border-outline-variant/60 bg-surface px-4"
       [length]="total()"
       [pageIndex]="currentPage() - 1"
       [pageSize]="pageSize()"

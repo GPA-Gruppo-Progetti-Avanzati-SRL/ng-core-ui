@@ -51,8 +51,8 @@ describe('MenuGuard', () => {
     expect(target(await guard.canActivateChild(child('items/edit/:id'), state('/items/edit/42')))).toBeTrue();
   });
 
-  it('bootstrap fallito → /error', async () => {
+  it('bootstrap fallito → lascia passare: il layout mostra la pagina di errore e l\'URL resta', async () => {
     layoutState.set('error');
-    expect(target(await guard.canActivateChild(child('users'), state('/users')))).toBe('/error');
+    expect(target(await guard.canActivateChild(child('users'), state('/users')))).toBeTrue();
   });
 });

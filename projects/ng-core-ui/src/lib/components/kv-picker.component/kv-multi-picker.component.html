@@ -1,6 +1,6 @@
 <div class="px-6 pt-4 pb-2">
   <mat-form-field class="w-full" subscriptSizing="dynamic">
-    <mat-label>Cerca</mat-label>
+    <mat-label>{{ t().picker.search }}</mat-label>
     <input
       matInput
       [value]="filterText()"
@@ -25,12 +25,12 @@
 <div class="flex justify-end gap-2 px-6 pb-4">
   <core-button
     variant="filled"
-    [label]="data.cancelLabel ?? 'Annulla'"
+    [label]="data.cancelLabel ?? t().picker.cancel"
     (click)="cancel()"
   />
   <core-button
     variant="filled"
-    [label]="data.confirmLabel ?? 'Conferma'"
+    [label]="data.confirmLabel ?? t().picker.confirm"
     (click)="confirm()"
   />
 </div>

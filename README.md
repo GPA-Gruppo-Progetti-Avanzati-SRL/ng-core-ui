@@ -3,7 +3,7 @@
 Libreria UI condivisa per le applicazioni GPA. Fornisce layout, componenti, gestione token/ambiente, routing pre-configurati, temi Angular Material 3 e utility Tailwind CSS v4.
 
 - **Pacchetto:** `@gpa-gruppo-progetti-avanzati-srl/ng-core-ui`
-- **Versione:** 0.1.0
+- **Versione:** 0.1.x
 - **Angular:** 22.x · **Material:** 22.x · **Tailwind:** 4.x · **TypeScript:** 6.x
 - **Documentazione completa:** [github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki)
 
@@ -18,6 +18,14 @@ ng add @gpa-gruppo-progetti-avanzati-srl/ng-core-ui
 ```
 
 Lo schematic configura automaticamente Angular Material, Tailwind, routing, layout, font e tutto il necessario.
+
+> **Requisiti.** Le peer dependencies richiedono Angular `^22` (`@angular/core`, `common`, `forms`,
+> `router`, `platform-browser`, `material`, `cdk`) e `rxjs ^7.8`. Un'app a un major precedente va
+> aggiornata prima (`ng update @angular/core @angular/cli`), altrimenti `npm install` fallisce
+> per le peer (oppure si installa con `--legacy-peer-deps` e si lascia allineare a `ng add`).
+>
+> **Stili.** `styles/components.css` include il preflight Tailwind (reset di margin, padding e bordi)
+> **globale**, non limitato a `.ui`: è voluto, layout e componenti della libreria ci contano.
 
 → Guida completa: [Getting Started](https://github.com/GPA-Gruppo-Progetti-Avanzati-SRL/ng-core-ui/wiki/Getting-Started)
 

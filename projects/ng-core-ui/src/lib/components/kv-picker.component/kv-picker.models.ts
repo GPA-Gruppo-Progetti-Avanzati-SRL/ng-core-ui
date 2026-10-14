@@ -10,7 +10,7 @@ export interface KvPickerBaseConfig {
   cancelLabel?: string;
 }
 
-export interface KvSinglePickerConfig extends KvPickerBaseConfig {}
+export type KvSinglePickerConfig = KvPickerBaseConfig;
 
 export interface KvMultiPickerConfig extends KvPickerBaseConfig {
   confirmLabel?: string;
@@ -26,7 +26,7 @@ export interface KvSignalPickerBaseConfig {
   cancelLabel?: string;
 }
 
-export interface KvSignalSinglePickerConfig extends KvSignalPickerBaseConfig {}
+export type KvSignalSinglePickerConfig = KvSignalPickerBaseConfig;
 
 export interface KvSignalMultiPickerConfig extends KvSignalPickerBaseConfig {
   confirmLabel?: string;

@@ -1,6 +1,6 @@
 @switch (variant()) {
   @case ('iconfilled') {
-    <button matIconButton [disabled]="disabled()" [matTooltip]="tooltip()"
+    <button type="button" matIconButton [disabled]="disabled()" [matTooltip]="tooltip()"
             class="!rounded-lg !w-11 !h-11 !min-w-11 !p-0
             [&_.mat-mdc-button-touch-target]:!w-9
             [&_.mat-mdc-button-touch-target]:!h-9
@@ -12,14 +12,14 @@
     </button>
   }
   @case ('icon') {
-    <button matIconButton [disabled]="disabled()" [matTooltip]="tooltip()">
+    <button type="button" matIconButton [disabled]="disabled()" [matTooltip]="tooltip()">
       @if (icon()) {
         <mat-icon class="!text-[20px] !w-5 !h-5 !leading-5">{{ icon() }}</mat-icon>
       }
     </button>
   }
   @case ('filled') {
-    <button matButton="filled" [disabled]="disabled()" [matTooltip]="tooltip()" class="!rounded-lg !h-10" [class]="disabled() ? '' : bgClass()">
+    <button type="button" matButton="filled" [disabled]="disabled()" [matTooltip]="tooltip()" class="!rounded-lg !h-10" [class]="disabled() ? '' : bgClass()">
       @if (icon()) {
         <mat-icon>{{ icon() }}</mat-icon>
       }
@@ -27,7 +27,7 @@
     </button>
   }
   @case ('text') {
-    <button matButton="text" [disabled]="disabled()" [matTooltip]="tooltip()" class="!rounded-lg" [class]="disabled() ? '' : textClass()">
+    <button type="button" matButton="text" [disabled]="disabled()" [matTooltip]="tooltip()" class="!rounded-lg" [class]="disabled() ? '' : textClass()">
       @if (icon()) {
         <mat-icon>{{ icon() }}</mat-icon>
       }

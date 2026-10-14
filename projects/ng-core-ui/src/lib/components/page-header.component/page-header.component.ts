@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation, input } from '@angular/core';
 import { MatDivider } from '@angular/material/list';
 
 @Component({
   selector: 'core-page-header',
   imports: [MatDivider],
   templateUrl: './page-header.component.html',
+  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ui' },
 })

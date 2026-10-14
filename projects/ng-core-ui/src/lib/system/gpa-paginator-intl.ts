@@ -1,63 +1,28 @@
 import { Injectable, effect, inject } from '@angular/core';
 import { MatPaginatorIntl } from '@angular/material/paginator';
-import { SystemService } from './system.service';
+import { CoreLabelsService } from './labels.service';
 
-const LABELS: Record<string, {
-  itemsPerPage: string;
-  nextPage: string;
-  previousPage: string;
-  firstPage: string;
-  lastPage: string;
-  rangeLabel: (page: number, pageSize: number, length: number) => string;
-}> = {
-  it: {
-    itemsPerPage: 'Righe per pagina:',
-    nextPage: 'Pagina successiva',
-    previousPage: 'Pagina precedente',
-    firstPage: 'Prima pagina',
-    lastPage: 'Ultima pagina',
-    rangeLabel: (page, pageSize, length) => {
-      if (length === 0) return '0 di 0';
-      const start = page * pageSize;
-      const end = Math.min(start + pageSize, length);
-      return `${start + 1} – ${end} di ${length}`;
-    },
-  },
-  en: {
-    itemsPerPage: 'Items per page:',
-    nextPage: 'Next page',
-    previousPage: 'Previous page',
-    firstPage: 'First page',
-    lastPage: 'Last page',
-    rangeLabel: (page, pageSize, length) => {
-      if (length === 0) return '0 of 0';
-      const start = page * pageSize;
-      const end = Math.min(start + pageSize, length);
-      return `${start + 1} – ${end} of ${length}`;
-    },
-  },
-};
-
+/** Testi del paginator dal dizionario della libreria (`labels.paginator`), reattivi alla lingua. */
 @Injectable()
 export class GpaPaginatorIntl extends MatPaginatorIntl {
-  private readonly _system = inject(SystemService);
+  private readonly _labels = inject(CoreLabelsService).labels;
 
   constructor() {
     super();
-    this._apply(this._system.environment()?.language ?? 'it');
+    this._apply();
     effect(() => {
-      this._apply(this._system.environment()?.language ?? 'it');
+      this._apply();
       this.changes.next();
     });
   }
 
-  private _apply(lang: string): void {
-    const l = LABELS[lang] ?? LABELS['it'];
-    this.itemsPerPageLabel  = l.itemsPerPage;
-    this.nextPageLabel      = l.nextPage;
-    this.previousPageLabel  = l.previousPage;
-    this.firstPageLabel     = l.firstPage;
-    this.lastPageLabel      = l.lastPage;
-    this.getRangeLabel      = l.rangeLabel;
+  private _apply(): void {
+    const l = this._labels().paginator;
+    this.itemsPerPageLabel = l.itemsPerPage;
+    this.nextPageLabel     = l.nextPage;
+    this.previousPageLabel = l.previousPage;
+    this.firstPageLabel    = l.firstPage;
+    this.lastPageLabel     = l.lastPage;
+    this.getRangeLabel     = l.rangeLabel;
   }
 }

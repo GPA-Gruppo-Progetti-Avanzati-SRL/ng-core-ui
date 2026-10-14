@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation, inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { AlertService, AlertType } from './alert.service';
+import type { AlertData, AlertType } from './alert.service';
 
 const ALERT_CONFIG: Record<AlertType, { icon: string; bg: string; fg: string }> = {
   info:    { icon: 'info',         bg: '#dbeafe', fg: '#1e3a8a' },
@@ -10,14 +11,15 @@ const ALERT_CONFIG: Record<AlertType, { icon: string; bg: string; fg: string }> 
   danger:  { icon: 'error',        bg: '#fee2e2', fg: '#7f1d1d' },
 };
 
+/** Contenuto del dialog aperto da `AlertService.alert()`. Non va messo nei template. */
 @Component({
   selector: 'core-alert',
-  imports: [MatButtonModule, MatIconModule],
+  imports: [MatDialogModule, MatButtonModule, MatIconModule],
   templateUrl: './alert.component.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertComponent {
-  protected readonly svc = inject(AlertService);
-  protected readonly cfg = ALERT_CONFIG;
+  protected readonly data = inject<AlertData>(MAT_DIALOG_DATA);
+  protected readonly cfg = ALERT_CONFIG[this.data.type];
 }

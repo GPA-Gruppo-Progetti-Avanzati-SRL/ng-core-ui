@@ -7,7 +7,8 @@ import {
   input,
   signal,
   viewChild,
-  ViewEncapsulation
+  ViewEncapsulation,
+  inject,
 } from '@angular/core';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CoreFieldComponent } from '../form-field.models';
 import { FieldStateErrorMatcher } from './field-error-state-matcher';
+import { CoreLabelsService } from '../../../system/labels.service';
 
 @Component({
   selector: 'core-file-input-field',
@@ -26,21 +28,33 @@ import { FieldStateErrorMatcher } from './field-error-state-matcher';
 })
 export class FileInputFieldComponent implements CoreFieldComponent {
 
-  readonly formField         = input.required<any>();
+  readonly formField         = input.required<any>(); // eslint-disable-line @typescript-eslint/no-explicit-any
   readonly label             = input<string>('');
   readonly showAsRequired    = input<boolean>(false);
 
+  /** Con `true` il valore del campo è `File[]` (vuoto = `[]`), altrimenti `File | null`. */
   readonly multiple          = input<boolean>(false);
   readonly acceptedMimeTypes = input<string[]>([]);
-  readonly valuePlaceHolder  = input<string>('Nessun file selezionato');
+  /** Default: testo `field.noFile` del dizionario (it: 'Nessun file selezionato'). */
+  readonly valuePlaceHolder  = input<string>();
+
+  protected readonly t = inject(CoreLabelsService).labels;
 
   private readonly _input = viewChild(MatInput);
 
-  private readonly fieldState = computed<any>(() => this.formField()());
+  private readonly fieldState = computed<any>(() => this.formField()()); // eslint-disable-line @typescript-eslint/no-explicit-any
   protected readonly required     = computed(() => this.showAsRequired() || (this.fieldState()?.required?.() ?? false));
   protected readonly disabled  = computed(() => this.fieldState()?.disabled?.() ?? false);
-  protected readonly selected  = computed<File | null>(() => this.fieldState()?.value?.() ?? null);
-  protected readonly fileName  = computed<string>(() => this.selected()?.name ?? '');
+  /** File selezionati, sempre come array (valore singolo o multiplo). */
+  protected readonly files     = computed<File[]>(() => {
+    const v = this.fieldState()?.value?.();
+    return Array.isArray(v) ? v : v ? [v] : [];
+  });
+  protected readonly selected  = computed<boolean>(() => this.files().length > 0);
+  protected readonly fileName  = computed<string>(() => {
+    const files = this.files();
+    return files.length > 3 ? this.t().field.filesSelected(files.length) : files.map(f => f.name).join(', ');
+  });
   protected readonly accepts   = computed<string>(() => this.acceptedMimeTypes().join(','));
   protected readonly touched   = computed<boolean>(() => this.fieldState()?.touched?.() ?? false);
 
@@ -51,7 +65,7 @@ export class FileInputFieldComponent implements CoreFieldComponent {
 
   protected readonly errorMessage = computed<string>(() => {
     const errors = this.fieldState()?.errors?.() ?? [];
-    return errors[0]?.message ?? 'Campo non valido';
+    return errors[0]?.message ?? this.t().field.invalid;
   });
 
   /** ErrorStateMatcher control-independent: senza NgControl MatInput non ricalcola errorState. */
@@ -81,13 +95,13 @@ export class FileInputFieldComponent implements CoreFieldComponent {
 
   protected onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.updateData(input.files?.[0] ?? null);
+    this.updateData(Array.from(input.files ?? []));
   }
 
   protected clearFile(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
-    this.updateData(null);
+    this.updateData([]);
   }
 
   protected onDragOver(event: DragEvent): void {
@@ -107,11 +121,11 @@ export class FileInputFieldComponent implements CoreFieldComponent {
     event.stopPropagation();
     this.isDraggingOver.set(false);
     const files = event.dataTransfer?.files;
-    if (files?.length) this.updateData(files[0]);
+    if (files?.length) this.updateData(Array.from(files));
   }
 
-  private updateData(file: File | null): void {
-    this.fieldState().value.set(file ?? null);
+  private updateData(files: File[]): void {
+    this.fieldState().value.set(this.multiple() ? files : (files[0] ?? null));
     this.fieldState().markAsTouched();
     this.fieldState().markAsDirty();
   }

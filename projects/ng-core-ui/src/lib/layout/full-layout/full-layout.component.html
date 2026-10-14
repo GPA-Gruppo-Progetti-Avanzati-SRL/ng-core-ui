@@ -5,18 +5,21 @@
       <mat-sidenav position="end" mode="over" class="extra-sidenav bg-primary text-on-primary"
                    [opened]="extraSidenavOpen()"
                    (closed)="extraSidenavOpen.set(false)">
-        <core-app-switcher (close)="closeExtraSidenav()" />
+        <core-app-switcher (dismiss)="closeExtraSidenav()" />
       </mat-sidenav>
 
       <mat-sidenav-content>
-        <aside #sidenav class="sidenav bg-tertiary text-on-tertiary" [class.collapsed]="!isExpanded()" role="navigation" aria-label="Primary">
+        <aside #sidenav class="sidenav bg-tertiary text-on-tertiary" [class.collapsed]="!isExpanded()" role="navigation" [attr.aria-label]="t().layout.primaryNav">
           <mat-nav-list class="nav-list">
-            @for (link of sortedMenuRoots(); track link) {
+            @for (link of sortedMenuRoots(); track link.id) {
               <a
                 mat-list-item
                 class="nav-item"
                 [routerLink]="[endpointFor(link)]"
-                [activated]="isActive(link)"
+                routerLinkActive
+                #rla="routerLinkActive"
+                [routerLinkActiveOptions]="activeOptions(link)"
+                [activated]="rla.isActive"
                 [attr.aria-label]="link.name || link.id"
                 [matTooltip]="link.name || link.id"
                 [matTooltipDisabled]="isExpanded()"
@@ -31,7 +34,7 @@
 
         <main class="flex flex-col flex-1 overflow-hidden">
           <mat-toolbar color="primary" class="toolbar">
-            <button mat-icon-button (click)="toggleSidenav()" aria-label="Apri/Chiudi menu" [attr.aria-pressed]="isExpanded()">
+            <button mat-icon-button (click)="toggleSidenav()" [attr.aria-label]="t().layout.menuToggle" [attr.aria-pressed]="isExpanded()">
               <mat-icon>menu</mat-icon>
             </button>
 
@@ -40,18 +43,16 @@
 
             <span class="mr-2 font-semibold text-lg text-on-primary">{{ whoami()?.user }}</span>
 
-            <a mat-icon-button [href]="environment()?.logoutPath || '#'" aria-label="Logout">
+            <a mat-icon-button [href]="environment()?.logoutPath || '#'" [attr.aria-label]="t().layout.logout">
               <mat-icon>logout</mat-icon>
             </a>
-            <button mat-icon-button (click)="openExtraSidenav()" aria-label="Apri menu laterale destro">
+            <button mat-icon-button (click)="openExtraSidenav()" [attr.aria-label]="t().layout.appsMenu">
               <mat-icon>more_vert</mat-icon>
             </button>
           </mat-toolbar>
 
           <div class="relative flex-1 overflow-auto">
             <router-outlet />
-            <core-confirm />
-            <core-alert />
           </div>
         </main>
       </mat-sidenav-content>
@@ -60,7 +61,7 @@
     <core-toast />
   }
   @case ('error') {
-   <page-error/>
+   <core-error-page />
   }
   @default {
     <core-loading-overlay />

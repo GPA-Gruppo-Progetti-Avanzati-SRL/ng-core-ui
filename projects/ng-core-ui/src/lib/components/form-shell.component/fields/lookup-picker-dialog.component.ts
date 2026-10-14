@@ -9,11 +9,13 @@ import { NgComponentOutlet } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconButton } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { CoreLabelsService } from '../../../system/labels.service';
 import { LookupDialogConfig } from './lookup-field.component';
 
 @Component({
   selector: 'core-lookup-picker-dialog',
-  imports: [MatDialogModule, MatIconButton, MatIconModule, NgComponentOutlet],
+  imports: [MatDialogModule, MatIconButton, MatIconModule, MatTooltipModule, NgComponentOutlet],
   templateUrl: './lookup-picker-dialog.component.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,6 +24,7 @@ export class LookupPickerDialogComponent {
   protected readonly pickerData = inject<LookupDialogConfig>(MAT_DIALOG_DATA);
   protected readonly dialogRef  = inject(MatDialogRef<LookupPickerDialogComponent>);
   protected readonly contentInjector: Injector;
+  protected readonly t = inject(CoreLabelsService).labels;
 
   constructor() {
     this.contentInjector = Injector.create({

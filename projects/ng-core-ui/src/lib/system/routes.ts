@@ -10,7 +10,7 @@ import { ForbiddenPage } from '../pages/forbidden.page';
 import { NotFoundPage } from '../pages/not-found.page';
 
 export type { CoreAction, CoreRouteBase, CoreRouteEntry } from './routes-export';
-export { toRoutesList, toRoutesYaml, toRoutesMongo } from './routes-export';
+export { toRoutesList, toRoutesYaml, toRoutesMongo, toRoutesSql } from './routes-export';
 import type { CoreRouteBase } from './routes-export';
 import {ErrorPage} from '../pages/error.page';
 

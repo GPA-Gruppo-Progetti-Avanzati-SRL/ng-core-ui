@@ -1,15 +1,18 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation, inject } from '@angular/core';
+import { CoreLabelsService } from '../system/labels.service';
 
 @Component({
-  selector: 'page-not-found',
-  imports: [CommonModule],
+  selector: 'core-not-found-page',
   template: `
     <div class="p-8">
-      <div class="text-2xl font-semibold mb-2 text-on-surface">Not Found</div>
-      <div class="text-on-surface-variant">The requested page could not be found.</div>
+      <h1 class="text-2xl font-semibold mb-2 text-on-surface">{{ t().notFound.title }}</h1>
+      <p class="text-on-surface-variant">{{ t().notFound.message }}</p>
     </div>
   `,
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ui' },
 })
-export class NotFoundPage {}
+export class NotFoundPage {
+  protected readonly t = inject(CoreLabelsService).labels;
+}

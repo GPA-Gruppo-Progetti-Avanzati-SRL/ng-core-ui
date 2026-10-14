@@ -47,7 +47,7 @@
           (click)="onClick()"
         >
           <span class="text-[12px]">
-            {{ disabled() ? 'Non disponibile' : buttonLabel() }}
+            {{ disabled() ? t().card.unavailable : (buttonLabel() ?? t().card.action) }}
           </span>
 
         </button>

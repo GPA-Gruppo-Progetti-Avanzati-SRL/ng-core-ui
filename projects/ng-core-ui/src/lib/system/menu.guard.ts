@@ -25,10 +25,9 @@ export class MenuGuard implements CanActivateChild {
     // Attende il completamento del bootstrap (la promise è già avviata da SystemService)
     await this.system.bootstrap().catch(() => void 0);
 
-    // Bootstrap fallito → /error
-    if (this.system.layoutState() === 'error') {
-      return this.router.parseUrl('/error');
-    }
+    // Bootstrap fallito: il layout mostra la pagina di errore al posto del contenuto. Si lascia
+    // passare la navigazione, così l'URL richiesto resta nella barra e "Riprova" lo ricarica.
+    if (this.system.layoutState() === 'error') return true;
 
     const allowed = this.system.allowedEndpoints();
 

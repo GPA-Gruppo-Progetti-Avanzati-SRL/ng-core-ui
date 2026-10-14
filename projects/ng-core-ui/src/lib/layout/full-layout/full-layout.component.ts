@@ -12,9 +12,7 @@ import {
   ElementRef,
   ViewEncapsulation
 } from '@angular/core';
-import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
-import { filter, map } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { IsActiveMatchOptions, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { PathNode } from '../../system/system.models';
 import { SystemService } from '../../system/system.service';
 
@@ -24,18 +22,15 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatListModule } from '@angular/material/list';
-import {ConfirmComponent} from '../../components/confirm.component/confirm.component';
-import {AlertComponent} from '../../components/alert.component/alert.component';
 import {ErrorPage} from '../../pages/error.page';
 import {AppSwitcherComponent} from '../app-switcher/app-switcher.component';
+import {CoreLabelsService} from '../../system/labels.service';
 
 @Component({
-  selector: 'app-full-layout',
+  selector: 'core-full-layout',
   imports: [
     MatButtonModule,
     ToastComponent,
-    ConfirmComponent,
-    AlertComponent,
     LoadingOverlayComponent,
     MatIconModule,
     MatSidenavModule,
@@ -44,6 +39,7 @@ import {AppSwitcherComponent} from '../app-switcher/app-switcher.component';
     MatListModule,
     RouterOutlet,
     RouterLink,
+    RouterLinkActive,
     ErrorPage,
     AppSwitcherComponent,
   ],
@@ -54,7 +50,6 @@ import {AppSwitcherComponent} from '../app-switcher/app-switcher.component';
 })
 export class FullLayoutComponent {
 
-  private router: Router = inject(Router);
   private system: SystemService = inject(SystemService);
 
   private readonly sidenavRef = viewChild<ElementRef<HTMLElement>>('sidenav');
@@ -63,17 +58,10 @@ export class FullLayoutComponent {
   environment = this.system.environment;
   menuTree = this.system.menuTree;
   layoutState = this.system.layoutState;
+  protected readonly t = inject(CoreLabelsService).labels;
   sidenavExpanded = signal(false);
   isExpanded = computed(() => this.sidenavExpanded());
   extraSidenavOpen = signal(false);
-
-  private currentUrl = toSignal(
-    this.router.events.pipe(
-      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-      map((e) => e.urlAfterRedirects)
-    ),
-    { initialValue: this.router.url }
-  );
 
   currentPageTitle = this.system.currentPageTitle;
   sortedMenuRoots = this.menuTree;
@@ -93,8 +81,17 @@ export class FullLayoutComponent {
     return n.endpoint ? this.system.normalizePath(n.endpoint) : null;
   }
 
-  isActive(n: PathNode): boolean {
-    return this.endpointFor(n) === this.currentUrl();
+  /**
+   * Voce attiva anche sulle sotto-pagine e con query string (`/users` resta attiva su
+   * `/users/edit/1?tab=2`); la root `/` solo in modo esatto, altrimenti sarebbe sempre attiva.
+   */
+  activeOptions(n: PathNode): IsActiveMatchOptions {
+    return {
+      paths: this.endpointFor(n) === '/' ? 'exact' : 'subset',
+      queryParams: 'ignored',
+      matrixParams: 'ignored',
+      fragment: 'ignored',
+    };
   }
 
   toggleSidenav(): void {

@@ -8,6 +8,7 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DatatableColumn, DatatableComponent } from '../datatable.component/datatable.component';
 import { KVOption } from '../form-shell.component/form-field.models';
+import { CoreLabelsService } from '../../system/labels.service';
 import { KvSignalPickerBaseConfig } from './kv-picker.models';
 
 @Directive()
@@ -18,6 +19,7 @@ export abstract class KvSignalPickerBase<T extends KvSignalPickerBaseConfig = Kv
   @ViewChild('table') protected _table?: DatatableComponent;
 
   protected readonly filterText = signal('');
+  protected readonly t = inject(CoreLabelsService).labels;
 
   protected readonly filteredOptions = computed<KVOption[]>(() => {
     const text = this.filterText().toLowerCase().trim();
@@ -33,7 +35,7 @@ export abstract class KvSignalPickerBase<T extends KvSignalPickerBaseConfig = Kv
     if (this.data.valueColumn) {
       cols.push({ key: 'value', label: this.data.valueColumn });
     }
-    cols.push({ key: 'label', label: this.data.labelColumn ?? 'Descrizione' });
+    cols.push({ key: 'label', label: this.data.labelColumn ?? this.t().picker.description });
     return cols;
   });
 

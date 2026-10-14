@@ -1,7 +1,7 @@
 import { Rule, SchematicContext, Tree, SchematicsException } from '@angular-devkit/schematics';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const libPkg = require('../../package.json') as { version: string; 'ng-add'?: { targetVersions?: Record<string, string> } };
 const LIB = '@gpa-gruppo-progetti-avanzati-srl/ng-core-ui';
 const LIB_VERSION: string = libPkg.version;
@@ -39,7 +39,7 @@ export function ngUpdate(): Rule {
     const deps: Record<string, string> = pkgJson.dependencies ?? {};
     const devDeps: Record<string, string> = pkgJson.devDependencies ?? {};
 
-    const angularVersion = exact(LIB_TARGET_VERSIONS['@angular/core'] ?? '21.0.0');
+    const angularVersion = exact(LIB_TARGET_VERSIONS['@angular/core'] ?? '22.0.0');
     const majorMatch = angularVersion.match(/\d+/);
     const angularMajorVersion = majorMatch ? `^${majorMatch[0]}.0.0` : angularVersion;
 

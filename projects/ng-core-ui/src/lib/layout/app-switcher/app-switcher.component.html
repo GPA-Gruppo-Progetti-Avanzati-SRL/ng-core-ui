@@ -1,5 +1,5 @@
 @if (environment()?.logoUrl) {
-  <a href="/" (click)="close.emit()" class="flex justify-center my-2 no-underline outline-none" aria-label="Vai alla home">
+  <a href="/" (click)="dismiss.emit()" class="flex justify-center my-2 no-underline outline-none" [attr.aria-label]="t().layout.home">
     <img class="app-logo-img bg-surface" [ngSrc]="environment()!.logoUrl!" width="96" height="96" alt="Logo" />
   </a>
 }
@@ -23,11 +23,11 @@
 </div>
 <mat-divider class="apps-divider"></mat-divider>
 <mat-nav-list class="extra-footer shrink-0 pt-1 flex justify-center">
-  <a mat-list-item class="extra-menu-item text-on-inverse-surface" [href]="environment()?.logoutPath || '#'" aria-label="Logout">
+  <a mat-list-item class="extra-menu-item text-on-inverse-surface" [href]="environment()?.logoutPath || '#'" [attr.aria-label]="t().layout.logout">
     <mat-icon>logout</mat-icon>
-    <span class="app-label">Logout</span>
+    <span class="app-label">{{ t().layout.logout }}</span>
   </a>
 </mat-nav-list>
 <div class="shrink-0 mt-1 px-4 text-[10px] text-on-primary opacity-80 text-center">
-  Version: {{ appVersion }} - Sha: {{ appSha }}
+  {{ t().layout.version }}: {{ appVersion }} - Sha: {{ appSha }}
 </div>

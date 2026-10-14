@@ -5,7 +5,7 @@
       <mat-sidenav position="end" mode="over" class="extra-sidenav bg-primary text-on-primary"
                    [opened]="extraSidenavOpen()"
                    (closed)="extraSidenavOpen.set(false)">
-        <core-app-switcher (close)="closeExtraSidenav()" />
+        <core-app-switcher (dismiss)="closeExtraSidenav()" />
       </mat-sidenav>
 
       <mat-sidenav-content>
@@ -16,18 +16,16 @@
 
             <span class="mr-2 font-semibold text-lg text-on-primary">{{ whoami()?.user }}</span>
 
-            <a mat-icon-button [href]="environment()?.logoutPath || '#'" aria-label="Logout">
+            <a mat-icon-button [href]="environment()?.logoutPath || '#'" [attr.aria-label]="t().layout.logout">
               <mat-icon>logout</mat-icon>
             </a>
-            <button mat-icon-button (click)="openExtraSidenav()" aria-label="Apri menu laterale destro">
+            <button mat-icon-button (click)="openExtraSidenav()" [attr.aria-label]="t().layout.appsMenu">
               <mat-icon>more_vert</mat-icon>
             </button>
           </mat-toolbar>
 
           <div class="relative flex-1 overflow-auto">
             <router-outlet />
-            <core-confirm />
-            <core-alert />
           </div>
         </main>
       </mat-sidenav-content>
@@ -36,7 +34,7 @@
     <core-toast />
   }
   @case ('error') {
-   <page-error/>
+   <core-error-page />
   }
   @default {
     <core-loading-overlay />

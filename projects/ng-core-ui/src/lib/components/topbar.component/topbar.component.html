@@ -16,30 +16,27 @@
     @if (!isCompact()) {
       <!-- Large screens: button row -->
       <div class="flex items-center justify-center shrink-0">
-        @for (action of actions(); track action.icon; let first = $first) {
+        @for (action of actions(); track action.label; let first = $first) {
           @if (action.visible?.() ?? true) {
             <div class="flex items-center">
               @if (!first) {
-                <div class="w-px self-stretch bg-outline-variant mx-1"></div>
+                <div class="w-px self-stretch bg-outline-variant mx-1" aria-hidden="true"></div>
               }
-              <div
-                class="flex flex-col items-center justify-center px-4 py-1 gap-1 transition-colors"
-                [class.cursor-pointer]="!(action.disabled?.())"
-                [class.hover:bg-black/8]="!(action.disabled?.())"
-                [class.opacity-40]="action.disabled?.()"
-                [class.pointer-events-none]="action.disabled?.()"
-                [attr.aria-label]="action.label"
-                (click)="!(action.disabled?.()) && action.onClick()"
+              <button
+                type="button"
+                class="flex flex-col items-center justify-center px-4 py-1 gap-1 transition-colors border-none bg-transparent text-inherit cursor-pointer hover:bg-black/8 disabled:cursor-default disabled:opacity-40 disabled:hover:bg-transparent"
+                [disabled]="action.disabled?.() ?? false"
+                (click)="action.onClick()"
               >
-                <mat-icon class="!text-[26px] !w-[26px] !h-[26px] !leading-none text-on-tertiary!">
+                <mat-icon aria-hidden="true" class="!text-[26px] !w-[26px] !h-[26px] !leading-none text-on-tertiary!">
                   {{ action.icon }}
                 </mat-icon>
                 <span class="flex flex-col items-center text-[11px] leading-tight font-medium text-on-tertiary">
-                  @for (word of action.label.split(' '); track word) {
+                  @for (word of action.label.split(' '); track $index) {
                     <span>{{ word }}</span>
                   }
                 </span>
-              </div>
+              </button>
             </div>
           }
         }
@@ -47,14 +44,14 @@
     } @else {
       <!-- Small screens: three dots menu -->
       <div class="flex shrink-0 ml-2">
-        <button mat-icon-button [matMenuTriggerFor]="actionsMenu" aria-label="Azioni">
+        <button mat-icon-button [matMenuTriggerFor]="actionsMenu" [attr.aria-label]="t().topbar.actions">
           <mat-icon style="color: var(--mat-sys-primary)">more_vert</mat-icon>
         </button>
         <mat-menu #actionsMenu="matMenu">
-          @for (action of actions(); track action.icon) {
+          @for (action of actions(); track action.label) {
             @if (action.visible?.() ?? true) {
               <button mat-menu-item [disabled]="action.disabled?.()" (click)="action.onClick()">
-                <mat-icon style="color: var(--mat-sys-primary)">{{ action.icon }}</mat-icon>
+                <mat-icon aria-hidden="true" style="color: var(--mat-sys-primary)">{{ action.icon }}</mat-icon>
                 <span>{{ action.label }}</span>
               </button>
             }

@@ -21,6 +21,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { LookupResult } from '../form-field.models';
 import { LookupPickerDialogComponent } from './lookup-picker-dialog.component';
 import { FieldStateErrorMatcher } from './field-error-state-matcher';
+import { CoreLabelsService } from '../../../system/labels.service';
 
 export interface LookupDialogConfig {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,11 +45,12 @@ function hasId(r: LookupResult | null | undefined): boolean {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LookupFieldComponent {
-  readonly formField    = input.required<any>();
+  readonly formField    = input.required<any>(); // eslint-disable-line @typescript-eslint/no-explicit-any
   readonly dialogConfig = input.required<LookupDialogConfig>();
   readonly label        = input<string>('');
 
   private readonly _dialog     = inject(MatDialog);
+  protected readonly t         = inject(CoreLabelsService).labels;
   private readonly _destroyRef = inject(DestroyRef);
 
   private readonly _input = viewChild(MatInput);
@@ -62,7 +64,7 @@ export class LookupFieldComponent {
     !!(this.fieldState()?.touched?.() && this.fieldState()?.invalid?.())
   );
   protected readonly errorMessage = computed<string>(() =>
-    this.fieldState()?.errors?.()?.[0]?.message ?? 'Campo non valido'
+    this.fieldState()?.errors?.()?.[0]?.message ?? this.t().field.invalid
   );
 
   /** ErrorStateMatcher control-independent: riflette invalid && touched del field state. */
@@ -105,6 +107,7 @@ export class LookupFieldComponent {
       .open(LookupPickerDialogComponent, {
         width:    cfg.width    ?? '600px',
         maxWidth: cfg.maxWidth ?? '95vw',
+        panelClass: 'ui',
         data:     { ...cfg, data: { ...(cfg.data ?? {}), initialIds } },
       })
       .afterClosed()

@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, input } from '@angular/core';
+import { CoreLabelsService } from '../../../system/labels.service';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation, input, inject } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FormField, FieldTree } from '@angular/forms/signals';
-import { FormFieldDef } from '../form-field.models';
+import { FormField } from '@angular/forms/signals';
 
 @Component({
   selector: 'core-textarea-field',
@@ -12,7 +12,8 @@ import { FormFieldDef } from '../form-field.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TextareaFieldComponent {
-  readonly formField   = input.required<any>();
+  protected readonly t = inject(CoreLabelsService).labels;
+  readonly formField   = input.required<any>(); // eslint-disable-line @typescript-eslint/no-explicit-any
   readonly rows        = input<number>(2);
   readonly label       = input<string>('');
 }

@@ -30,18 +30,21 @@ export interface CoreRouteEntry {
   menu?: boolean;
 }
 
+/** Scalare YAML: le stringhe come JSON (YAML 1.2 lo legge come double-quoted, escape compresi). */
+function yamlScalar(v: unknown): string {
+  return typeof v === 'string' ? JSON.stringify(v) : String(v);
+}
+
 function entryToYaml(e: CoreRouteEntry, appId: string): string {
   const lines: string[] = [
     `  - category: ${e.category}`,
-    `    _id: "${e._id}"`,
-    `    app: "${appId}"`,
+    `    _id: ${yamlScalar(e._id)}`,
+    `    app: ${yamlScalar(appId)}`,
   ];
   const rest = e as unknown as Record<string, unknown>;
-  const stringKeys = new Set(['name', 'description', 'icon', 'endpoint']);
   for (const key of ['name', 'description', 'icon', 'endpoint', 'order', 'menu']) {
     if (rest[key] !== undefined) {
-      const val = stringKeys.has(key) ? `"${rest[key]}"` : rest[key];
-      lines.push(`    ${key}: ${val}`);
+      lines.push(`    ${key}: ${yamlScalar(rest[key])}`);
     }
   }
   return lines.join('\n');
@@ -50,8 +53,8 @@ function entryToYaml(e: CoreRouteEntry, appId: string): string {
 export function toRoutesYaml(routes: CoreRouteBase[], actions?: CoreAction[], appId = '', appDescription = ''): string {
   const entries = toRoutesList(routes, actions);
   const capDefs = 'cap_defs:\n' + entries.map(e => entryToYaml(e, appId)).join('\n') + '\n';
-  const capabilities = entries.map(e => `    - "${e._id}"`).join('\n');
-  const capGroups = `cap_groups:\n  - _id: "grp:${appId}:ALL"\n    description: ${appDescription}\n    capabilities:\n${capabilities}\n`;
+  const capabilities = entries.map(e => `    - ${yamlScalar(e._id)}`).join('\n');
+  const capGroups = `cap_groups:\n  - _id: ${yamlScalar(`grp:${appId}:ALL`)}\n    description: ${yamlScalar(appDescription)}\n    capabilities:\n${capabilities}\n`;
   return capDefs + capGroups;
 }
 

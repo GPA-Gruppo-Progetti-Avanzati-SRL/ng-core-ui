@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { DatatableLoader, DatatableResult, DatatableSort } from './datatable.component';
+import { compareValues, defaultFilterFn, getNestedValue } from './datatable-utils';
 
 export type InMemoryLoader<T> = DatatableLoader<T> & { invalidate(): void; getAll(): Observable<T[]> };
 
@@ -131,13 +132,6 @@ export function createInMemoryLoader<T>(
     return pendingFetch;
   };
 
-  const defaultFilterFn = (row: T, text: string): boolean => {
-    const lower = text.toLowerCase();
-    return Object.values(row as object).some(
-      v => v != null && String(v).toLowerCase().includes(lower),
-    );
-  };
-
   const loader = (page: number, pageSize: number, sort?: DatatableSort): Observable<DatatableResult<T>> => {
     return fetchAll().pipe(
       map(all => {
@@ -218,13 +212,6 @@ export function createSignalLoader<T>(
   data: () => T[],
   options?: SignalLoaderOptions<T>,
 ): DatatableLoader<T> {
-  const defaultFilterFn = (row: T, text: string): boolean => {
-    const lower = text.toLowerCase();
-    return Object.values(row as object).some(
-      v => v != null && String(v).toLowerCase().includes(lower),
-    );
-  };
-
   return (page: number, pageSize: number, sort?: DatatableSort): Observable<DatatableResult<T>> => {
     let items = data();
 
@@ -250,21 +237,4 @@ export function createSignalLoader<T>(
     const start = (page - 1) * pageSize;
     return of({ items: items.slice(start, start + pageSize), total });
   };
-}
-
-// ---------------------------------------------------------------------------
-
-function getNestedValue(obj: unknown, key: string): unknown {
-  return key.split('.').reduce(
-    (o: unknown, k) => (o != null && typeof o === 'object' ? (o as Record<string, unknown>)[k] : undefined),
-    obj,
-  );
-}
-
-function compareValues(a: unknown, b: unknown): number {
-  if (a == null && b == null) return 0;
-  if (a == null) return -1;
-  if (b == null) return 1;
-  if (typeof a === 'number' && typeof b === 'number') return a - b;
-  return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' });
 }

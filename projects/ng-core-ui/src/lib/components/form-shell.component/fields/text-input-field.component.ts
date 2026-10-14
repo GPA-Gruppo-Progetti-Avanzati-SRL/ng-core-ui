@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, input } from '@angular/core';
+import { CoreLabelsService } from '../../../system/labels.service';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation, input, inject } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {FormField} from '@angular/forms/signals';
@@ -12,7 +13,8 @@ import {FormField} from '@angular/forms/signals';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TextInputFieldComponent {
-  readonly formField   = input.required<any>();
+  protected readonly t = inject(CoreLabelsService).labels;
+  readonly formField   = input.required<any>(); // eslint-disable-line @typescript-eslint/no-explicit-any
   readonly type        = input<string>('text');
   readonly label       = input<string>('');
 }

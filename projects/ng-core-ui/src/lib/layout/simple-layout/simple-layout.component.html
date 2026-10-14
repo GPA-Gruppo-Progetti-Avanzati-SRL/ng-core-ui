@@ -8,7 +8,7 @@
 
           <span class="mr-2 font-semibold text-lg text-on-primary">{{ whoami()?.user }}</span>
 
-          <a mat-icon-button [href]="environment()?.logoutPath || '#'" aria-label="Logout">
+          <a mat-icon-button [href]="environment()?.logoutPath || '#'" [attr.aria-label]="t().layout.logout">
             <mat-icon>logout</mat-icon>
           </a>
         </mat-toolbar>
@@ -16,14 +16,15 @@
         <div class="relative flex-1 overflow-auto">
           <router-outlet/>
           <div class="fixed bottom-2 right-4 text-[10px] text-error opacity-80 pointer-events-none z-[1000]">
-            Version : {{ appVersion }} - Sha: {{ appSha }}
+            {{ t().layout.version }}: {{ appVersion }} - Sha: {{ appSha }}
           </div>
         </div>
       </main>
     </div>
+    <core-toast />
   }
   @case ('error') {
-    <page-error/>
+    <core-error-page />
   }
   @default {
     <core-loading-overlay/>

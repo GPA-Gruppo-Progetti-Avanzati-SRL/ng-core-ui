@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an Angular 21 monorepo containing **ng-core-ui** (v0.0.29), a reusable UI component library for GPA (Gruppo Progetti Avanzati) internal applications. It is published via ng-packagr and consumed by other Angular apps.
+This is an Angular 22 monorepo containing **ng-core-ui** (v0.1.x), a reusable UI component library for GPA (Gruppo Progetti Avanzati) internal applications. It is published via ng-packagr and consumed by other Angular apps.
 
 ## Commands
 
@@ -38,8 +38,11 @@ npm test
 # Run a specific test file
 ng test --include='**/card.component.spec.ts'
 
+# Test in CI (Chrome headless --no-sandbox)
+npm run test:ci
+
 # Lint
-ng lint
+npm run lint
 ```
 
 ## Architecture
@@ -69,9 +72,11 @@ layout/         # Full-page layout wrappers
   full-layout/  # FullLayoutComponent — sidenav sinistra + toolbar + app-switcher
   right-layout/ # RightLayoutComponent — toolbar + app-switcher (senza sidenav sinistra)
   simple-layout/# SimpleLayoutComponent — solo toolbar minimale
-  page-error/   # Inline error page shown when bootstrap fails (selector: page-error)
-not-found/      # 404 page
-forbidden/      # 403 page
+pages/          # ErrorPage (core-error-page, con "Riprova"), NotFoundPage, ForbiddenPage
+system/labels.ts         # CoreLabels: dizionari it/en, LIB_LABELS, resolveLabels
+system/labels.service.ts # CoreLabelsService.labels — testi correnti (environment.language)
+system/tokens.ts         # LIB_TOKEN_URL, LIB_ENVIRONMENT_URL, LIB_BOOTSTRAP_TIMEOUT
+system/build-info.ts     # BUILD_INFO (AppVersion/AppSha con fallback 'dev')
 utils.ts        # AES-GCM decryption via Web Crypto API
 main.ts         # provideGPAUICore() provider function
 ```
@@ -82,20 +87,28 @@ Consuming apps call `provideGPAUICore(options?)` in their root config, where `op
 - `tokenUrl?: string` — overrides the default `/api/token`
 - `environmentUrl?: string` — overrides the default `/environment/environment.json`
 - `trustedOrigins?: string[]` — extra origins (besides the page origin) that receive `X-Context`/`X-AppId` and trigger the SSO reload on status 0 (token `LIB_TRUSTED_ORIGINS`)
+- `bootstrapTimeoutMs?: number` — timeout of each bootstrap call (environment, token). Default `30000` (token `LIB_BOOTSTRAP_TIMEOUT`)
+- `labels?: CoreLabelsOverrides` — per-language overrides of the library texts, e.g. `{ it: { datatable: { empty: 'Nessuna pratica' } } }` (token `LIB_LABELS`)
 
-These set `LIB_TOKEN_URL` and `LIB_ENVIRONMENT_URL` injection tokens used by `SystemService`.
+These set `LIB_TOKEN_URL` and `LIB_ENVIRONMENT_URL` injection tokens (in `system/tokens.ts`, re-exported by `main.ts`) used by `SystemService`.
 
-Bootstrap is **owned by `SystemService`** and starts automatically in its constructor via `queueMicrotask` (deferred past DI graph resolution to avoid the `SystemService → HttpClient → contextInterceptor → SystemService` circular dependency). Layout components and guards do **not** call `bootstrap()` to start it — only the guard `await`s it to block navigation until completion.
+Bootstrap is **owned by `SystemService`** and is started by `provideGPAUICore()` through a non-blocking `provideEnvironmentInitializer` (the app renders immediately and the layouts show the spinner). The constructor no longer starts it: injecting `SystemService` without `provideGPAUICore()` (e.g. in tests) makes no HTTP call. Layout components do **not** call `bootstrap()`; the guard `await`s it (and starts it if needed) to block navigation until completion.
 
 The sequence inside `bootstrap()`:
 1. `loadEnvironment()` — fetches `environmentUrl`, populates `environment`.
 2. `loadToken()` — reads `appId` from `environment()`, fetches token with `AppId` header. If `env.encryptToken` is true, decrypts via AES-GCM. Populates `whoami`, `paths`, `apps`, `sites`.
 3. `menuTree` is a `computed` derived from `paths` — no explicit `.set()` needed.
-4. Deduplication via `bootstrapPromise` field — concurrent `await`s reuse the same promise. On failure the rejected promise is **kept cached** (no auto-retry).
+4. Deduplication via `bootstrapPromise` field — concurrent `await`s reuse the same promise. On failure (HTTP error or timeout) `layoutState` becomes `'error'` and the rejected promise is **kept cached** (no auto-retry); the error page's "Riprova" reloads the page at the same URL.
+
+**`encryptToken` is obfuscation, not encryption**: the AES-GCM key is `SHA-256(appId)` and `appId` is public in `environment.json`. It hides the token from casual inspection only; it does not protect it from anyone who can read the page.
 
 Two `effect()`s run in the constructor:
 - **Theme effect** — calls `StyleManagerService.setTheme(env.theme)` whenever `environment()` changes (guarded by `if (!env) return`).
-- **Title effect** — reacts to `layoutState()`: sets `'Caricamento...'` while loading, `'Errore'` on error, and `environment()?.appTitle` when ready.
+- **Title effect** — reacts to `layoutState()`: sets `labels.browserTitle.loading` / `.error` (it: `'Caricamento...'` / `'Errore'`) and `environment()?.appTitle` when ready.
+
+### Testi e lingua
+
+Tutti i testi della libreria vengono da `CoreLabelsService.labels()` (dizionari `CORE_LABELS_IT` / `CORE_LABELS_EN` in `system/labels.ts`), scelti da `environment.language` (`it-IT` → `it`; lingue senza dizionario → `it`). Override per lingua con `provideGPAUICore({ labels })`. Nei componenti: `protected readonly t = inject(CoreLabelsService).labels;` e nel template `{{ t().sezione.chiave }}`. **Non aggiungere stringhe fisse nei template**: aggiungere la chiave a `CoreLabels` e a entrambi i dizionari (un test verifica che abbiano le stesse chiavi). Anche `GpaPaginatorIntl` legge da qui.
 
 ### State Signals
 
@@ -130,12 +143,13 @@ interface Environment {
 }
 ```
 
-Note: `AppSha` and `AppVersion` are expected to be available globally (e.g., defined via build system) and are not part of the provider or environment interface.
+Note: `AppSha` and `AppVersion` are injected by the build (`--define`). The library reads them only through `system/build-info.ts` (`BUILD_INFO`, guarded by `typeof`): without `--define` (`ng serve`, tests) they fall back to `'dev'` instead of throwing a ReferenceError.
 
 ### Route Guards
 
 `MenuGuard` implements `CanActivateChild`. It `await`s `system.bootstrap()` (the cached promise) to block navigation until bootstrap completes, then checks `layoutState()`:
-- `'error'` → redirect `/error`
+- the wildcard child `**` is always allowed → unknown URLs show `NotFoundPage` (404), not `/forbidden`
+- `'error'` → lets the navigation through: the layout shows the error page instead of the content and the requested URL stays in the address bar
 - `'ready'` → checks `allowedEndpoints`; unauthorized → redirect `/forbidden`
 - `/error`, `/forbidden`, `/not-found` are always allowed (loop prevention)
 
@@ -168,6 +182,8 @@ provideGPAUICore(),
 - **mat-theme-bridge.css** — contains a `@theme {}` block that registers `--color-*` tokens (e.g., `--color-surface`, `--color-primary`) with Tailwind so it generates semantic utilities (`bg-surface`, `text-on-primary`, etc.). This block is **for Tailwind utility generation only** — it does NOT provide the actual CSS variable values at runtime.
 - **`_color-bridge.scss` + mixin** — the actual runtime bridge. Contains a single `color-bridge.apply()` mixin that declares `--color-*: var(--mat-sys-*)` mappings. Included via `@include color-bridge.apply()` inside `.gpa {}`, `.cobalt {}` and `.forest {}` in the respective theme SCSS files. This ensures the `var()` references resolve correctly in all browsers including WebKit/Safari, where declaring them on `:root` fails because `--mat-sys-*` variables are not in scope at that level.
 - **Pre-built Tailwind output** — `styles/components.css` is compiled from `styles/components.input.css` (which imports the full Tailwind framework + mat-theme-bridge + `@source "../src"`) via `npm run build:components-css`. This prevents consuming apps from re-processing base/theme layers. The `@source "../src"` directive is required so Tailwind v4 scans the library's component templates for utility class names.
+- **Preflight globale (scelta voluta)** — `components.css` include il preflight Tailwind (`@layer base`: `* { margin:0; padding:0; border:0 solid; box-sizing:border-box }` ecc.) **non** scoped a `.ui`: si applica a tutta l'app consumatrice. Layout e componenti della lib contano su quel reset; un'app che importa `components.css` lo eredita.
+- **`.ui` su `<body>`** — l'ng-add aggiunge `ui` alle classi del `<body>` (conservando quelle esistenti, es. `mat-typography`). Overlay e dialog (CDK) vivono fuori dai layout: i dialog della lib passano anche `panelClass: 'ui'`.
 - **Per-app Tailwind file** — consuming apps use `src/tailwind-app.css` (utilities layer only + mat-theme-bridge import + `@custom-variant ui (.ui &)` + `@source "."`), generated by the `ng-add` schematic.
 - Components use `ViewEncapsulation.None` for shared styles. Component-specific styles are expressed as Tailwind utility classes directly in the HTML template (no per-component CSS files).
 - **Layout SCSS** — `_simple-layout.scss` has been deleted; all simple-layout styles are now Tailwind inline classes. `_full-layout.scss` retains only the rules that cannot be expressed in Tailwind: `.sidenav` width/transition, `.nav-item` MDC overrides, `.label` collapse animation, `mat-sidenav.extra-sidenav` Material overrides. `_layout-shared.scss` contains only `mat-toolbar.toolbar` with `@include mat.toolbar-overrides()`. `themes.scss` imports `full-layout` (covers both FullLayout and RightLayout styles). `_full-layout.scss` was previously `_main-layout.scss`.
@@ -178,7 +194,7 @@ All layout components read `layoutState` directly from `SystemService` (no local
 
 - `'loading'` → `<core-loading-overlay />` (shown while bootstrap is in progress)
 - `'ready'` → full layout rendered (sidenav/toolbar/content)
-- `'error'` → `<page-error />` (inline centered error page with `cloud_off` icon)
+- `'error'` → `<core-error-page />` (inline centered error page with `cloud_off` icon and a "Riprova" button that reloads the page)
 
 `layoutState` and `_bootstrapFailed` live entirely in `SystemService`. No router navigation on failure — the error page is shown in-place.
 
@@ -221,14 +237,15 @@ The library publishes these assets alongside the compiled JS:
 | `ConfirmComponent` | `core-confirm` | `components/confirm.component` |
 
 **Services:**
-- `ToastService` — `success/error/info/warning(message, duration?)`. Colori semantici fissi (verde/rosso/blu/giallo), indipendenti dal tema.
+- `ToastService` — `success/error/info/warning(message, duration?, isHtml?)`.
+- **HTML nei messaggi** (`isHtml` di toast, `confirm()`, `alert()`) — sempre via `[innerHTML]` con la sanitizzazione standard di Angular (restano `<b>`, `<br>`, liste, link; spariscono script, handler `on*`, `style`). Mai `bypassSecurityTrustHtml`. Colori semantici fissi (verde/rosso/blu/giallo), indipendenti dal tema.
 - `LoadingService` — `show()/hide()` con contatore. `isLoading: Signal<boolean>`.
 - `loadingInterceptor` — `HttpInterceptorFn` che chiama `show/hide` automaticamente su ogni XHR.
 - `contextInterceptor` — aggiunge `X-Context`/`X-AppId` **solo** a richieste same-origin o verso `trustedOrigins`.
 - `redirectInterceptor` — su status 0 fa `location.reload()` solo per richieste same-origin/trusted, browser online e al massimo una volta ogni 10 s (marker `sessionStorage` `gpa-core:redirect-reload`); altrimenti propaga l'errore.
 - `GpaDateAdapter` — DateAdapter registrato da `provideGPAUICore()` (sostituisce `provideNativeDateAdapter()`): parse nell'ordine del locale (`it` → gg/mm/aaaa), date alle 12:00 locali per evitare lo shift UTC. `toIsoDate(date)` → `'YYYY-MM-DD'` per il backend.
-- `AlertService` — `alert(options: AlertOptions): Promise<void>`. Mostra un dialog modale di avviso con `title?`, `message`, `closeLabel?`, `type?: 'info'|'success'|'warning'|'danger'`. Awaitable.
-- `ConfirmService` — `confirm(options: ConfirmOptions): Promise<boolean>`. Mostra un dialog modale di conferma con `title?`, `message`, `confirmLabel?`, `cancelLabel?`, `type?: 'default'|'danger'` (danger colora il bottone in rosso). Ritorna `true` se confermato.
+- `AlertService` — `alert(options: AlertOptions): Promise<void>`. Apre un `MatDialog` (role `alertdialog`) con `title?`, `message`, `isHtml?`, `closeLabel?`, `type?: 'info'|'success'|'warning'|'danger'`. Awaitable; si risolve alla chiusura (bottone, Esc, backdrop).
+- `ConfirmService` — `confirm(options: ConfirmOptions): Promise<boolean>`. Apre un `MatDialog` con `title?`, `message`, `isHtml?`, `confirmLabel?`, `cancelLabel?`, `type?: 'default'|'danger'` (danger: bottone rosso e focus iniziale su Annulla). `true` se confermato, `false` per Annulla/Esc/backdrop. Più richieste si impilano, ognuna risolve la propria Promise. Funziona in ogni layout: **non** servono `<core-confirm>`/`<core-alert>` nei template (sono il contenuto dei dialog).
 
 **DataTable API:**
 - `DatatableColumn { key, label, width?, sortable?, format?, component? }` — `key` supporta notazione dot per oggetti annidati (es. `address.city`). `sortable?: boolean` abilita click sull'header per ordinamento. `format?: (row) => string` per valori calcolati da più campi (priorità su `key`). `component` è un `Type<any>` Angular opzionale per celle con layout custom (priorità massima).
@@ -238,7 +255,8 @@ The library publishes these assets alongside the compiled JS:
 - `createPagedLoader<T>(http, url, params?, headers?)` — modalità **server-side**: ogni cambio pagina/sort chiama l'API. Convenzione GPA: response `T[]` + header `totalCount`. `params?: () => Record<string,string|number>` è una funzione rieseguita ad ogni load. `headers?: () => Record<string,string>` inietta header custom. Il sort viene passato come query param `sort=field:dir`.
 - `createInMemoryLoader<T>(http, url, options?)` — modalità **client-side**: una singola chiamata HTTP scarica tutto, poi paginazione/sort/filtro avvengono in memoria. Il dataset viene cachato nel closure. Opzioni: `extraParams?`, `headers?: () => Record<string,string>`, `filter?: () => string` (segnale testo ricerca), `filterFn?: (row, text) => boolean` (default: ricerca su tutti i campi stringa). Il loader restituisce anche `invalidate()` per svuotare la cache e forzare un re-fetch. Supporta risposta `T[]` diretta o `{ body: T[] }` GPA.
 - `DatatableComponent.refresh(resetPage?: boolean)` — ricarica i dati. `resetPage=true` torna a pagina 1.
-- `DatatableComponent` inputs aggiuntivi: `pageSizeOptions: number[]` (default `[10,25,50]`), `initialPageSize: number` (default `10`), `rowBackground?: (row) => string | null` per colorare le righe.
+- `DatatableComponent` inputs aggiuntivi: `pageSizeOptions: number[]` (default `[10,25,50]`), `initialPageSize: number` (default `10`), `rowBackground?: (row) => string | null` per colorare le righe, `rowKey?: (row) => unknown` (identità per la selezione: **obbligatorio di fatto** con loader server-side, dove ogni fetch crea oggetti nuovi), `emptyMessage` (default `'Nessun dato'`).
+- Output: `selectionChange`, `loadError` (errore del loader; la tabella mostra comunque "Riprova"). Una pagina oltre la fine (es. dopo una cancellazione) torna all'ultima pagina esistente. Header ordinabili: `<button>` con `aria-sort`.
 - **Colonne custom**: passare `component: MyCellComponent` su `DatatableColumn`. Il componente deve esporre `value = input<unknown>()` e `row = input<unknown>()`. Viene renderizzato via `NgComponentOutlet` con `inputs` — nessun template markup aggiuntivo nel consuming component.
 
 **FormShell API:**
@@ -246,8 +264,9 @@ The library publishes these assets alongside the compiled JS:
 - `FormModel.model` — `WritableSignal<T>`, source of truth dei valori. Leggere con `formModel.model()` nel submit.
 - `FormModel.ft` — `FieldTree<T>`, accesso tipizzato per singoli field in `computed()`: `formModel.ft.nome().value()`.
 - `FormModel.invalid` — `Signal<boolean>`, delega a `ft().invalid()`.
-- `FormModel.submit(action: () => void)` — chiama `markAllAsTouched()`, poi esegue `action()` solo se `invalid()` è `false`. Pattern canonico per i bottoni submit.
-- `FormModel.markAllAsTouched()` — forza la visualizzazione di tutti gli errori.
+- `FormModel.submit(action: () => unknown): Promise<boolean>` — usa `submit()` di `@angular/forms/signals` con `ignoreValidators: 'none'`: marca touched tutto l'albero, non parte se invalido **o con validatori async `pending`**, ignora i click mentre un'azione è in corso. `action` può essere async; se ritorna errori `{ kind, message, fieldTree? }` (o array) vengono applicati ai campi. Pattern canonico per i bottoni submit.
+- `FormModel.submitting` — `Signal<boolean>`, true durante l'azione di `submit()`.
+- `FormModel.markAllAsTouched()` — marca touched l'intero albero (annidati e array compresi).
 - `FormModel.reset(value?: T)` — resetta stato touched/dirty, opzionalmente aggiorna il valore.
 - `FormFieldDef<T> { field, label, component, span?, inputs? }` — solo layout UI. `field` è il riferimento diretto al `FieldTree` (es. `ft.nome`), NON una stringa. TypeScript cattura i typo a compile time.
 - Validazione, hidden, disabled: **sempre nello schema** del `FormModel` usando `required(p.field)`, `hidden(p.field, logic)`, `disabled(p.field, logic)` da `@angular/forms/signals`.
@@ -256,6 +275,16 @@ The library publishes these assets alongside the compiled JS:
 - **`formField()()` pattern nei field component**: `formField()` = chiama InputSignal → FieldTree; `formField()()` = chiama FieldTree → FieldState con `.value`, `.errors()`, `.touched()`, `.invalid()`.
 - `[formField]="formField()"` nei template dei field — passare il FieldTree al directive Angular, NON l'InputSignal (`[formField]="formField"` è sbagliato).
 - Field component built-in: `TextInputFieldComponent` (`type?`), `TextareaFieldComponent` (`rows?`), `ComboboxFieldComponent` (`options: KVOption[]`), `DatepickerFieldComponent`, `LookupFieldComponent` (`dialogConfig: { component, data?, width?, maxWidth? }`), `RadioButtonListFieldComponent` (`options: KVOption[], inline?: boolean`), `CheckboxListFieldComponent` (`options: KVOption[], inline?: boolean` — valore è un array).
+
+**KV picker (dialog di selezione per `LookupFieldComponent`):**
+- `kvSinglePicker(config, title?, opts?)` / `kvMultiPicker(...)` — caricano le opzioni da `GET /api/<coreContext>/properties/<lookupName>` (risposta `KVProperty[]`: `key`, `value`, `order`, `kind`). **`coreContext`** è una property di `environment.properties` (letta con `getEnvironmentProperty('coreContext')`); se manca, il segmento viene omesso (`/api/properties/<lookupName>`). `lookupName` viene codificato con `encodeURIComponent`.
+- `kvSignalSinglePicker` / `kvSignalMultiPicker` — stesse UI su opzioni già in memoria (`options: Signal<KVOption[]>`).
+- Config comune: `labelColumn?`, `valueColumn?` (se presente mostra anche la colonna chiave), `cancelLabel?`; i multi anche `confirmLabel?`, `initialIds?`. Il risultato è un `LookupResult` (`{ id, label }`; nei multi `id` è un array e `label` le descrizioni separate da virgola).
+- `loadKVOptions(url, blank = true)` — `Signal<KVOption[]>` per combobox/radio/checkbox dallo stesso tipo di endpoint.
+
+**Field file:**
+- `FileInputFieldComponent` — `multiple?: boolean` (valore `File[]`, altrimenti `File | null`), `acceptedMimeTypes?: string[]`, `valuePlaceHolder?`, `showAsRequired?`.
+- `mimeTypeValidator({ allowedTypes, message? })` — accetta MIME esatti, wildcard (`image/*`) ed estensioni (`.pdf`); con `file.type` vuoto decide l'estensione. `maxFileSizeValidator({ maxBytes, message? })`. Entrambi funzionano su valore singolo o `File[]`.
 
 ### Key Conventions
 
@@ -277,7 +306,7 @@ All exports go through `projects/ng-core-ui/src/public-api.ts`. When adding a ne
 
 `ng add @gpa-gruppo-progetti-avanzati-srl/ng-core-ui` runs the following steps to fully configure a consuming app:
 
-1. **alignDependencies** — aligns `@angular/*` and non-Angular peer deps using `ng-add.targetVersions` from the library's `package.json` (Angular 21.x, Material 21.x, Tailwind 4.x, TypeScript ~5.9).
+1. **alignDependencies** — aligns `@angular/*` and non-Angular peer deps using `ng-add.targetVersions` from the library's `package.json` (Angular 22.x, Material 22.x, Tailwind 4.x, TypeScript 6.x).
 2. **setupTailwind** — creates `.postcssrc.json` with `@tailwindcss/postcss`.
 3. **updateAngularJson** — sets `preserveSymlinks`, adds style entries (fonts.scss, tailwind-app.css, components.css, themes.scss), adds assets mapping, doubles build budgets (1MB/2MB initial, 8kB/16kB component), sets `baseHref` in production config.
 4. **updateStylesScss** — adds `@use "tailwindcss"` and `@source` directive for ng-core-ui.

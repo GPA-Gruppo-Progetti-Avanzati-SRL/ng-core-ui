@@ -7,6 +7,6 @@
     class="!text-sm"
   ></textarea>
   @if (formField()().touched() && formField()().errors().length) {
-    <mat-error>{{ formField()().errors()[0]?.message ?? 'Campo non valido' }}</mat-error>
+    <mat-error>{{ formField()().errors()[0]?.message ?? t().field.invalid }}</mat-error>
   }
 </mat-form-field>

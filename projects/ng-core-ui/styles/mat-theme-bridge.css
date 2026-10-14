@@ -2,7 +2,7 @@
  * Bridges Angular Material MD3 CSS variables to Tailwind v4 color tokens.
  * Import this file in any Tailwind entry point to get semantic color utilities
  * (text-primary, bg-surface, border-outline-variant, etc.) that automatically
- * follow the active Material theme (gpa/poste, light/dark).
+ * follow the active Material theme (gpa/cobalt/forest, light/dark).
  *
  * Usage:
  *   @import "@gpa-gruppo-progetti-avanzati-srl/ng-core-ui/styles/mat-theme-bridge.css";

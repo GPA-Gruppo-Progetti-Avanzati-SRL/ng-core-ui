@@ -1,41 +1,25 @@
-@if (svc.state(); as s) {
-  <!-- backdrop -->
-  <div
-    class="fixed inset-0 z-[9998] bg-black/40 backdrop-blur-sm"
-    (click)="svc.close()"
-  ></div>
+<div class="flex items-center gap-3 px-6 py-4" [style.background-color]="cfg.bg" [style.color]="cfg.fg">
+  <mat-icon aria-hidden="true" class="shrink-0 !text-[22px] !w-[22px] !h-[22px] !leading-none">{{ cfg.icon }}</mat-icon>
+  <h2 mat-dialog-title class="!m-0 !p-0 !text-base !font-semibold" [style.color]="cfg.fg">{{ data.title }}</h2>
+</div>
 
-  <!-- dialog -->
-  <div class="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none">
-    <div class="pointer-events-auto w-96 rounded-2xl border border-outline-variant bg-surface shadow-xl flex flex-col overflow-hidden">
+<mat-dialog-content class="!pt-5">
+  @if (data.isHtml) {
+    <div class="m-0 text-sm leading-relaxed text-on-surface-variant" [innerHTML]="data.message"></div>
+  } @else {
+    <p class="m-0 text-sm leading-relaxed text-on-surface-variant">{{ data.message }}</p>
+  }
+</mat-dialog-content>
 
-      <!-- header colorato con icona -->
-      <div
-        class="flex items-center gap-3 px-6 py-4"
-        [style.background-color]="cfg[s.type].bg"
-        [style.color]="cfg[s.type].fg"
-      >
-        <mat-icon class="shrink-0 !text-[22px] !w-[22px] !h-[22px] !leading-none">{{ cfg[s.type].icon }}</mat-icon>
-        <p class="m-0 text-base font-semibold">{{ s.title }}</p>
-      </div>
-
-      <!-- corpo -->
-      <div class="flex flex-col gap-5 px-6 py-5">
-        <p class="m-0 text-sm leading-relaxed text-on-surface-variant">{{ s.message }}</p>
-
-        <div class="flex justify-end">
-          <button
-            mat-flat-button
-            class="transition-all duration-150 hover:scale-[1.03] hover:brightness-90"
-            [style.background-color]="cfg[s.type].bg"
-            [style.color]="cfg[s.type].fg"
-            (click)="svc.close()"
-          >
-            {{ s.closeLabel }}
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-}
+<mat-dialog-actions align="end">
+  <button
+    mat-flat-button
+    type="button"
+    mat-dialog-close
+    cdkFocusInitial
+    [style.background-color]="cfg.bg"
+    [style.color]="cfg.fg"
+  >
+    {{ data.closeLabel }}
+  </button>
+</mat-dialog-actions>

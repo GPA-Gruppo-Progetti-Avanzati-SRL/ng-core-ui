@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LookupFieldComponent } from './lookup-field.component';
 
-@Component({ selector: 'dummy-dialog', template: '' })
+@Component({ selector: 'core-dummy-dialog', template: '' })
 class DummyDialogComponent {}
 
 /** Fake FieldState/FieldTree che imita l'API dei signal-forms usata dal componente. */

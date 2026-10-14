@@ -5,7 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { LookupFieldComponent } from './lookup-field.component';
 import { LookupResult } from '../form-field.models';
 
-@Component({ selector: 'dummy-dialog', template: '' })
+@Component({ selector: 'core-dummy-dialog', template: '' })
 class DummyDialogComponent {}
 
 // Lookup via NgComponentOutlet con un FieldTree REALE dei signal-forms.

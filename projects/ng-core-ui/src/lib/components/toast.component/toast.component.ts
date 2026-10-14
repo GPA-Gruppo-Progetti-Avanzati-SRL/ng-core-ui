@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, ViewEncapsulation, effect, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ToastService, ToastType } from './toast.service';
+import { CoreLabelsService } from '../../system/labels.service';
 
 const TOAST_CONFIG: Record<ToastType, { icon: string; bg: string; fg: string }> = {
   success: { icon: 'check_circle', bg: '#dcfce7', fg: '#14532d' },
@@ -26,6 +27,7 @@ export class ToastComponent {
   private readonly el = inject(ElementRef<HTMLElement>);
   protected readonly svc = inject(ToastService);
   protected readonly cfg = TOAST_CONFIG;
+  protected readonly t = inject(CoreLabelsService).labels;
 
   constructor() {
     const el = this.el.nativeElement as PopoverHTMLElement;

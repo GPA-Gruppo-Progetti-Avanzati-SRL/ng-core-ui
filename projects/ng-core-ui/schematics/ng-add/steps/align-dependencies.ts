@@ -2,7 +2,7 @@ import { Rule, SchematicContext, SchematicsException, Tree } from '@angular-devk
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 import { LIB, LIB_TARGET_VERSIONS } from '../constants';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const LIB_VERSION: string = (require('../../../package.json') as { version: string }).version;
 
 /** Rimuove prefissi semver (^, ~, >=, <=, >, <) per forzare versione esatta. */
@@ -33,7 +33,7 @@ export function alignDependencies(): Rule {
     const deps: Record<string, string> = pkgJson.dependencies ?? {};
     const devDeps: Record<string, string> = pkgJson.devDependencies ?? {};
 
-    const angularVersion = exact(LIB_TARGET_VERSIONS['@angular/core'] ?? '21.0.0');
+    const angularVersion = exact(LIB_TARGET_VERSIONS['@angular/core'] ?? '22.0.0');
     // I build tool (@angular/build, @angular/cli, @angular/compiler-cli) seguono
     // un versioning proprio: usare solo il major evita errori "version not found"
     const majorMatch = angularVersion.match(/\d+/);

@@ -5,20 +5,23 @@ import { DateAdapter } from '@angular/material/core';
 import { App, Context, PathNode, TokenResponse } from './system.models';
 import { CoreAction } from './routes';
 import { Environment } from './environment';
-import { firstValueFrom } from 'rxjs';
-import { LIB_TOKEN_URL, LIB_ENVIRONMENT_URL } from '../main';
+import { firstValueFrom, timeout } from 'rxjs';
+import { LIB_TOKEN_URL, LIB_ENVIRONMENT_URL, LIB_BOOTSTRAP_TIMEOUT } from './tokens';
 import { decrypt } from '../utils';
 import { StyleManagerService } from './style-manager.service';
+import { LIB_LABELS, resolveLabels } from './labels';
 
 @Injectable({ providedIn: 'root' })
 export class SystemService {
   private readonly http             = inject(HttpClient);
   private readonly tokenUrl         = inject(LIB_TOKEN_URL);
   private readonly environmentUrl   = inject(LIB_ENVIRONMENT_URL);
+  private readonly bootstrapTimeout = inject(LIB_BOOTSTRAP_TIMEOUT);
   private readonly styleManager     = inject(StyleManagerService);
   private readonly titleService     = inject(Title);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private readonly _dateAdapter     = inject<DateAdapter<unknown>>(DateAdapter as any, { optional: true });
+  private readonly labelOverrides   = inject(LIB_LABELS);
 
   readonly whoami        = signal<{ user: string; roles: string[] | null; capabilities: string[] | null } | null>(null);
   readonly paths         = signal<PathNode[] | null>(null);
@@ -63,9 +66,10 @@ export class SystemService {
     });
 
     effect(() => {
+      const titles = resolveLabels(this.environment()?.language, this.labelOverrides).browserTitle;
       switch (this.layoutState()) {
-        case 'loading': this.titleService.setTitle('Caricamento...'); break;
-        case 'error':   this.titleService.setTitle('Errore');         break;
+        case 'loading': this.titleService.setTitle(titles.loading); break;
+        case 'error':   this.titleService.setTitle(titles.error);   break;
         case 'ready': {
           const title = this.environment()?.appTitle;
           if (title) this.titleService.setTitle(title);
@@ -79,9 +83,6 @@ export class SystemService {
       this._dateAdapter?.setLocale(lang);
       if (isDevMode()) console.log('[SystemService] locale →', lang);
     });
-
-    // Differito a dopo la risoluzione del grafo DI (evita ciclo SystemService → HttpClient → contextInterceptor → SystemService)
-    queueMicrotask(() => this.bootstrap().catch(() => this._bootstrapFailed.set(true)));
   }
 
   getEnvironmentProperty(key: string): unknown {
@@ -120,7 +121,9 @@ export class SystemService {
   }
 
   async loadEnvironment(): Promise<Environment> {
-    const data = await firstValueFrom(this.http.get<Environment>(this.environmentUrl));
+    const data = await firstValueFrom(
+      this.http.get<Environment>(this.environmentUrl).pipe(timeout(this.bootstrapTimeout)),
+    );
     if (isDevMode()) console.debug('[SystemService] environment', data);
     this.environment.set(data);
     return data;
@@ -131,7 +134,9 @@ export class SystemService {
     if (!env?.appId) throw new Error('AppId not found in environment');
 
     const headers = new HttpHeaders().set('AppId', env.appId);
-    const rawToken = await firstValueFrom(this.http.get(this.tokenUrl, { headers, responseType: 'text' }));
+    const rawToken = await firstValueFrom(
+      this.http.get(this.tokenUrl, { headers, responseType: 'text' }).pipe(timeout(this.bootstrapTimeout)),
+    );
     const decryptedJson = env.encryptToken ? await decrypt(rawToken, env.appId) : rawToken;
 
     let data: TokenResponse;
@@ -153,6 +158,12 @@ export class SystemService {
 
   private bootstrapPromise: Promise<void> | null = null;
 
+  /**
+   * Carica environment e token. Avviato da `provideGPAUICore()` (environment initializer, non
+   * bloccante: i layout mostrano lo spinner); il `MenuGuard` ne attende la Promise. Le chiamate
+   * concorrenti condividono la stessa Promise; un fallimento resta in cache e porta
+   * `layoutState` a `'error'` ("Riprova" nella pagina di errore ricarica la pagina).
+   */
   async bootstrap(): Promise<void> {
     if (this.whoami() && this.paths() && this.apps()) return;
     if (this.bootstrapPromise) return this.bootstrapPromise;
@@ -164,6 +175,7 @@ export class SystemService {
         if (isDevMode()) console.debug('[SystemService] bootstrap finished');
       } catch (err) {
         console.error('[SystemService] bootstrap failed', err);
+        this._bootstrapFailed.set(true);
         throw err;
       }
     })();

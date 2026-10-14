@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, computed, input } from '@angular/core';
+import { CoreLabelsService } from '../../../system/labels.service';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation, computed, input, inject } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
@@ -13,7 +14,8 @@ import { FormField } from '@angular/forms/signals';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatepickerFieldComponent {
-  readonly formField   = input.required<any>();
+  protected readonly t = inject(CoreLabelsService).labels;
+  readonly formField   = input.required<any>(); // eslint-disable-line @typescript-eslint/no-explicit-any
   readonly label       = input<string>('');
 
   // Il datepicker ha un NgControl reale (via [formField]): Material mostra nativamente

@@ -32,10 +32,35 @@ export function createTailwindAppCss(): Rule {
     const indexPath = 'src/index.html';
     if (tree.exists(indexPath)) {
       const content = tree.read(indexPath)!.toString('utf-8');
-      if (!content.includes('class="ui"')) {
-        tree.overwrite(indexPath, content.replace('<body>', '<body class="ui">'));
+      const result = addBodyClass(content, 'ui');
+      if (result === null) {
+        context.logger.warn('  ⚠ <body> non trovato in src/index.html — aggiungere a mano class="ui"');
+      } else if (result !== content) {
+        tree.overwrite(indexPath, result);
         context.logger.info('  ✔ Aggiunto class="ui" al <body> di src/index.html');
       }
     }
   };
+}
+
+/**
+ * Aggiunge `cls` alle classi del primo `<body …>` conservando quelle esistenti
+ * (es. `mat-typography` messo da `ng add @angular/material`). Ritorna il contenuto invariato se la
+ * classe c'è già, `null` se non trova il tag.
+ */
+export function addBodyClass(html: string, cls: string): string | null {
+  const body = /<body\b([^>]*)>/i.exec(html);
+  if (!body) return null;
+  const attrs = body[1];
+  const classAttr = /\sclass\s*=\s*(["'])(.*?)\1/i.exec(attrs);
+  let newAttrs: string;
+  if (classAttr) {
+    const classes = classAttr[2].split(/\s+/).filter(Boolean);
+    if (classes.includes(cls)) return html;
+    const q = classAttr[1];
+    newAttrs = attrs.replace(classAttr[0], ` class=${q}${[...classes, cls].join(' ')}${q}`);
+  } else {
+    newAttrs = ` class="${cls}"${attrs}`;
+  }
+  return html.slice(0, body.index) + `<body${newAttrs}>` + html.slice(body.index + body[0].length);
 }

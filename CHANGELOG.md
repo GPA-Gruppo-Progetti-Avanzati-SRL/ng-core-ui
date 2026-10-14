@@ -11,6 +11,54 @@
 - **Datatable — `visible` delle azioni non riceve più `null`.** Un predicato come `r => r.stato === 'BOZZA'` mandava in errore la tabella. La colonna azioni compare se almeno un'azione è visibile su almeno una riga della pagina.
 - **Date — nuovo `GpaDateAdapter` al posto del `NativeDateAdapter`.** Legge le date digitate nell'ordine del locale (`it`: gg/mm/aaaa; separatori `/ . -` e spazio; anno a 2 o 4 cifre) e `aaaa-mm-gg`; le date inesistenti (31/02) sono invalide. Prima `05/03/2025` diventava il 3 maggio. Le date create dal picker sono alle 12:00 locali, così in JSON non scivolano al giorno prima. Nuovo helper `toIsoDate(date)` → `'YYYY-MM-DD'`.
 
+### Affidabilità e correttezza (P1 dell'analisi 2026-10-14)
+
+- **404 vero per gli URL sconosciuti** — `MenuGuard` lascia passare la rotta `**`: un URL inesistente mostra `NotFoundPage` invece di `/forbidden`.
+- **`ConfirmService` / `AlertService` su `MatDialog`** — funzionano in ogni layout (prima in `SimpleLayout` `await confirm()` restava appeso per sempre); più richieste si impilano e ognuna risolve la propria Promise (prima la seconda sovrascriveva la prima, che non si risolveva mai). Accessibilità nativa: `role="dialog"`/`alertdialog`, focus trap, Esc, ripristino del focus; nelle conferme `danger` il focus iniziale va su "Annulla".
+- **Toast** — `SimpleLayout` ora li mostra; contenitore `aria-live="polite"`, bottone di chiusura con `aria-label`.
+- **Datatable** — nuovo input `rowKey` (selezione per chiave: con un loader server-side la selezione non si perde più al refetch); `rowBackground` e l'evidenza della selezione ora si vedono (le celle non hanno più `bg-white`) e la tabella segue il tema (`bg-surface`); errore con bottone "Riprova" e nuovo output `loadError`; messaggio "Nessun dato" (input `emptyMessage`); dopo una cancellazione che svuota l'ultima pagina torna alla pagina precedente; header ordinabili accessibili da tastiera con `aria-sort`.
+- **`AppSha`/`AppVersion`** — letti tramite `BUILD_INFO` con `typeof`: senza `--define` (`ng serve`, test) valgono `'dev'` invece di lanciare `ReferenceError` (che rompeva anche la pagina di errore).
+- **`FormModel.submit()`** — basato su `submit()` di signal forms: non parte con validatori asincroni `pending`, ignora il doppio click mentre l'azione è in corso, marca touched tutto l'albero (non solo i campi del layout), accetta azioni async e applica ai campi gli errori server ritornati. Nuovo `FormModel.submitting`.
+- **Peer dependencies reali** — `^22.0.0` per `@angular/*` (aggiunti `@angular/forms`, `@angular/cdk`, `@angular/platform-browser`) e `rxjs ^7.8.0`, non più opzionali; restano opzionali solo `tailwindcss` e `@tailwindcss/postcss`.
+- **ng-add** — la classe `ui` viene aggiunta al `<body>` anche quando ha già altre classi (es. `mat-typography` dopo `ng add @angular/material`); prima la sostituzione falliva in silenzio e nessuna utility della libreria si applicava.
+- **Generatori ACL** — `routes.yaml` sempre valido (gli scalari passano da `JSON.stringify`: prima una descrizione con `"` o `:` rompeva il file); un `app.actions.config.ts` con errori ferma la generazione (prima veniva ignorato e l'ACL usciva senza action); nuova opzione `--app-id=<id>` per allineare l'`appId` a quello di `environment.json`.
+- **CI** — workflow `ci.yml` su PR e push su `master` (test + build); il publish esegue i test prima di pubblicare. Nuovo script `test:ci` (Chrome headless `--no-sandbox`).
+- **Preflight Tailwind globale** — confermato come comportamento voluto e documentato.
+
+### Breaking (P1)
+
+- **Peer dependencies `^22`**: un'app su Angular 21 o precedente deve prima aggiornare Angular (`ng update @angular/core @angular/cli`) oppure installare con `--legacy-peer-deps`.
+- `ConfirmService.state`/`respond()` e `AlertService.state`/`close()` non esistono più; `ConfirmComponent`/`AlertComponent` sono ora il contenuto dei dialog e non vanno messi nei template (`<core-confirm />`/`<core-alert />` vanno rimossi se presenti).
+- `FormModel.submit()` ritorna `Promise<boolean>` (prima `void`) e non esegue l'azione se ci sono validatori asincroni in corso.
+- Datatable: con un loader server-side e la selezione attiva va passato `rowKey`; la colonna azioni e le celle non hanno più sfondo bianco fisso.
+
+### Qualità e manutenzione (P2 dell'analisi 2026-10-14)
+
+- **Testi e lingua** — tutti i testi della libreria vengono da un dizionario (`CORE_LABELS_IT` / `CORE_LABELS_EN`, servizio `CoreLabelsService`) scelto da `environment.language`; override per lingua con `provideGPAUICore({ labels })`. Coperti titolo del browser, pagine di errore/404/403, layout, confirm/alert, toast, card, topbar, datatable, field, KV picker, paginator.
+- **Bootstrap** — avviato da `provideGPAUICore()` con un environment initializer non bloccante, non più dal costruttore di `SystemService` (iniettarlo in un test non fa più partire chiamate HTTP); timeout configurabile (`bootstrapTimeoutMs`, default 30 s) su environment e token; la pagina di errore ha "Riprova", che ricarica allo stesso URL.
+- **Accessibilità** — azioni della Topbar come `<button>` raggiungibili da tastiera; FormShell senza `direction: rtl`: ordine visivo e di tabulazione coincidono con l'ordine dei campi (con azioni inline e una sola riga incompleta i campi restano allineati a destra tramite offset); lista checkbox e radio come gruppi con etichetta (`aria-labelledby`); bottoni icona dei field con `aria-label`.
+- **Field** — `CheckboxListField` rispetta `disabled`/`readonly` dello schema; `FileInputField` con `multiple` produce `File[]` con tutti i file (prima teneva solo il primo); `mimeTypeValidator` accetta wildcard (`image/*`) ed estensioni (`.pdf`) e gestisce i file con MIME vuoto; nuovo `maxFileSizeValidator`. Colori dei field dal tema (niente più `slate`/`red` fissi).
+- **FullLayout** — voce di menu attiva anche sulle sotto-pagine e con query string (`routerLinkActive`).
+- **`SKIP_LOADING`** — `HttpContextToken` per escludere una richiesta dal contatore di `LoadingService`.
+- **`provideHttpClient` dell'app** — verificato con test: `withFetch()` e gli interceptor dell'app convivono con `provideGPAUICore()` in qualsiasi ordine.
+- **Pulizie** — selettori `core-*` per layout e pagine; helper della datatable non più duplicati; `toRoutesSql` esportato; `type="button"` in `core-button` (dentro un `<form>` faceva submit); classi Tailwind inesistenti corrette; `loadKVOptions` tollera risposte `null` e non muta la risposta; `lookupName` codificato nell'URL.
+- **Lint** — `angular-eslint` configurato (`npm run lint`, prefisso `core`), zero errori, eseguito in CI.
+- **Template Dockerfile (ng-add)** — copia il lockfile, `.git` in `./.git`, `ASSETS_FOLDER` coerente.
+- **Documentazione** — CLAUDE.md e README allineati (Angular 22, bootstrap, testi, KV picker e `coreContext`, validatori file, `encryptToken` come offuscamento).
+
+- **`confirm()` / `alert()` con HTML** — nuova opzione `isHtml`, come per i toast: il messaggio viene reso come HTML con la sanitizzazione standard di Angular (formattazione sì, script e handler no).
+
+### Breaking (P2)
+
+- `MenuGuard`: con bootstrap fallito non reindirizza più a `/error`; lascia passare e il layout mostra la pagina di errore all'URL richiesto.
+- `SystemService` non avvia più il bootstrap nel costruttore: serve `provideGPAUICore()` (già richiesto dall'ng-add) oppure una chiamata esplicita a `bootstrap()`.
+- `AppSwitcherComponent`: output `close` rinominato `dismiss`.
+- Selettori: `app-full-layout` → `core-full-layout` (idem right/simple), `page-error` → `core-error-page`, `page-not-found` → `core-not-found-page`, `page-forbidden` → `core-forbidden-page`.
+- `FileInputField` con `multiple: true`: il valore è `File[]`.
+- `TopbarComponent` è ora OnPush: `visible`/`disabled` delle azioni devono leggere signal.
+- Testi cambiati: 404 e 403 ora in italiano ("Pagina non trovata", "Accesso negato"), "Logout" → "Esci"; con `language: 'en'` i testi sono in inglese.
+- `KvSinglePickerConfig` e `KvSignalSinglePickerConfig` sono ora alias di tipo (non più interfacce estendibili per declaration merging).
+
 ### Breaking a runtime
 
 - Le richieste verso host terzi non ricevono più `X-Context`/`X-AppId`: se un backend su un altro origin li usa, va dichiarato in `trustedOrigins`.

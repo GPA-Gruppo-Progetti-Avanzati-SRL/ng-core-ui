@@ -23,7 +23,8 @@ ENV BUN_INSTALL=/usr/local/bun
 ENV PATH="\${BUN_INSTALL}/bin:\${PATH}"
 RUN curl -fsSL https://bun.sh/install | bash
 
-COPY package*.json ./
+# Lockfile copiato insieme al package.json: senza, l'install non è riproducibile
+COPY package.json bun.lock* package-lock.json* ./
 RUN bun install --ci
 
 COPY src ./src
@@ -31,7 +32,7 @@ COPY public ./public
 COPY tsconfig*.json ./
 COPY angular.json ./
 COPY .postcssrc.json ./
-COPY .git .
+COPY .git ./.git
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 RUN git rev-parse HEAD | tr -d '\\n' > SHA
@@ -47,7 +48,7 @@ RUN ls dist/
 
 FROM busybox AS final
 
-ENV ASSET_FOLDER=""
+ENV ASSETS_FOLDER=""
 
 WORKDIR /app/
 

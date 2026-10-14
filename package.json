@@ -9,7 +9,9 @@
     "test": "ng test",
     "build:lib": "node -e \"require('fs').copyFileSync('README.md','projects/ng-core-ui/README.md')\" && node scripts/build-components-css.mjs && node scripts/build-bin.mjs && ng build ng-core-ui --configuration production && tsc -p projects/ng-core-ui/schematics/tsconfig.json && node -e \"const fs=require('fs'),f='dist/ng-core-ui/package.json',p=JSON.parse(fs.readFileSync(f,'utf8'));delete p.type;fs.writeFileSync(f,JSON.stringify(p,null,2)+'\\n');console.log('Removed type:module from dist package.json');\"",
     "build:components-css": "node scripts/build-components-css.mjs",
-    "build:schematics": "tsc -p projects/ng-core-ui/schematics/tsconfig.json"
+    "build:schematics": "tsc -p projects/ng-core-ui/schematics/tsconfig.json",
+    "test:ci": "ng test ng-core-ui --watch=false --browsers=ChromeHeadlessCI",
+    "lint": "ng lint"
   },
   "prettier": {
     "printWidth": 100,
@@ -28,13 +30,19 @@
     "@angular-devkit/build-angular": "^22.2.2",
     "@angular-devkit/core": "^22.0.1",
     "@angular-devkit/schematics": "^22.0.1",
+    "@angular-eslint/builder": "22.6.0",
     "@angular/build": "^22.0.1",
     "@angular/cdk": "^22.0.1",
     "@angular/cli": "^22.0.1",
     "@angular/compiler-cli": "^22.0.1",
+    "@eslint/js": "^10.0.1",
     "@schematics/angular": "^22.0.1",
+    "@tailwindcss/postcss": "^4.3.1",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^22.0.0",
+    "angular-eslint": "22.6.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.12.0",
     "jasmine-core": "~5.8.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
@@ -42,7 +50,10 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "ng-packagr": "^22.0.0",
-    "typescript": "~6.0.3"
+    "postcss": "^8.5.28",
+    "tailwindcss": "^4.3.1",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "8.71.0"
   },
   "peerDependencies": {
     "@angular/common": "^22.0.1",

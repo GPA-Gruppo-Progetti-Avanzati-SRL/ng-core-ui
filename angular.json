@@ -24,13 +24,27 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "tsConfig": "projects/ng-core-ui/tsconfig.spec.json"
+            "tsConfig": "projects/ng-core-ui/tsconfig.spec.json",
+            "karmaConfig": "projects/ng-core-ui/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/ng-core-ui/**/*.ts",
+              "projects/ng-core-ui/**/*.html"
+            ],
+            "eslintConfig": "projects/ng-core-ui/eslint.config.js"
           }
         }
       }
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": false,
+    "schematicCollections": [
+      "angular-eslint"
+    ]
   }
 }
