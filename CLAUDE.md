@@ -81,6 +81,7 @@ main.ts         # provideGPAUICore() provider function
 Consuming apps call `provideGPAUICore(options?)` in their root config, where `options` is an optional `GpaCoreOptions` object with:
 - `tokenUrl?: string` — overrides the default `/api/token`
 - `environmentUrl?: string` — overrides the default `/environment/environment.json`
+- `trustedOrigins?: string[]` — extra origins (besides the page origin) that receive `X-Context`/`X-AppId` and trigger the SSO reload on status 0 (token `LIB_TRUSTED_ORIGINS`)
 
 These set `LIB_TOKEN_URL` and `LIB_ENVIRONMENT_URL` injection tokens used by `SystemService`.
 
@@ -223,6 +224,9 @@ The library publishes these assets alongside the compiled JS:
 - `ToastService` — `success/error/info/warning(message, duration?)`. Colori semantici fissi (verde/rosso/blu/giallo), indipendenti dal tema.
 - `LoadingService` — `show()/hide()` con contatore. `isLoading: Signal<boolean>`.
 - `loadingInterceptor` — `HttpInterceptorFn` che chiama `show/hide` automaticamente su ogni XHR.
+- `contextInterceptor` — aggiunge `X-Context`/`X-AppId` **solo** a richieste same-origin o verso `trustedOrigins`.
+- `redirectInterceptor` — su status 0 fa `location.reload()` solo per richieste same-origin/trusted, browser online e al massimo una volta ogni 10 s (marker `sessionStorage` `gpa-core:redirect-reload`); altrimenti propaga l'errore.
+- `GpaDateAdapter` — DateAdapter registrato da `provideGPAUICore()` (sostituisce `provideNativeDateAdapter()`): parse nell'ordine del locale (`it` → gg/mm/aaaa), date alle 12:00 locali per evitare lo shift UTC. `toIsoDate(date)` → `'YYYY-MM-DD'` per il backend.
 - `AlertService` — `alert(options: AlertOptions): Promise<void>`. Mostra un dialog modale di avviso con `title?`, `message`, `closeLabel?`, `type?: 'info'|'success'|'warning'|'danger'`. Awaitable.
 - `ConfirmService` — `confirm(options: ConfirmOptions): Promise<boolean>`. Mostra un dialog modale di conferma con `title?`, `message`, `confirmLabel?`, `cancelLabel?`, `type?: 'default'|'danger'` (danger colora il bottone in rosso). Ritorna `true` se confermato.
 

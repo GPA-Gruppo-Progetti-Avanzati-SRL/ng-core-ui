@@ -102,10 +102,11 @@ export class DatatableComponent {
   protected readonly currentPage       = signal(1);
   protected readonly pageSize          = linkedSignal(() => this.initialPageSize());
   protected readonly currentSort       = signal<DatatableSort>(null);
-  protected readonly hasVisibleActions = computed(() =>
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.actions().some(a => a.visible?.(null as any) ?? true)
-  );
+  // `visible` riceve sempre una riga vera: chiamarlo con null rompe i predicati come `r => r.stato`.
+  protected readonly hasVisibleActions = computed(() => {
+    const actions = this.actions();
+    return actions.length > 0 && this.rows().some(row => actions.some(a => a.visible?.(row) ?? true));
+  });
   protected readonly displayedColumns = computed(() => {
     const cols = this.columns().map(c => c.key);
     const withSel = this.selectionMode() !== 'none' ? [SELECTION_COL, ...cols] : cols;

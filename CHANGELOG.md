@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+### Sicurezza e correzioni (P0 dell'analisi 2026-10-14)
+
+- **`redirectInterceptor` — niente più reload infinito.** Su status 0 ricarica la pagina solo se la richiesta è verso l'origin della pagina (o un `trustedOrigins`), se il browser non è offline e se non c'è già stato un reload negli ultimi 10 secondi (marker in `sessionStorage`). Negli altri casi l'errore viene propagato: con backend giù o rete assente al bootstrap ora compare `page-error`.
+- **`contextInterceptor` — header solo verso l'origin della pagina.** `X-Context` e `X-AppId` non vengono più inviati a host terzi (prima l'URL completo della pagina usciva dal perimetro e l'header custom faceva fallire il preflight CORS).
+- **Nuova opzione `provideGPAUICore({ trustedOrigins })`** (token `LIB_TRUSTED_ORIGINS`) per gli origin, diversi da quello della pagina, che devono ricevere gli header e il reload SSO.
+- **Toast HTML — rimosso `bypassSecurityTrustHtml`.** Con `isHtml=true` il messaggio passa dalla sanitizzazione standard di Angular: la formattazione (`<b>`, `<br>`, `<a>`, …) resta, script, handler `on*` e attributi `style` vengono rimossi.
+- **Datatable — `visible` delle azioni non riceve più `null`.** Un predicato come `r => r.stato === 'BOZZA'` mandava in errore la tabella. La colonna azioni compare se almeno un'azione è visibile su almeno una riga della pagina.
+- **Date — nuovo `GpaDateAdapter` al posto del `NativeDateAdapter`.** Legge le date digitate nell'ordine del locale (`it`: gg/mm/aaaa; separatori `/ . -` e spazio; anno a 2 o 4 cifre) e `aaaa-mm-gg`; le date inesistenti (31/02) sono invalide. Prima `05/03/2025` diventava il 3 maggio. Le date create dal picker sono alle 12:00 locali, così in JSON non scivolano al giorno prima. Nuovo helper `toIsoDate(date)` → `'YYYY-MM-DD'`.
+
+### Breaking a runtime
+
+- Le richieste verso host terzi non ricevono più `X-Context`/`X-AppId`: se un backend su un altro origin li usa, va dichiarato in `trustedOrigins`.
+- I toast HTML perdono gli attributi `style` e qualsiasi script.
+- Le date prodotte dal datepicker hanno ora l'ora a 12:00 invece di 00:00 (`getTime()` cambia, giorno/mese/anno no).
+
 ## [0.1.10] — 2026-07-28
 
 - **bug fixing multichoice picker**, ora confermando senza aver selezionato nulla imposta il campo a null
