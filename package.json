@@ -25,6 +25,7 @@
   },
   "private": false,
   "devDependencies": {
+    "@angular-devkit/build-angular": "^22.2.2",
     "@angular-devkit/core": "^22.0.1",
     "@angular-devkit/schematics": "^22.0.1",
     "@angular/build": "^22.0.1",

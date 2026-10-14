@@ -30,6 +30,8 @@ export class SystemService {
   private readonly contexts         = signal<Context[] | null>(null);
   readonly environment   = signal<Environment | null>(null);
   readonly environmentProperties = computed(() => this.environment()?.properties ?? {});
+  readonly currentPageTitleOverride = signal<string | null>(null);
+  readonly currentPageTitle = computed(() => this.currentPageTitleOverride() || this.environment()?.appTopBarTitle ||this.environment()?.appDescription || 'Enterprise App');
 
   private readonly _bootstrapFailed = signal(false);
   readonly layoutState = computed<'loading' | 'ready' | 'error'>(() => {
@@ -84,6 +86,15 @@ export class SystemService {
 
   getEnvironmentProperty(key: string): unknown {
     return this.environmentProperties()[key];
+  }
+
+  setCurrentPageTitle(title?: string | null): void {
+    this.currentPageTitleOverride.set(title ?? null);
+  }
+
+
+  resetCurrentPageTitle(): void {
+    this.currentPageTitleOverride.set(null);
   }
 
   getContextByType(contextType: string): Signal<Context[]> {

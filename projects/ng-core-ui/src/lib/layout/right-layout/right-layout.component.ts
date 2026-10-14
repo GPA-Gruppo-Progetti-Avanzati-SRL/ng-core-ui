@@ -49,7 +49,7 @@ export class RightLayoutComponent {
   environment = this.system.environment;
   layoutState = this.system.layoutState;
   extraSidenavOpen = signal(false);
-  currentPageTitle = computed(() => this.environment()?.appDescription || 'Enterprise App');
+  currentPageTitle = this.system.currentPageTitle;
 
   openExtraSidenav(): void {
     this.extraSidenavOpen.set(true);

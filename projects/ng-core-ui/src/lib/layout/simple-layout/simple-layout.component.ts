@@ -43,5 +43,5 @@ export class SimpleLayoutComponent {
   readonly appSha = AppSha;
   readonly appVersion = AppVersion;
 
-  currentPageTitle = computed(() => this.environment()?.appDescription || 'Enterprise App');
+  currentPageTitle = this.system.currentPageTitle;
 }

@@ -75,7 +75,7 @@ export class FullLayoutComponent {
     { initialValue: this.router.url }
   );
 
-  currentPageTitle = computed(() => this.environment()?.appDescription || 'Enterprise App');
+  currentPageTitle = this.system.currentPageTitle;
   sortedMenuRoots = this.menuTree;
 
   constructor() {
@@ -87,6 +87,7 @@ export class FullLayoutComponent {
       }
     });
   }
+
 
   endpointFor(n: PathNode): string | null {
     return n.endpoint ? this.system.normalizePath(n.endpoint) : null;

@@ -1,7 +1,8 @@
 export interface Environment {
   appId: string;
   appTitle: string;
-  appDescription: string
+  appDescription: string;
+  appTopBarTitle?: string;
   theme: string;
   logoutPath: string;
   logoUrl?: string;
