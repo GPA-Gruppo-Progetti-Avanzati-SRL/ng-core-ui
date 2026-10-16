@@ -4,6 +4,12 @@
 
 ## [0.2.0] — 2026-10-16
 
+### Nuove funzionalità
+
+- **`AutocompleteFieldComponent` (`core-autocomplete-field`)** — field del FormShell: tendina con filtro testuale (mat-autocomplete). Il testo digitato filtra le voci per etichetta o valore, senza distinzione di maiuscole. Opzioni da `options` (`KVOption[]` o signal) oppure da `lookupName`, sullo stesso endpoint dei KV picker (`/api/<coreContext>/properties/<lookupName>`, ordinate per `order`). Nel modello va la `value` della voce scelta, come nel combobox; il testo libero non viene accettato (uscendo dal campo torna la voce selezionata), il campo svuotato vale `null`. Input `placeholder` e `maxResults` (default 50); rispetta `required`/`disabled`/`readonly` dello schema.
+
+- **Maschera di input su `TextInputFieldComponent`** — nuovo input `mask` (`0` cifra, `A` lettera, `*` lettera o cifra, `\` per un letterale; ogni altro carattere è un letterale inserito da solo mentre si scrive). La textbox mostra il valore formattato, nel modello va quello pulito (`keepMask: true` per salvare quello formattato); un valore del modello, pulito o già formattato, viene sempre mostrato con la maschera. Il cursore resta al suo posto quando si scrive in mezzo, i caratteri non ammessi vengono scartati, con maschere solo numeriche il mobile apre la tastiera numerica. Nuovi input `uppercase` (anche senza maschera, es. codice fiscale) e `placeholder`. Esportati `applyMask`/`unmaskValue` (utili anche nel `format` delle colonne del datatable) e il validatore `maskValidator({ mask, message? })` per richiedere il valore completo.
+
 ### Correzioni dalla prova sul campo
 
 - **Toast, confirm e alert: il testo non esce più dal riquadro.** Parole lunghe senza spazi (URL, codici d'errore, JSON) ora vanno a capo (`min-w-0` + `wrap-anywhere`). Nei messaggi `isHtml` i figli restano nella larghezza: `<pre>` va a capo e le tabelle scorrono in orizzontale all'interno. Il caso è emerso provando questa versione: la sanitizzazione dell'HTML (vedi sotto) toglie gli attributi `style` inline che alcuni messaggi usavano per andare a capo. Il toast non supera più la larghezza dello schermo.

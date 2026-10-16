@@ -21,6 +21,8 @@ export interface CoreLabels {
     clearFile: string;
     clearSelection: string;
     select: (label: string) => string;
+    noResults: string;
+    loading: string;
   };
   picker: { title: string; search: string; description: string; cancel: string; confirm: string; close: string };
   kvOptions: { loadError: string };
@@ -75,6 +77,8 @@ export const CORE_LABELS_IT: CoreLabels = {
     clearFile: 'Annulla selezione file',
     clearSelection: 'Rimuovi selezione',
     select: label => `Seleziona ${label}`.trim(),
+    noResults: 'Nessun risultato',
+    loading: 'Caricamento…',
   },
   picker: { title: 'Seleziona', search: 'Cerca', description: 'Descrizione', cancel: 'Annulla', confirm: 'Conferma', close: 'Chiudi' },
   kvOptions: { loadError: 'Errore nel caricamento delle opzioni' },
@@ -120,6 +124,8 @@ export const CORE_LABELS_EN: CoreLabels = {
     clearFile: 'Clear file selection',
     clearSelection: 'Clear selection',
     select: label => `Select ${label}`.trim(),
+    noResults: 'No results',
+    loading: 'Loading…',
   },
   picker: { title: 'Select', search: 'Search', description: 'Description', cancel: 'Cancel', confirm: 'Confirm', close: 'Close' },
   kvOptions: { loadError: 'Error while loading options' },

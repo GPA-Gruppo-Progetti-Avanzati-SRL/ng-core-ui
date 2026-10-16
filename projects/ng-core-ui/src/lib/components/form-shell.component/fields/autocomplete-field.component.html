@@ -1,0 +1,54 @@
+<mat-form-field appearance="outline" floatLabel="always" class="w-full">
+  <mat-label>{{ label() }}</mat-label>
+
+  <input
+    matInput
+    type="text"
+    autocomplete="off"
+    [value]="query()"
+    (input)="onInput($any($event.target).value)"
+    (focus)="focused.set(true)"
+    (blur)="onBlur()"
+    [matAutocomplete]="auto"
+    [matAutocompleteDisabled]="!editable()"
+    [placeholder]="placeholder() ?? ''"
+    [disabled]="disabled()"
+    [readonly]="readonly()"
+    [required]="required()"
+    [errorStateMatcher]="errorMatcher"
+    class="!text-sm"
+  />
+
+  <div matSuffix class="flex items-center gap-1 pr-1">
+    @if (loading()) {
+      <mat-spinner diameter="18" [attr.aria-label]="t().field.loading" />
+    }
+    @if (hasValue() && editable()) {
+      <button
+        mat-icon-button
+        type="button"
+        (click)="clear()"
+        [matTooltip]="t().field.clearSelection"
+        [attr.aria-label]="t().field.clearSelection"
+      >
+        <mat-icon aria-hidden="true" class="!text-[18px] !w-[18px] !h-[18px] !leading-none">close</mat-icon>
+      </button>
+    }
+  </div>
+
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    [displayWith]="displayWith"
+    (optionSelected)="onSelect($event)"
+    autoActiveFirstOption
+  >
+    @for (opt of filtered(); track opt.value) {
+      <mat-option [value]="opt">{{ opt.label }}</mat-option>
+    } @empty {
+      <mat-option disabled>{{ loading() ? t().field.loading : t().field.noResults }}</mat-option>
+    }
+  </mat-autocomplete>
+
+  <!-- Sempre in DOM (ContentChildren stabile): la visibilità è pilotata da errorState. -->
+  <mat-error>{{ errorMessage() }}</mat-error>
+</mat-form-field>

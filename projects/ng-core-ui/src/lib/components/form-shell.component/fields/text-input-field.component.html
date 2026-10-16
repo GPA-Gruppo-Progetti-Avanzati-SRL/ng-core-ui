@@ -1,12 +1,31 @@
 <mat-form-field appearance="outline" floatLabel="always" class="w-full mb-[-0.5rem]">
   <mat-label>{{ label() }}</mat-label>
-  <input
-    matInput
-    [type]="type()"
-    [formField]="formField()"
-    class="!text-sm"
-  />
-  @if (formField()().touched() && formField()().errors().length) {
-    <mat-error>{{ formField()().errors()[0]?.message ?? t().field.invalid }}</mat-error>
+  @if (custom()) {
+    <input
+      matInput
+      [type]="type()"
+      [value]="display()"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+      [placeholder]="placeholder() ?? ''"
+      [attr.maxlength]="maxLength()"
+      [attr.inputmode]="inputMode()"
+      [disabled]="disabled()"
+      [readonly]="readonly()"
+      [required]="required()"
+      [errorStateMatcher]="errorMatcher"
+      class="!text-sm"
+    />
+  } @else {
+    <input
+      matInput
+      [type]="type()"
+      [formField]="formField()"
+      [placeholder]="placeholder() ?? ''"
+      class="!text-sm"
+    />
   }
+  <!-- Sempre in DOM (ContentChildren stabile): la visibilità è pilotata da errorState
+       (NgControl di [formField], oppure errorMatcher nel ramo con maschera). -->
+  <mat-error>{{ errorMessage() }}</mat-error>
 </mat-form-field>
