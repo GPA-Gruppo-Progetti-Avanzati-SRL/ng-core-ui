@@ -145,4 +145,29 @@ describe('ConfirmService / AlertService: il testo resta nel dialog', () => {
       });
     }
   }
+
+  // Caso dello screenshot: titolo ed etichette dei bottoni lunghi senza spazi.
+  for (const kind of ['confirm', 'alert'] as const) {
+    it(`${kind}: titolo e bottoni lunghi restano nel dialog`, async () => {
+      const title = 'TITOLO_' + 'x'.repeat(120);
+      const label = 'BOTTONE_' + 'y'.repeat(120);
+      if (kind === 'confirm') {
+        TestBed.inject(ConfirmService).confirm({ title, message: 'ok?', confirmLabel: label, cancelLabel: label, type: 'danger' });
+      } else {
+        TestBed.inject(AlertService).alert({ title, message: 'ok', closeLabel: label });
+      }
+      await settle();
+      const pane = document.querySelector<HTMLElement>('.cdk-overlay-pane.core-dialog')!;
+      const surface = pane.querySelector<HTMLElement>('.mat-mdc-dialog-surface')!;
+      expect(surface.scrollWidth).withContext('nessuno scroll orizzontale del dialog').toBeLessThanOrEqual(surface.clientWidth + 1);
+      const right = surface.getBoundingClientRect().right;
+      for (const el of Array.from(pane.querySelectorAll<HTMLElement>('h2, button, .mdc-button__label'))) {
+        expect(el.getBoundingClientRect().right).withContext(`${el.tagName}.${el.className} dentro il dialog`).toBeLessThanOrEqual(right + 1);
+      }
+      for (const btn of Array.from(pane.querySelectorAll<HTMLElement>('mat-dialog-actions button'))) {
+        const label = btn.querySelector<HTMLElement>('.mdc-button__label')!;
+        expect(label.getBoundingClientRect().bottom).withContext('etichetta dentro il bottone (altezza)').toBeLessThanOrEqual(btn.getBoundingClientRect().bottom + 1);
+      }
+    });
+  }
 });

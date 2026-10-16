@@ -1,4 +1,4 @@
-<h2 mat-dialog-title class="!text-base !font-semibold text-on-surface">{{ data.title }}</h2>
+<h2 mat-dialog-title class="!text-base !font-semibold text-on-surface min-w-0 wrap-anywhere">{{ data.title }}</h2>
 
 <mat-dialog-content>
   @if (data.isHtml) {
@@ -9,13 +9,14 @@
 </mat-dialog-content>
 
 <!-- Focus iniziale sull'azione "sicura": Annulla per le conferme distruttive, Conferma altrimenti -->
-<mat-dialog-actions align="end" class="gap-2">
-  <button mat-button type="button" [mat-dialog-close]="false" [attr.cdkFocusInitial]="danger ? '' : null">
+<mat-dialog-actions align="end" class="gap-2 min-w-0">
+  <button mat-button type="button" class="!h-auto !min-h-10 !py-2 max-w-full min-w-0 whitespace-normal wrap-anywhere text-center [&_.mdc-button__label]:min-w-0" [mat-dialog-close]="false" [attr.cdkFocusInitial]="danger ? '' : null">
     {{ data.cancelLabel }}
   </button>
   <button
     mat-flat-button
     type="button"
+    class="!h-auto !min-h-10 !py-2 max-w-full min-w-0 whitespace-normal wrap-anywhere text-center [&_.mdc-button__label]:min-w-0"
     [mat-dialog-close]="true"
     [attr.cdkFocusInitial]="danger ? null : ''"
     [class.!bg-error]="danger"

@@ -13,6 +13,7 @@
 ### Correzioni dalla prova sul campo
 
 - **Toast, confirm e alert: il testo non esce più dal riquadro.** Parole lunghe senza spazi (URL, codici d'errore, JSON) ora vanno a capo (`min-w-0` + `wrap-anywhere`). Nei messaggi `isHtml` i figli restano nella larghezza: `<pre>` va a capo e le tabelle scorrono in orizzontale all'interno. Il caso è emerso provando questa versione: la sanitizzazione dell'HTML (vedi sotto) toglie gli attributi `style` inline che alcuni messaggi usavano per andare a capo. Il toast non supera più la larghezza dello schermo.
+- **Confirm e alert: anche titolo ed etichette dei bottoni vanno a capo.** Un titolo o un `confirmLabel`/`cancelLabel`/`closeLabel` lunghi senza spazi uscivano dal dialog e facevano comparire una barra di scorrimento orizzontale; il testo dei bottoni finiva fuori dallo sfondo del bottone. Ora i bottoni crescono in altezza e il testo va a capo all'interno.
 - **Test di layout**: `components.css` viene caricato anche nei test (generato da `npm test` e `test:ci`), così l'aspetto dei componenti è verificabile.
 
 ### Dipendenze

@@ -1,6 +1,6 @@
-<div class="flex items-center gap-3 px-6 py-4" [style.background-color]="cfg.bg" [style.color]="cfg.fg">
+<div class="flex min-w-0 items-center gap-3 px-6 py-4" [style.background-color]="cfg.bg" [style.color]="cfg.fg">
   <mat-icon aria-hidden="true" class="shrink-0 !text-[22px] !w-[22px] !h-[22px] !leading-none">{{ cfg.icon }}</mat-icon>
-  <h2 mat-dialog-title class="!m-0 !p-0 !text-base !font-semibold" [style.color]="cfg.fg">{{ data.title }}</h2>
+  <h2 mat-dialog-title class="!m-0 !p-0 !text-base !font-semibold min-w-0 flex-1 wrap-anywhere" [style.color]="cfg.fg">{{ data.title }}</h2>
 </div>
 
 <mat-dialog-content class="!pt-5">
@@ -11,10 +11,11 @@
   }
 </mat-dialog-content>
 
-<mat-dialog-actions align="end">
+<mat-dialog-actions align="end" class="min-w-0">
   <button
     mat-flat-button
     type="button"
+    class="!h-auto !min-h-10 !py-2 max-w-full min-w-0 whitespace-normal wrap-anywhere text-center [&_.mdc-button__label]:min-w-0"
     mat-dialog-close
     cdkFocusInitial
     [style.background-color]="cfg.bg"
