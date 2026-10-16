@@ -2,9 +2,9 @@
 
 <mat-dialog-content>
   @if (data.isHtml) {
-    <div class="m-0 text-sm leading-relaxed text-on-surface-variant" [innerHTML]="data.message"></div>
+    <div class="m-0 min-w-0 text-sm leading-relaxed text-on-surface-variant wrap-anywhere [&_*]:max-w-full [&_pre]:whitespace-pre-wrap [&_table]:block [&_table]:overflow-x-auto" [innerHTML]="data.message"></div>
   } @else {
-    <p class="m-0 text-sm leading-relaxed text-on-surface-variant">{{ data.message }}</p>
+    <p class="m-0 min-w-0 text-sm leading-relaxed text-on-surface-variant wrap-anywhere">{{ data.message }}</p>
   }
 </mat-dialog-content>
 

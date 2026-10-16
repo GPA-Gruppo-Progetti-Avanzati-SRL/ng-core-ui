@@ -111,3 +111,38 @@ describe('ConfirmService / AlertService con isHtml', () => {
     });
   }
 });
+
+describe('ConfirmService / AlertService: il testo resta nel dialog', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: MATERIAL_ANIMATIONS, useValue: { animationsDisabled: true } }],
+    });
+    document.body.classList.add('ui');
+  });
+
+  afterEach(() => TestBed.inject(MatDialog).closeAll());
+
+  const settle = async () => {
+    TestBed.tick();
+    await new Promise(r => setTimeout(r));
+    TestBed.tick();
+  };
+  const LONG = 'ERR_' + 'X'.repeat(150);
+  const cases: [string, string, boolean][] = [
+    ['parola lunga', LONG, false],
+    ['HTML <pre>', `<pre>${LONG}</pre>`, true],
+    ['HTML con style rimosso', `<div style="word-break:break-all">${LONG}</div>`, true],
+  ];
+
+  for (const kind of ['confirm', 'alert'] as const) {
+    for (const [name, message, isHtml] of cases) {
+      it(`${kind}: ${name}`, async () => {
+        if (kind === 'confirm') TestBed.inject(ConfirmService).confirm({ message, isHtml });
+        else TestBed.inject(AlertService).alert({ message, isHtml });
+        await settle();
+        const content = document.querySelector<HTMLElement>('.cdk-overlay-pane.core-dialog mat-dialog-content')!;
+        expect(content.scrollWidth).withContext('nessuno scroll orizzontale').toBeLessThanOrEqual(content.clientWidth + 1);
+      });
+    }
+  }
+});

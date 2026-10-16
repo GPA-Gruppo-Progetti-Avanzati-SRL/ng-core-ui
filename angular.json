@@ -25,7 +25,10 @@
           "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/ng-core-ui/tsconfig.spec.json",
-            "karmaConfig": "projects/ng-core-ui/karma.conf.js"
+            "karmaConfig": "projects/ng-core-ui/karma.conf.js",
+            "styles": [
+              "projects/ng-core-ui/styles/components.css"
+            ]
           }
         },
         "lint": {

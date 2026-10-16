@@ -1,4 +1,4 @@
-<div role="status" aria-live="polite" class="fixed top-17 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-2 pointer-events-none w-96 items-center">
+<div role="status" aria-live="polite" class="fixed top-17 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-2 pointer-events-none w-96 max-w-[calc(100vw-2rem)] items-center">
   @for (msg of svc.messages(); track msg.id) {
     <div
       class="flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg w-full pointer-events-auto"
@@ -7,9 +7,9 @@
     >
       <mat-icon aria-hidden="true" class="shrink-0 !text-[20px] !w-5 !h-5 !leading-none">{{ cfg[msg.type].icon }}</mat-icon>
       @if (msg.isHtml) {
-        <div class="flex-1 text-sm leading-snug" [innerHTML]="msg.message"></div>
+        <div class="flex-1 min-w-0 text-sm leading-snug wrap-anywhere [&_*]:max-w-full [&_pre]:whitespace-pre-wrap [&_table]:block [&_table]:overflow-x-auto" [innerHTML]="msg.message"></div>
       } @else {
-        <span class="flex-1 text-sm leading-snug">{{ msg.message }}</span>
+        <span class="flex-1 min-w-0 text-sm leading-snug wrap-anywhere">{{ msg.message }}</span>
       }
       <button
         class="shrink-0 flex opacity-60 hover:opacity-100 transition-opacity cursor-pointer -mr-1 border-none bg-transparent p-0"

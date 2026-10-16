@@ -2,7 +2,12 @@
 
 ## [Unreleased]
 
-## [0.2.0] — 2026-10-14
+## [0.2.0] — 2026-10-16
+
+### Correzioni dalla prova sul campo
+
+- **Toast, confirm e alert: il testo non esce più dal riquadro.** Parole lunghe senza spazi (URL, codici d'errore, JSON) ora vanno a capo (`min-w-0` + `wrap-anywhere`). Nei messaggi `isHtml` i figli restano nella larghezza: `<pre>` va a capo e le tabelle scorrono in orizzontale all'interno. Il caso è emerso provando questa versione: la sanitizzazione dell'HTML (vedi sotto) toglie gli attributi `style` inline che alcuni messaggi usavano per andare a capo. Il toast non supera più la larghezza dello schermo.
+- **Test di layout**: `components.css` viene caricato anche nei test (generato da `npm test` e `test:ci`), così l'aspetto dei componenti è verificabile.
 
 ### Dipendenze
 
