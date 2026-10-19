@@ -114,6 +114,8 @@ export class AutocompleteFieldComponent {
   /** Testo nella textbox: filtro mentre si scrive, etichetta della voce scelta altrimenti. */
   protected readonly query   = signal('');
   protected readonly focused = signal(false);
+  /** Tendina aperta: il messaggio d'errore viene nascosto per non sovrapporsi al pannello. */
+  protected readonly panelOpen = signal(false);
 
   protected readonly filtered = computed<KVOption[]>(() => {
     const raw = this.query();

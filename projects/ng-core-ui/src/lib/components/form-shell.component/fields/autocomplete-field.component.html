@@ -40,6 +40,8 @@
     #auto="matAutocomplete"
     [displayWith]="displayWith"
     (optionSelected)="onSelect($event)"
+    (opened)="panelOpen.set(true)"
+    (closed)="panelOpen.set(false)"
     autoActiveFirstOption
   >
     @for (opt of filtered(); track opt.value) {
@@ -49,6 +51,7 @@
     }
   </mat-autocomplete>
 
-  <!-- Sempre in DOM (ContentChildren stabile): la visibilità è pilotata da errorState. -->
-  <mat-error>{{ errorMessage() }}</mat-error>
+  <!-- Sempre in DOM (ContentChildren stabile): la visibilità è pilotata da errorState.
+       Nascosto a tendina aperta: il pannello si apre sotto il box e si sovrapporrebbe al testo. -->
+  <mat-error [class.invisible]="panelOpen()">{{ errorMessage() }}</mat-error>
 </mat-form-field>
