@@ -68,6 +68,9 @@ export class AutocompleteFieldComponent {
   private readonly system = inject(SystemService);
   private readonly _input = viewChild(MatInput);
 
+  /** Tendina aperta (eventi opened/closed di mat-autocomplete). */
+  protected readonly panelOpen = signal(false);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private readonly fieldState = computed<any>(() => this.formField()());
 
@@ -95,8 +98,9 @@ export class AutocompleteFieldComponent {
   protected readonly disabled     = computed(() => this.fieldState()?.disabled?.() ?? false);
   protected readonly readonly     = computed(() => this.fieldState()?.readonly?.() ?? false);
   protected readonly editable     = computed(() => !this.disabled() && !this.readonly());
+  /** Niente stato d'errore mentre si sceglie dalla tendina. */
   protected readonly hasError     = computed(() =>
-    !!(this.fieldState()?.touched?.() && this.fieldState()?.invalid?.()),
+    !this.panelOpen() && !!(this.fieldState()?.touched?.() && this.fieldState()?.invalid?.()),
   );
   protected readonly errorMessage = computed<string>(() =>
     this.fieldState()?.errors?.()?.[0]?.message ?? this.t().field.invalid,
@@ -114,8 +118,6 @@ export class AutocompleteFieldComponent {
   /** Testo nella textbox: filtro mentre si scrive, etichetta della voce scelta altrimenti. */
   protected readonly query   = signal('');
   protected readonly focused = signal(false);
-  /** Tendina aperta: il messaggio d'errore viene nascosto per non sovrapporsi al pannello. */
-  protected readonly panelOpen = signal(false);
 
   protected readonly filtered = computed<KVOption[]>(() => {
     const raw = this.query();

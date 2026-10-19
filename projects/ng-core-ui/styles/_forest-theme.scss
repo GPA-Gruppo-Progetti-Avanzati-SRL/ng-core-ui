@@ -36,6 +36,10 @@ $forest-theme: mat.define-theme((
   panel-background-color: mat.get-theme-color($forest-theme, neutral, 95),
 ));
 
+@include mat.autocomplete-overrides((
+  background-color: mat.get-theme-color($forest-theme, neutral, 95),
+));
+
 @include mat.datepicker-overrides((
   calendar-container-background-color: mat.get-theme-color($forest-theme, neutral, 95),
 ));

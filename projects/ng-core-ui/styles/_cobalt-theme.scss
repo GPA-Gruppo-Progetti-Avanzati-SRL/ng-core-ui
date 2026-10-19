@@ -35,6 +35,10 @@ $cobalt-theme: mat.define-theme((
   @include color-bridge.apply();
 }
 
+@include mat.autocomplete-overrides((
+  background-color: mat.get-theme-color($cobalt-theme, neutral, 95),
+));
+
 .error-snackbar {
   @include mat.snack-bar-overrides((
     container-color: var(--mat-sys-error),
