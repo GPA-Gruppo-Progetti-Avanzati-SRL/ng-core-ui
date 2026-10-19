@@ -33,11 +33,11 @@ $cobalt-theme: mat.define-theme((
   --mat-sys-surface-variant: var(--mat-sys-tertiary-container);
 
   @include color-bridge.apply();
-}
 
-@include mat.autocomplete-overrides((
-  background-color: mat.get-theme-color($cobalt-theme, neutral, 95),
-));
+  @include mat.autocomplete-overrides((
+    background-color: mat.get-theme-color($cobalt-theme, neutral, 95),
+  ));
+}
 
 .error-snackbar {
   @include mat.snack-bar-overrides((
