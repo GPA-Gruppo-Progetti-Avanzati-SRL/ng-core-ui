@@ -10,7 +10,7 @@
 
 <!-- Focus iniziale sull'azione "sicura": Annulla per le conferme distruttive, Conferma altrimenti -->
 <mat-dialog-actions align="end" class="gap-2 min-w-0">
-  <button mat-button type="button" class="!h-auto !min-h-10 !py-2 max-w-full min-w-0 whitespace-normal wrap-anywhere text-center [&_.mdc-button__label]:min-w-0" [mat-dialog-close]="false" [attr.cdkFocusInitial]="danger ? '' : null">
+  <button mat-flat-button type="button" class="!h-auto !min-h-10 !py-2 max-w-full min-w-0 whitespace-normal wrap-anywhere text-center [&_.mdc-button__label]:min-w-0" [mat-dialog-close]="false" [attr.cdkFocusInitial]="danger ? '' : null">
     {{ data.cancelLabel }}
   </button>
   <button
